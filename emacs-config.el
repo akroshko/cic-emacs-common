@@ -172,6 +172,7 @@
                                 "_.log" "_.pdf" "_.pdfsync"  "_.prv" "_.tex"
                                 ".aux" ".bbl" ".blg" ".bst" ".pdfsync" ".snm" ".synctex.gz" ".toc"
                                 ".pyd" ".pyc" ))
+  (setq dired-listing-switches "--group-directories-first -alh")
   ;; set omit by default
   (add-hook 'dired-mode-hook '(lambda ()  (dired-omit-mode 1))))
 (requiring-package (flyspell)
