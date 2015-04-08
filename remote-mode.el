@@ -36,7 +36,11 @@
 ;; Features that might be required by this library:
 ;;
 ;; Requires pymacs for now, but want to remove that.
-;; XXXX: requires conkeror installed and an okular_remote.py command
+;; XXXX: requires okular, conkeror installed, and the provided okular_remote.py command
+;; XXXX: An okular-preview command is required on the path
+;;       ln -s /usr/bin/okular <<Users bin directory>>/okular-preview
+;; XXXX: A conkeror-preview command will soon be required on the path
+;;       ln -s /usr/bin/conkeror <<Users bin directory>>/conkeror-preview
 ;;
 ;;; Code:
 
