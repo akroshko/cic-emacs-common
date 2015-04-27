@@ -50,7 +50,6 @@
 (global-set-key (kbd "s-*") (lambda ()
                               (interactive)
                               (org-table-recalculate '(16))))
-(global-set-key (kbd "s-c e") 'apk:org-heading-timestamp)
 (global-set-key (kbd "s-c w") 'wdired-change-to-wdired-mode)
 ;; generic emacs development
 (global-set-key (kbd "s-e b") (lambda () (interactive) (eval-buffer) (message "Evaluated buffer.")))
@@ -129,6 +128,7 @@
 (global-set-key (kbd "H-n") 'windmove-down)
 (global-set-key (kbd "H-f") 'windmove-right)
 (global-set-key (kbd "H-b") 'windmove-left)
+(global-set-key (kbd "H-d") 'apk:org-heading-timestamp)
 ;; TODO is this good, kinda makes sense, to put it on quit/refresh key
 (global-set-key (kbd "H-<return>") 'buffer-menu)
 (global-set-key (kbd "H-<backspace>") 'delete-frame)

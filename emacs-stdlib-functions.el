@@ -44,14 +44,30 @@
 (defun mpp (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
 time-stamp in the message.
-XXXX: not adding apk prefix before this function is called so often in adhoc code
-TODO: remove timestamp flag
+XXXX: not adding apk: prefix before this function is called so often in adhoc code
+TODO: flag to remove timestamp
 TODO: have a decent default buffer that is not the normal message one"
   (let ((message-string (concat (apk:time-stamp) "\n" (with-output-to-string (princ value)))))
     (if buffer
         (save-excursion (with-current-buffer (get-buffer-create buffer)
                           (goto-char (point-max))
                           (insert (concat message-string "\n"))))
+      (message message-string))))
+
+(defun mpp-echo (value &optional buffer)
+  "Pretty print a message to a particular buffer and include a
+time-stamp in the message.  Echo in minibuffer area as well.
+XXXX: not adding apk: prefix before this function is called so often in adhoc code
+TODO: flag to remove timestamp
+TODO: have a decent default buffer that is not the normal message one"
+  (let* ((raw-message-string (with-output-to-string (princ value)))
+         (message-string (concat (apk:time-stamp) "\n" raw-message-string)))
+    (if buffer
+        (progn
+          (save-excursion (with-current-buffer (get-buffer-create buffer)
+                            (goto-char (point-max))
+                            (insert (concat message-string "\n"))))
+          (message raw-message-string))
       (message message-string))))
 
 (defun apk:time-stamp ()
@@ -204,7 +220,7 @@ TODO: Currently prefix search, do I want an exact search?"
   (unless count
     (setq count 1))
   (dotimes (i count)
-    (while (not (org-table-p))
+    (while (not (or (org-table-p) (eobp)))
       (forward-line 1))
     (when (< i (- count 1))
       (apk:org-table-last-row)
@@ -386,7 +402,7 @@ of this macro, just in case."
          (save-excursion
            (forward-line 1)
            (setq ,table nil)
-           (while (not (or (and (org-headline-p (get-current-line)) (= (org-outline-level) 1)) (org-table-p)))
+           (while (not (or (and (org-headline-p (get-current-line)) (= (org-outline-level) 1)) (org-table-p) (eobp)))
              (forward-line 1))
            (when (org-table-p)
              (setq ,table (apk:org-table-to-lisp-no-separators))))
@@ -427,7 +443,6 @@ ROW contains the current row converted into elisp."
              (forward-line 1)))))))
 
 ;; think, like table with table-row, should get item-lines
-;; (do-org-list-items "~/Dropbox/projects/org-agenda/main-agenda.org" "Supplies" item-line (list (mpp item-line)))
 (defmacro do-org-list-items (filename list-name item-line &rest body)
   "Iterate over the items of list LIST-NAME in FILENAME.
 ITEM-LINE contains the line that a particular item is on."
@@ -444,10 +459,8 @@ ITEM-LINE contains the line that a particular item is on."
            ,@body
            (save-excursion
              (forward-line 1)
-             (let ((current-line (get-current-line)))
-               (when (and (org-headline-p current-line) (= (org-outline-level) 1))
-                 ; (org-at-drawer-p)
-                 (setq keep-going nil))))
+             (when (or (and (org-headline-p (get-current-line)) (= (org-outline-level) 1)) (progn (end-of-line) (eobp)))
+               (setq keep-going nil)))
            (when keep-going
              (forward-line 1)))))))
 
@@ -829,5 +842,11 @@ properly escaped and combined with | to be an emacs regexp."
   "Escapes a few select posix regexps to emacs regexps.
   Generally functionality is added here as needed."
   (replace-regexp-in-string (regexp-quote "\\\\") "\\\\" posix-regexp))
+
+(defun join-paths (&rest args)
+  "Join paths in elisp.
+
+   XXX: Only works with two arguments!"
+  (concat (file-name-as-directory (car args)) (cadr args)))
 
 (provide 'emacs-stdlib-functions)
