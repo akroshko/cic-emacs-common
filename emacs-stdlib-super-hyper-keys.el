@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150327
+;; Version: 20150522
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -55,7 +55,7 @@
 (global-set-key (kbd "s-e b") (lambda () (interactive) (eval-buffer) (message "Evaluated buffer.")))
 (global-set-key (kbd "s-e d") (lambda () (interactive) (let ((d (eval-defun nil))) (funcall d))))
 (global-set-key (kbd "s-e i") (lambda () (interactive) (ielm)))
-(global-set-key (kbd "s-e j") (lambda () (interactive) (switch-to-buffer "*Jaws*")))
+(global-set-key (kbd "s-e j") (lambda () (interactive) (switch-to-buffer "*PPCapture*")))
 (global-set-key (kbd "s-e m") (lambda () (interactive) (switch-to-buffer "*Messages*")))
 (global-set-key (kbd "s-e e") (apk:toggle-variable debug-on-error
                                                "Debug on error enabled."
@@ -142,8 +142,9 @@
 ;; navigation of files
 (global-set-key (kbd "H-i") 'imenu)
 (global-set-key (kbd "H-y") 'copy-file-name-to-clipboard)
-;; not sure I think this is good at all
-(global-set-key (kbd "H-t") 'org-todo)
+;; todo commands
+(global-set-key (kbd "H-t") 'org-mark-todo)
+;; TODO not sure if I want these two anymore
 (global-set-key (kbd "C-H-t") (lambda () (interactive) (org-todo 'nextset)))
 (global-set-key (kbd "M-H-t") (lambda () (org-todo '(4))))
 

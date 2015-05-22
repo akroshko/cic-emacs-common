@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150327
+;; Version: 20150522
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -45,7 +45,9 @@
       `(catch 'requiring-package-fail
          (progn
            (condition-case error-string
-               (require ',package)
+               (progn
+                 (require ',package)
+                 ,@forms)
              (error
               (let ((msg (format  "Failed to load package %s "
                                   (symbol-name ',package))))
@@ -55,8 +57,7 @@
                   (insert (format "The error was: %s\n" error-string)))
                 (if ,error-if-fail
                     (error msg)
-                  (throw 'requiring-package-fail nil)))))
-           ,@forms)))
+                  (throw 'requiring-package-fail nil))))))))
 (put 'requiring-package 'lisp-indent-function 1))
 
 ;; set proper fonts, characters, and colors
@@ -230,11 +231,21 @@
         org-agenda-todo-list-sublevels nil
         org-agenda-todo-ignore-scheduled t
         org-agenda-todo-ignore-deadlines t
-        org-ctrl-k-protect-subtree nil)
+        org-ctrl-k-protect-subtree nil
+        org-deadline-warning-days 0)
   ;; TODO not sure why this works, if it works, and if I still need it
   (add-hook 'org-mode-hook (lambda ()  (when (display-graphic-p)
                                          (setq org-startup-with-inline-images t
                                                org-image-actual-width '(400)))))
+  ;; TODO clean this up!!!!
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (font-lock-add-keywords 'org-mode
+                                      ;;
+                                      '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
+                                         ;; font-lock-warning-face
+                                         font-lock-keyword-face
+                                         )))))
   ;; literal hyperlinks
   (add-hook 'org-mode-hook (lambda ()
                              (org-remove-from-invisibility-spec '(org-link))

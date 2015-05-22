@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150327
+;; Version: 20150522
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -78,6 +78,45 @@ TODO: incomplete but still useful right now"
       (outline-end-of-subtree)
       (org-back-to-heading)
       (beginning-of-line))))
+
+
+(defun org-mark-todo (arg)
+  "Change to DONE or TODO with prefix ARG.
+Changes a tree of bullet points to have + bullet marker or to -
+with prefix ARG.  Does nothing if already in desired state."
+  (interactive "P")
+  (cond ((org-at-heading-p)
+         ;; TODO make sure this works OK
+         (if arg
+             (org-todo 'todo)
+           (org-todo 'done)))
+        ((org-at-item-p)
+         (save-excursion
+           (beginning-of-line)
+           (let* ((current-line (get-current-line))
+                  (current-indentation (count-indentation current-line))
+                  replace-regexp
+                  regplace-item)
+             (when (and (not arg) (string-match "\\s-*- " current-line))
+               (setq replace-regexp "^\\s-*\\(-\\) .*$")
+               (setq replace-item "+"))
+             (when (and arg (string-match "\\s-*\\+ " current-line))
+               (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
+               (setq replace-item "-"))
+             (when replace-regexp
+               ;; replace
+               (beginning-of-line)
+               (when (re-search-forward replace-regexp nil t)
+                 (replace-match replace-item nil nil nil 1))
+               (forward-line)
+               (while (> (count-indentation (get-current-line)) current-indentation)
+                 ;; replace again
+                 (beginning-of-line)
+                 (when (re-search-forward replace-regexp nil t)
+                   (replace-match replace-item nil nil nil 1))
+                 (forward-line))))))
+        (t
+         (error "Not at an item or TODO!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands

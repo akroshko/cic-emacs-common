@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150327
+;; Version: 20150522
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -48,11 +48,11 @@ XXXX: not adding apk: prefix before this function is called so often in adhoc co
 TODO: flag to remove timestamp
 TODO: have a decent default buffer that is not the normal message one"
   (let ((message-string (concat (apk:time-stamp) "\n" (with-output-to-string (princ value)))))
-    (if buffer
-        (save-excursion (with-current-buffer (get-buffer-create buffer)
-                          (goto-char (point-max))
-                          (insert (concat message-string "\n"))))
-      (message message-string))))
+    (unless buffer
+      (setq buffer (get-buffer-create "*PPCapture*")))
+    (save-excursion (with-current-buffer (get-buffer-create buffer)
+                      (goto-char (point-max))
+                      (insert (concat message-string "\n"))))))
 
 (defun mpp-echo (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
@@ -62,13 +62,12 @@ TODO: flag to remove timestamp
 TODO: have a decent default buffer that is not the normal message one"
   (let* ((raw-message-string (with-output-to-string (princ value)))
          (message-string (concat (apk:time-stamp) "\n" raw-message-string)))
-    (if buffer
-        (progn
-          (save-excursion (with-current-buffer (get-buffer-create buffer)
-                            (goto-char (point-max))
-                            (insert (concat message-string "\n"))))
-          (message raw-message-string))
-      (message message-string))))
+    (unless buffer
+      (setq buffer (get-buffer-create "*PPCapture*")))
+    (save-excursion (with-current-buffer (get-buffer-create buffer)
+                      (goto-char (point-max))
+                      (insert (concat message-string "\n"))))
+    (message raw-message-string)))
 
 (defun apk:time-stamp ()
   "Create a time-stamp."
@@ -131,6 +130,11 @@ TODO: are one of this and strip-full redundant?"
 (defun remove-trailing-whitespace (str)
   "Strip trailing whitespace off of STR."
   (when (string-match "[ \t\n]*$" str)
+    (concat (replace-match "" nil nil str))))
+
+(defun remove-leading-whitespace (str)
+  "Strip leading whitespace off of STR."
+  (when (string-match "^[ \t\n]*" str)
     (concat (replace-match "" nil nil str))))
 
 (defun full-string-p (thing-or-string)
@@ -550,11 +554,13 @@ return cdr of OBJECT."
 
 ; http://www.emacswiki.org/emacs/ElispCookbook#toc20
 (defun string-integer-p (string)
+  "Check if STRING is an integer."
   (if (string-match "\\`[-+]?[0-9]+\\'" string)
       t
     nil))
 
 (defun string-float-p (string)
+  "Check if STRING is a floating point number."
   (if (string-match "\\`[-+]?[0-9]+\\.[0-9]*\\'" string)
       t
     nil))
@@ -616,7 +622,7 @@ TODO: Make formatting an option so more universal."
                      string)
        t))
 
-;; I really do want this here if the following function will be useful at all
+;; XXXX: I really do want this here if the following function will be useful at all
 (random t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -671,6 +677,8 @@ paths."
   (string-equal (strip-full str) ""))
 
 (defun apk:is-not-empty-string-nil (str)
+  "Check if STR is an empty string (no characters or all
+whitespace) or a nil."
   (and str (not (string= (strip-full str) ""))))
 
 (defun delete-current-line ()
@@ -848,5 +856,12 @@ properly escaped and combined with | to be an emacs regexp."
 
    XXX: Only works with two arguments!"
   (concat (file-name-as-directory (car args)) (cadr args)))
+
+(defun count-indentation (&optional current-line)
+  "Count the indentation level in CURRENT-LINE, if nil use the
+current line at point."
+  (unless current-line
+    (setq current-line (get-current-line)))
+  (- (length current-line) (length (remove-leading-whitespace current-line))))
 
 (provide 'emacs-stdlib-functions)

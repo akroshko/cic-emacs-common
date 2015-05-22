@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150327
+;; Version: 20150522
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -92,6 +92,26 @@
 
 (requiring-package (org)
   ;; want key to be the same everywhere
-  (global-set-key (kbd "C-c C-o") 'org-open-at-point-global))
+  (global-set-key (kbd "C-c C-o") 'org-open-at-point-global)
+  ;; make org-mode calendar navigation more convienient without needing arrow keys
+  ;; capitals not need
+  (define-key org-read-date-minibuffer-local-map (kbd "F") (lambda ()
+                                                             (interactive)
+                                                           (org-eval-in-calendar '(calendar-forward-day 1))))
+  (define-key org-read-date-minibuffer-local-map (kbd "B") (lambda ()
+                                                             (interactive)
+                                                             (org-eval-in-calendar '(calendar-backward-day 1))))
+  (define-key org-read-date-minibuffer-local-map (kbd "P") (lambda ()
+                                                             (interactive)
+                                                             (org-eval-in-calendar '(calendar-backward-week 1))))
+  (define-key org-read-date-minibuffer-local-map (kbd "N") (lambda ()
+                                                             (interactive)
+                                                             (org-eval-in-calendar '(calendar-forward-week 1))))
+  (define-key org-read-date-minibuffer-local-map (kbd "M-F") (lambda ()
+                                                               (interactive)
+                                                               (org-eval-in-calendar '(calendar-forward-month 1))))
+  (define-key org-read-date-minibuffer-local-map (kbd "M-B") (lambda ()
+                                                               (interactive)
+                                                               (org-eval-in-calendar '(calendar-backward-month 1)))))
 
 (provide 'emacs-stdlib-keys)
