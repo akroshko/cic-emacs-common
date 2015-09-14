@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org mode commands
 ;; taken from http://orgmode.org/worg/org-hacks.html#sec-1-3-1
-(defun apk:org-end-of-next-heading (&optional arg)
+(defun cic:org-end-of-next-heading (&optional arg)
   "Go to the end of the next heading.  ARG doesn't do anything
 right now.
 TODO: incomplete but still useful right now"
@@ -54,7 +54,7 @@ TODO: incomplete but still useful right now"
   (let (current-heading-level
         heading-empty)
     (save-excursion
-      (unless (org-headline-p (get-current-line))
+      (unless (cic:org-headline-p (cic:get-current-line))
         (org-back-to-heading))
       (setq current-heading-level (org-outline-level)))
     (when (equal current-heading-level 3)
@@ -66,11 +66,11 @@ TODO: incomplete but still useful right now"
     (org-forward-heading-same-level 1)
     ;; this can be weird if no subheadings, same line...
     (save-excursion
-      (let ((current-line (get-current-line)))
+      (let ((current-line (cic:get-current-line)))
         (hide-subtree)
         (org-cycle)
         (outline-end-of-subtree)
-        (when (string= current-line (get-current-line))
+        (when (string= current-line (cic:get-current-line))
           (setq heading-empty t))))
     (unless heading-empty
       (hide-subtree)
@@ -79,77 +79,102 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
+(defvar cic:org-mark-toggle-headline-hook
+  nil
+  "Add functions to be run with cic:org-mark-toggle-headline.")
 
-(defun org-mark-todo (arg)
-  "Change to DONE or TODO with prefix ARG.
+(defun cic:org-at-todo-p ()
+  (let (matched
+        ;; TODO: this should be changed to read org-todo-keywords
+        (todo-keyword-strings '("TODO" "NEXT" "WAITING" "DONE" "INVALID")))
+    (dolist (tks todo-keyword-strings)
+      (when (string-match tks (cic:get-current-line))
+        (setq matched t)))
+    matched))
+
+(defun cic:org-mark-toggle-headline (arg)
+  "Change to DONE or TODO, + or -, or another custom state.
+
 Changes a tree of bullet points to have + bullet marker or to -
-with prefix ARG.  Does nothing if already in desired state."
+or TODO with prefix ARG.  These can be highlighted a different
+color to easily indicate doneness.  Also has a hook for custom
+types of headings.  Does nothing if already in desired state."
   (interactive "P")
-  (cond ((org-at-heading-p)
-         ;; TODO make sure this works OK
-         (if arg
-             (org-todo 'todo)
-           (org-todo 'done)))
-        ((org-at-item-p)
-         (save-excursion
-           (beginning-of-line)
-           (let* ((current-line (get-current-line))
-                  (current-indentation (count-indentation current-line))
-                  replace-regexp
-                  regplace-item)
-             (when (and (not arg) (string-match "\\s-*- " current-line))
-               (setq replace-regexp "^\\s-*\\(-\\) .*$")
-               (setq replace-item "+"))
-             (when (and arg (string-match "\\s-*\\+ " current-line))
-               (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
-               (setq replace-item "-"))
-             (when replace-regexp
-               ;; replace
+  (let (return-value
+        return-true)
+    ;; check the cic:org-mark-toggle-headline-hook first
+    (dolist (heading-hook cic:org-mark-toggle-headline-hook)
+      (setq return-value (funcall heading-hook))
+      (when return-value
+        (setq return-true t)))
+    (unless return-value
+      (cond ((eq major-mode 'org-agenda-mode)
+             (when (cic:org-at-todo-p)
+               (org-agenda-todo)))
+            ((and (org-at-heading-p) (cic:org-at-todo-p))
+             (if arg
+                 (org-todo 'todo)
+               (org-todo 'done)))
+            ((org-at-item-p)
+             (save-excursion
                (beginning-of-line)
-               (when (re-search-forward replace-regexp nil t)
-                 (replace-match replace-item nil nil nil 1))
-               (forward-line)
-               (while (> (count-indentation (get-current-line)) current-indentation)
-                 ;; replace again
-                 (beginning-of-line)
-                 (when (re-search-forward replace-regexp nil t)
-                   (replace-match replace-item nil nil nil 1))
-                 (forward-line))))))
-        (t
-         (error "Not at an item or TODO!"))))
+               (let* ((current-line (cic:get-current-line))
+                      (current-indentation (count-indentation current-line))
+                      replace-regexp
+                      regplace-item)
+                 (when (and (not arg) (string-match "\\s-*- " current-line))
+                   (setq replace-regexp "^\\s-*\\(-\\) .*$")
+                   (setq replace-item "+"))
+                 (when (and arg (string-match "\\s-*\\+ " current-line))
+                   (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
+                   (setq replace-item "-"))
+                 (when replace-regexp
+                   ;; replace
+                   (beginning-of-line)
+                   (when (re-search-forward replace-regexp nil t)
+                     (replace-match replace-item nil nil nil 1))
+                   (forward-line)
+                   (while (> (count-indentation (cic:get-current-line)) current-indentation)
+                     ;; replace again
+                     (beginning-of-line)
+                     (when (re-search-forward replace-regexp nil t)
+                       (replace-match replace-item nil nil nil 1))
+                     (forward-line))))))
+            (t
+             (error "Not at an item or valid TODO!"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands
 
-(defun apk:browse-url-at-point-conkeror ()
+(defun cic:browse-url-at-point-conkeror ()
   "Find the URL at point and browse in the conkeror web browser."
   (interactive)
   (let ((browse-url-generic-program "conkeror"))
-    (browse-url-generic (apk:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line 'url))))
 
-(defun apk:browse-url-at-point-firefox ()
+(defun cic:browse-url-at-point-firefox ()
   "Find the URL at point and browse in the Firefox web browser."
   (interactive)
-  (browse-url-firefox (apk:url-at-point-or-line 'url)))
+  (browse-url-firefox (cic:url-at-point-or-line 'url)))
 
-(defun apk:browse-url-at-point-w3m ()
+(defun cic:browse-url-at-point-w3m ()
   "Find the URL at point and browse in the w3m web browser."
   (interactive)
-  (browse-url-w3 (apk:url-at-point-or-line 'url)))
+  (w3m-browse-url (cic:url-at-point-or-line 'url)))
 
-(defun apk:url-at-point-or-line (&optional current-line)
-  "Find the URL at point and browse in the w3m web browser.  Find
-the url in CURRENT-LINE if specified."
+(defun cic:url-at-point-or-line (&optional current-line)
+  "Find the URL at point and return.  Find the url in
+CURRENT-LINE if specified."
   (let ((url (thing-at-point 'url)))
     (unless url
       (unless current-line
-        (setq current-line (get-current-line)))
-      (let ((url-start (string-match apk:emacs-stdlib-url-regexp current-line)))
+        (setq current-line (cic:get-current-line)))
+      (let ((url-start (string-match cic:emacs-stdlib-url-regexp current-line)))
         (when url-start
           (setq url (substring current-line url-start (match-end 0))))))
     url))
 
-(defun apk:org-heading-timestamp (&optional arg)
+(defun cic:org-heading-timestamp (&optional arg)
   "Create an org-mode heading with the current time and date.
 ARG has not effect currently.  Behaviour based on
 org-insert-heading."
@@ -161,7 +186,7 @@ org-insert-heading."
    (t
     (insert (format-time-string "%a %b %d, %Y")))))
 
-(defun apk:org-insert-two-level (&optional arg)
+(defun cic:org-insert-two-level (&optional arg)
   "This is a really good function actually.  It inserts a top
 level with a bottom level heading"
   ;; TODO almost there, works different for items or headlines, need
@@ -179,7 +204,7 @@ level with a bottom level heading"
 ;; dired....
 ;; TODO fix when getting to end of dired buffer, shows buffer and acts dumb
 ;;      proabably need to fix up save-current-buffer, etc.
-(defun apk:next-file-dired (&optional motion)
+(defun cic:next-file-dired (&optional motion)
   "Goto the next file from the current file as listed by dired.
 Effect of motion is unknown."
   (interactive)
@@ -204,7 +229,7 @@ Effect of motion is unknown."
     (when next-filename
       (find-file next-filename))))
 
-(defun apk:search-word-other-window ()
+(defun cic:search-word-other-window ()
   "Search in the other window for the word at point.
 TODO: not currently used but could be with a bit of tweaking."
   (interactive)
@@ -215,8 +240,8 @@ TODO: not currently used but could be with a bit of tweaking."
     (goto-char (point-min))
     (search-forward point-word))))
 
-; http://www.emacswiki.org/emacs/BufferLocalKeys
-(defun apk:buffer-local-set-key (key func)
+;; http://www.emacswiki.org/emacs/BufferLocalKeys
+(defun cic:buffer-local-set-key (key func)
   "Set a buffer local key."
   (interactive "KSet key on this buffer: \naCommand: ")
   (let ((name (format "%s-magic" (buffer-name))))
@@ -233,7 +258,7 @@ TODO: not currently used but could be with a bit of tweaking."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixup commands
-(defun apk:fix-whitespace (buffer)
+(defun cic:fix-whitespace (buffer)
   "Automate the command sequence M-% C-q C-m RET C-q C-j RET"
   (interactive "*b")
   (save-excursion
@@ -248,42 +273,42 @@ TODO: not currently used but could be with a bit of tweaking."
 
 ; http://emacswiki.org/emacs/ShellMode#toc11
 ; TODO create key for this
-(defun apk:clear-shell ()
+(defun cic:clear-shell ()
   "Clear the current shell."
   (interactive)
   (let ((comint-buffer-maximum-size 0))
     (comint-truncate-buffer)))
 
-(defun apk:compilation-shell ()
+(defun cic:compilation-shell ()
   "Make current shell a compilation shell.
 TODO: toggle the compilation shell."
   (interactive)
   (shell)
-  (apk:compilation-shell-minor-mode))
+  (cic:compilation-shell-minor-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; appearance commands
 ;; http://www.emacswiki.org/emacs/FullScreen
-(defun apk:x-force-maximized (&optional f)
+(defun cic:x-force-maximized (&optional f)
   "Force maximized.  Requires wmctrl to be installed.
 TODO: Often called from .emacs so should handle errors well."
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
 
-(defun apk:toggle-fullscreen ()
+(defun cic:toggle-fullscreen ()
   "Toggle fullscreen.  Requires wmctrl to be installed.
 TODO: Often called from .emacs so should handle errors well."
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -btoggle,fullscreen"))
 
-(defun apk:toggle-menubar ()
+(defun cic:toggle-menubar ()
   "Toggle the menubar."
   (interactive)
   (if menu-bar-mode
       (menu-bar-mode -1)
     (menu-bar-mode t)))
 
-(defun apk:whack-whitespace (arg)
+(defun cic:whack-whitespace (arg)
   "Delete all white space from point to the next word.  With
     prefix ARG delete across newlines as well.  The only danger
     in this is that you don't have to actually be at the end of a
@@ -294,14 +319,14 @@ TODO: Often called from .emacs so should handle errors well."
         (re-search-forward regexp nil t)
         (replace-match "" nil nil)))
 
-(defun apk:ansi-term-screen ()
+(defun cic:ansi-term-screen ()
   "Run the screen command in an ansi-term."
   (interactive)
   (ansi-term "/usr/bin/screen"))
 
-(defun apk:ansi-term-screen-select ()
+(defun cic:ansi-term-screen-select ()
   "Select screen sessions in an ansi term.
-TODO: not sure if this works well"
+TODO: not sure if this works at all."
   (interactive)
   ;; get list of running screen sessions
   (let ((ansi-term-screen-sessions (remove "" (split-string (shell-command-to-string "ls /var/run/screen/S-$(whoami)") "\n")))
@@ -310,11 +335,11 @@ TODO: not sure if this works well"
         temp-filename)
     (if ansi-term-screen-sessions
         (progn
-          (setq apk:ansi-term-screen-sessions (mapcar (lambda (e)
+          (setq cic:ansi-term-screen-sessions (mapcar (lambda (e)
                                                     (when (string-match "\\([0-9]+\\)\\..*" e)
-                                                      (match-string 1 e))) apk:ansi-term-screen-sessions))
+                                                      (match-string 1 e))) cic:ansi-term-screen-sessions))
           ;; select the screen session
-          (setq session (select-list-item apk:ansi-term-screen-sessions))
+          (setq session (cic:select-list-item cic:ansi-term-screen-sessions))
           ;; TODO: there's probably a more secure way to do this than
           ;; random shell commands in temp files
           (setq temp-filename (make-temp-file "emacs-command-"))
@@ -330,7 +355,7 @@ TODO: not sure if this works well"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; toggle
 
-(defmacro apk:toggle-variable (variable &optional message-t message-nil)
+(defmacro cic:toggle-variable (variable &optional message-t message-nil)
   "Toggle the value of VARIABLE from t to nil and back.
 MESSAGE-T gives the message when switching to t. MESSAGE-NIL
 gives the message when switching to nil."
@@ -346,7 +371,7 @@ gives the message when switching to nil."
          (when ,message-t
            (message ,message-t))))))
 
-(defun apk:capture-time-string ()
+(defun cic:capture-time-string ()
   "Read a time string.
 TODO: eventually make more sophisticated"
   ;; remove sometime
@@ -354,22 +379,198 @@ TODO: eventually make more sophisticated"
   ;; TODO create the appropriate prompt
   (read-string "Enter 24 hour time HHMM: "))
 
-(defun apk:capture-time-date-string ()
+(defun cic:capture-time-date-string ()
   "Read a time and date string.
 TODO: eventually make more sophisticated"
   (interactive)
   ;; get the date first
-  (concat (org-read-date) " " (apk:capture-time-string)))
+  (concat (org-read-date) " " (cic:capture-time-string)))
 
-(defun apk:upward-tag-table ()
+(defun cic:upward-tag-table ()
   "Look upwards in the directory structure for a TAGS file and
 visit it."
   (interactive)
-  (let ((my-tags-file (find-file-upwards "TAGS")))
+  (let ((my-tags-file (cic:find-file-upwards "TAGS")))
     (when my-tags-file
-      ;; TODO makunbound doesn't work here, symbolp error?
       (setq tags-file-name "")
       (message "Loading tags file: %s" my-tags-file)
       (visit-tags-table my-tags-file))))
+
+(defun cic:ansi-term-localhost ()
+  "Start up an ansi-term on localhost."
+  (interactive)
+  (ansi-term "/bin/bash" "localhost"))
+
+;; http://oremacs.com/2015/01/01/three-ansi-term-tips/
+;; TODO: maybe burrying an old term buffer might be better?
+(defun cic:term-exec-hook ()
+  "Kill term buffers when exiting."
+  (let* ((buff (current-buffer))
+         (proc (get-buffer-process buff)))
+    (set-process-sentinel
+     proc
+     `(lambda (process event)
+        (if (string= event "finished\n")
+            (kill-buffer ,buff))))))
+(add-hook 'term-exec-hook 'cic:term-exec-hook)
+
+(defun cic:goto-previous-mark ()
+  "Jump to the previous mark."
+  (interactive)
+  (set-mark-command '(4)))
+
+;; http://hewner.com/2012/11/19/changing-the-emacs-modeline-color-in-a-buffer/
+;; TODO: need to generalize this a little
+(defun cic:term-toggle-modes ()
+  "Change the color of the modeline of a terminal based on
+whether it is active or inactive.  And whether it is in line or
+character mode, indicating whether it can be a normal buffer or
+not."
+  (interactive)
+
+  (when (eq major-mode 'term-mode)
+    (if (term-in-char-mode)
+        (progn
+          (term-line-mode)
+          ;; set the modeline background color and save a "cookie" so the change can be undone
+          (face-remap-remove-relative old-term-color)
+          (face-remap-remove-relative old-term-color-inactive))
+      (progn
+        (term-char-mode)
+        ;; undo that change later
+        ;; like this because green/red means program is in non-standard mode
+        (setq-local old-term-color (face-remap-add-relative 'mode-line :background "green"))
+        (setq-local old-term-color-inactive (face-remap-add-relative 'mode-line-inactive :background "red"))))))
+(add-hook 'term-mode-hook
+          (lambda ()
+            (setq-local old-term-color (face-remap-add-relative 'mode-line :background "green"))
+            (setq-local old-term-color-inactive (face-remap-add-relative 'mode-line-inactive :background "red"))))
+
+;; https://jcubic.wordpress.com/2012/01/26/switching-between-buffers-with-the-same-major-mode-in-emacs/
+(defun cic:buffer-same-mode (change-buffer-fun)
+  "Helper function to go to buffers of the same mode.
+CHANGE-BUFFER-FUN gets repeatedly called until another buffer of
+the same mode if found."
+  (let ((current-mode major-mode)
+        (next-mode nil))
+    (while (not (eq next-mode current-mode))
+      (funcall change-buffer-fun)
+      (setq next-mode major-mode))))
+
+(defun cic:previous-buffer-same-mode ()
+  "Go to the previous buffer of the same mode."
+  (interactive)
+  (cic:buffer-same-mode #'previous-buffer))
+
+(defun cic:next-buffer-same-mode ()
+  "Go to the next buffer of the same mode."
+  (interactive)
+  (cic:buffer-same-mode #'next-buffer))
+
+(defun cic:py-align-matrix ()
+  "Align a comma-delimitted matrix (within a region) in Python or
+similar languages."
+  (interactive)
+  (replace-regexp ",\\s-*" "," nil (region-beginning) (region-end))
+  (align-regexp (region-beginning) (region-end) "\\(,\\)" 1 1 t))
+
+(defun cic:sort-symbols (reverse beg end)
+  "Sort a set of symbols in a region."
+  ;; https://emacs.stackexchange.com/questions/7548/sorting-words-with-hyphens-e-g-in-a-lisp-mode
+  (interactive "*P\nr")
+  (let ((temp-table (copy-syntax-table text-mode-syntax-table)))
+    (with-syntax-table temp-table
+      (modify-syntax-entry ?. "_" temp-table)
+      (sort-regexp-fields reverse "\\_<.*?\\_>" "\\&" beg end))))
+
+(defun cic:copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      (file-name-nondirectory default-directory)
+                    (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+(defun cic:create-password-insert (&optional arg)
+  "When ARG is given, select a random password type and insert
+into current buffer.  Without ARG, defaults to 24 character
+alphanumeric."
+  (interactive "P")
+  (let ((select-list (list
+                      (list '24anp  "24 character alphanumeric with punctuation")
+                      (list '12anp  "12 character alphanumeric with punctuation")
+                      (list '24an  "24 character alphanumeric")
+                      (list '12an "12 character alphanumeric")))
+        selected)
+    (if arg
+        (progn
+          (setq selected (cic:select-list-item select-list
+                                           'cadr))
+          (setq selected (car (elt select-list selected))))
+      (setq selected '24anp))
+    (cond ((eq selected '12an)
+           (insert (cic:create-password-12-Alphanum)))
+          ((eq selected '12anp)
+           (insert (cic:create-password-12-Alphanum-punct)))
+          ((eq selected '24an)
+           (insert (cic:create-password-24-Alphanum)))
+          (t
+           (insert (cic:create-password-24-Alphanum-punct))))))
+
+(defun cic:create-password-insert-select ()
+  "Select a random password type and insert into current buffer."
+  (interactive)
+  (cic:create-password-insert t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; emacs development
+(defun cic:recalculate ()
+  (interactive)
+  (org-table-recalculate '(16)))
+(defun cic:elisp-eval-buffer ()
+  (interactive)
+  ;; TODO make sure we only evaluate elisp mode or ??
+  (eval-buffer) (message "Evaluated buffer."))
+(defun cic:elisp-eval-call-defun ()
+  (interactive)
+  (let ((d (eval-defun nil)))
+    (funcall d)))
+(defun cic:elisp-pp-capture-buffer ()
+  (switch-to-buffer "*PPCapture*"))
+(defun cic:elisp-messages-buffer ()
+  (switch-to-buffer "*Messages*"))
+(defun cic:elisp-debug-on-error ()
+  (interactive)
+  (funcall (cic:toggle-variable debug-on-error
+                                "Debug on error enabled."
+                                "Debug on error disabled.")))
+(defun cic:elisp-scratch-buffer ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+(defun cic:help-org ()
+  (interactive)
+  (info "org"))
+(defun cic:help-elisp ()
+  (interactive)
+  (info "elisp"))
+(defun cic:external-collecton-buffer ()
+  (interactive)
+  (switch-to-buffer "*Collection*"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun cic:previous-file-dired ()
+  (interactive)
+  (cic:next-file-dired -1))
+(defun cic:org-end-of-prev-heading ()
+  (interactive)
+  (cic:org-end-of-next-heading -1))
+(defun cic:prev-frame ()
+  (interactive)
+  (other-frame -1))
+(defun cic:text-scale-neutral ()
+  (interactive)
+  (text-scale-adjust 0))
 
 (provide 'emacs-stdlib-commands)

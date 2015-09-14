@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -31,39 +31,34 @@
 ;;
 ;;; Code:
 
-
-(defconst otdb-gear-types
-  '("gear"))
-
-(defconst apk:emacs-stdlib-url-regexp
+(defconst cic:emacs-stdlib-url-regexp
   "https\?://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*/[a-zA-Z0-9.!#%&+./\\\\;,:=?@~_()-]*[a-zA-Z0-9.!#%&+./\\\\:=?@~_()-]\\|https\?://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*/"
   "A regexp that matches most urls.")
 
-(defconst apk:emacs-stdlib-url-regexp-complete
-  (concat "\\[\\[\\("  apk:emacs-stdlib-url-regexp "\\)\\(\\]\\[.*\\)?::[a-zA-Z0-9_-]\\{10,11\\}::\\]\\]")
+(defconst cic:emacs-stdlib-url-regexp-complete
+  (concat "\\[\\[\\("  cic:emacs-stdlib-url-regexp "\\)\\(\\]\\[.*\\)?::[a-zA-Z0-9_-]\\{10,11\\}::\\]\\]")
   "A regexp that matches a complete url.")
 
-(defconst apk:emacs-stdlib-url-regexp-org
-  (concat "\\[\\[\\(" apk:emacs-stdlib-url-regexp "\\)\\]\\[.*\\]\\]")
+(defconst cic:emacs-stdlib-url-regexp-org
+  (concat "\\[\\[\\(" cic:emacs-stdlib-url-regexp "\\)\\]\\[.*\\]\\]")
   "A regexp that matches an org-mode url.")
 
-(defconst apk:emacs-stdlib-headline-regexp
+(defconst cic:emacs-stdlib-headline-regexp
   "^\\*+ \\(.*\\)")
 
-;; TODO include checkboxes
-(defconst apk:emacs-stdlib-list-regexp
+(defconst cic:emacs-stdlib-list-regexp
   "^ *\\([-+*]\\) \\(\\[.\\]\\)?\\(.*\\)")
 
-(defconst apk:emacs-stdlib-checkbox-regexp
+(defconst cic:emacs-stdlib-checkbox-regexp
   "^ *\\([-+*]\\) \\(\\[.\\]\\)\\(.*\\)")
 
-(defconst apk:emacs-stdlib-checkbox-checked-regexp
+(defconst cic:emacs-stdlib-checkbox-checked-regexp
   "^ *\\([-+*]\\) \\(\\[[X-]\\]\\)\\(.*\\)")
 
-(defconst apk:emacs-stdlib-checkbox-unchecked-regexp
+(defconst cic:emacs-stdlib-checkbox-unchecked-regexp
   "^ *\\([-+*]\\) \\(\\[ \\]\\)\\(.*\\)")
 
-(defconst apk:emacs-stdlib-list-exact-regexp
+(defconst cic:emacs-stdlib-list-exact-regexp
   "^ *\\([-+*]\\) \\(\\[.\\]\\)? *")
 
 (provide 'emacs-stdlib-constants)

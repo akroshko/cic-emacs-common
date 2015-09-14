@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@
 ;; Commentary:
 ;;
 ;; Uses the super and hyper keys to add a lot of higher-level
-;; functionality in a relatively intuative way to the basic Emacs
+;; functionality in a relatively intuitive way to the basic Emacs
 ;; keybindings.  There will likely be more keybindings moved here in
 ;; the future.
 ;;
@@ -43,112 +43,104 @@
 ;;
 ;;; Code:
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; emacs development
-;; org keys
-(global-set-key (kbd "s-<return>") 'apk:org-insert-two-level)
-(global-set-key (kbd "s-*") (lambda ()
-                              (interactive)
-                              (org-table-recalculate '(16))))
-(global-set-key (kbd "s-c w") 'wdired-change-to-wdired-mode)
-;; generic emacs development
-(global-set-key (kbd "s-e b") (lambda () (interactive) (eval-buffer) (message "Evaluated buffer.")))
-(global-set-key (kbd "s-e d") (lambda () (interactive) (let ((d (eval-defun nil))) (funcall d))))
-(global-set-key (kbd "s-e i") (lambda () (interactive) (ielm)))
-(global-set-key (kbd "s-e j") (lambda () (interactive) (switch-to-buffer "*PPCapture*")))
-(global-set-key (kbd "s-e m") (lambda () (interactive) (switch-to-buffer "*Messages*")))
-(global-set-key (kbd "s-e e") (apk:toggle-variable debug-on-error
-                                               "Debug on error enabled."
-                                               "Debug on error disabled."))
-(global-set-key (kbd "s-e s") (lambda () (interactive) (switch-to-buffer "*scratch*")))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; generic search/replace stuff
-(global-set-key (kbd "s-f d") 'find-name-dired)
-(global-set-key (kbd "s-f f") 'find-grep)
-(global-set-key (kbd "s-f g") 'rgrep)
-;; TODO better key for this
-(global-set-key (kbd "s-f w") 'apk:search-word-other-window)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; h==help
-(global-set-key (kbd "s-h a") 'info-apropos)
-(global-set-key (kbd "s-h f") 'find-function)
-;; put c-U to just go to front of manual
-(global-set-key (kbd "s-h e") 'info-lookup-symbol)
-(global-set-key (kbd "s-h k") 'find-function-on-key)
-(global-set-key (kbd "s-h l") 'find-library)
-;; TODO better key for both normal manual and searching
-;;      is C-h == normal emacs and s-h == elisp good?
-(global-set-key (kbd "s-h o") (lambda () (interactive) (info "org")))
-(global-set-key (kbd "s-h r") (lambda () (interactive) (info "elisp")))
-;; TODO better name/key for this
-(global-set-key (kbd "s-h u") 'apropos-value)
-(global-set-key (kbd "s-h v") 'find-variable)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; j==jump
-(global-set-key (kbd "s-j 9") (lambda () (interactive) (switch-to-buffer "*Collection*")))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; O == Open, meaning I'm Opening Outside of emacs
-(global-set-key (kbd "s-o c") 'apk:browse-url-at-point-conkeror)
-(global-set-key (kbd "s-o f") 'apk:browse-url-at-point-firefox)
-(global-set-key (kbd "s-o w") 'apk:browse-url-at-point-w3m)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; remote
-(global-set-key (kbd "s-r m") (lambda () (interactive)
-                                (if (eq major-mode 'dired-mode)
-                                    (call-interactively 'remote-dired-mode)
-                                  (call-interactively 'remote-url-mode))))
-(global-set-key (kbd "s-r r") 'remote-open)
-(global-set-key (kbd "s-r s-r") 'remote-open)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; view
-(global-set-key (kbd "s-v l") 'hl-line-mode)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; x=fix
-(global-set-key (kbd "s-x c") (apk:toggle-variable case-fold-search
-                                               "Case fold search enabled."
-                                               "Case fold search disabled."))
-(global-set-key (kbd "s-x w") 'apk:fix-whitespace)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Hyper keys
-;; are there cooler things than this?
-;; time date stamp???
-;; add control U?
-(global-set-key (kbd "H->") 'next-buffer)
-(global-set-key (kbd "H-<") 'previous-buffer)
-(global-set-key (kbd "H-}") 'apk:next-file-dired)
-(global-set-key (kbd "H-{") (lambda () (interactive) (apk:next-file-dired -1)))
-(global-set-key (kbd "H-)") 'apk:org-end-of-next-heading)
-(global-set-key (kbd "H-(") (lambda () (interactive) (apk:org-end-of-next-heading -1)))
-(global-set-key (kbd "H-]") 'other-frame)
-(global-set-key (kbd "H-[") '(lambda () (interactive) (other-frame -1)))
-(global-set-key (kbd "H-;") 'menu-bar-open)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; window management
-(global-set-key (kbd "H-p") 'windmove-up)
-(global-set-key (kbd "H-n") 'windmove-down)
-(global-set-key (kbd "H-f") 'windmove-right)
-(global-set-key (kbd "H-b") 'windmove-left)
-(global-set-key (kbd "H-d") 'apk:org-heading-timestamp)
-;; TODO is this good, kinda makes sense, to put it on quit/refresh key
-(global-set-key (kbd "H-<return>") 'buffer-menu)
-(global-set-key (kbd "H-<backspace>") 'delete-frame)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; other cool keys
-(global-set-key (kbd "H-0") (lambda () (interactive) (text-scale-adjust 0)))
-(global-set-key (kbd "H--") 'text-scale-decrease)
-(global-set-key (kbd "H-=") 'text-scale-increase)
-(global-set-key (kbd "H-+") 'text-scale-increase)
-(global-set-key (kbd "H-\\") 'indent-sexp)
-;; navigation of files
-(global-set-key (kbd "H-i") 'imenu)
-(global-set-key (kbd "H-y") 'copy-file-name-to-clipboard)
-;; todo commands
-(global-set-key (kbd "H-t") 'org-mark-todo)
-;; TODO not sure if I want these two anymore
-(global-set-key (kbd "C-H-t") (lambda () (interactive) (org-todo 'nextset)))
-(global-set-key (kbd "M-H-t") (lambda () (org-todo '(4))))
+(define-minor-mode emacs-stdlib-super-keys-mode
+  "Some standard keys bound to super."
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            ;; org keys
+            (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
+            (define-key map (kbd "s-*") 'cic:recalculate)
+            (define-key map (kbd "s-c w") 'wdired-change-to-wdired-mode)
+            ;; generic emacs development
+            (define-key map (kbd "s-e b") 'cic:elisp-eval-buffer)
+            (define-key map (kbd "s-e d") 'cic:elisp-eval-call-defun)
+            (define-key map (kbd "s-e i") 'ielm)
+            (define-key map (kbd "s-e j") 'cic:elisp-pp-capture-buffer)
+            (define-key map (kbd "s-e m") 'cic:elisp-messages-buffer)
+            (define-key map (kbd "s-e e") 'cic:elisp-debug-on-error)
+            (define-key map (kbd "s-e s") 'cic:elisp-scratch-buffer)
+            (define-key map (kbd "s-f w") 'cic:search-word-other-window)
+            ;; h==help
+            (define-key map (kbd "s-h a") 'info-apropos)
+            (define-key map (kbd "s-h f") 'find-function)
+            ;; put c-u to just go to front of manual
+            (define-key map (kbd "s-h e") 'info-lookup-symbol)
+            (define-key map (kbd "s-h k") 'find-function-on-key)
+            (define-key map (kbd "s-h l") 'find-library)
+            (define-key map (kbd "s-h o") 'cic:help-org)
+            (define-key map (kbd "s-h r") 'cic:help-elisp)
+            ;; TODO better name/key for this
+            (define-key map (kbd "s-h u") 'apropos-value)
+            (define-key map (kbd "s-h v") 'find-variable)
+            ;; m==system manager
+            (define-key map (kbd "s-m p") 'cic:create-password-insert)
+            (define-key map (kbd "s-m M-p") 'cic:create-password-insert-select)
+            ;; j==jump
+            ;; O == Open, meaning I'm Opening Outside of emacs
+            (define-key map (kbd "s-i c") 'cic:browse-url-at-point-conkeror)
+            (define-key map (kbd "s-i f") 'cic:browse-url-at-point-firefox)
+            (define-key map (kbd "s-i w") 'cic:browse-url-at-point-w3m)
+            ;; view
+            ;; requires???
+            (define-key map (kbd "s-v l") 'hl-line-mode)
+            ;; x=fix
+            (define-key map (kbd "s-x c") (cic:toggle-variable case-fold-search
+                                                               "Case fold search enabled."
+                                                               "Case fold search disabled."))
+            (define-key map (kbd "s-x w") 'cic:fix-whitespace)
+            map))
 
-(requiring-package (dired-x)
-  (define-key dired-mode-map (kbd "M-o") 'dired-omit-mode))
+(define-minor-mode emacs-stdlib-hyper-keys-mode
+  "Some standard keys bound to hyper."
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            ;; Hyper keys
+            ;; are there cooler things than this?
+            ;; time date stamp???
+            ;; add control U?
+            (define-key map (kbd "H->") 'next-buffer)
+            (define-key map (kbd "H-<") 'previous-buffer)
+            (define-key map (kbd "H-}") 'cic:next-file-dired)
+            (define-key map (kbd "H-{") 'cic:previous-file-dired)
+            (define-key map (kbd "H-)") 'cic:org-end-of-next-heading)
+            (define-key map (kbd "H-(") 'cic:org-end-of-prev-heading)
+            (define-key map (kbd "H-d") 'cic:org-heading-timestamp)
+            (define-key map (kbd "H-\\") 'indent-sexp)
+            ;; navigation of files
+            (define-key map (kbd "H-i") 'imenu)
+            (define-key map (kbd "H-y") 'cic:copy-file-name-to-clipboard)
+            ;; todo commands
+            (define-key map (kbd "H-t") 'cic:org-mark-toggle-headline)
+            ;; universal align
+            (define-key map (kbd "H-q") 'align-current)
+            map))
+
+(define-minor-mode emacs-stdlib-hyper-keys-all-mode
+  "Some standard keys bound to hyper that should work in all
+   modes including minibuffer."
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "H-]") 'other-frame)
+            (define-key map (kbd "H-[") 'cic:prev-frame)
+            (define-key map (kbd "H-;") 'menu-bar-open)
+            ;; window management
+            (define-key map (kbd "H-p") 'windmove-up)
+            (define-key map (kbd "H-n") 'windmove-down)
+            (define-key map (kbd "H-f") 'windmove-right)
+            (define-key map (kbd "H-b") 'windmove-left)
+            ;; other cool keys
+            (define-key map (kbd "H-0") 'cic:text-scale-neutral)
+            (define-key map (kbd "H--") 'text-scale-decrease)
+            (define-key map (kbd "H-=") 'text-scale-increase)
+            (define-key map (kbd "H-+") 'text-scale-increase)
+            (define-key map (kbd "H-<return>") 'buffer-menu)
+            (define-key map (kbd "H-<backspace>") 'delete-frame)
+            map))
+
+;; ensure only certain keys work in minibuffer
+(defun cic:stdlib-super-hyper-keys-minibuffer-setup-hook ()
+  (emacs-stdlib-super-keys-mode 0)
+  (emacs-stdlib-hyper-keys-mode 0))
+(add-hook 'minibuffer-setup-hook 'cic:stdlib-super-hyper-keys-minibuffer-setup-hook)
 
 (provide 'emacs-stdlib-super-hyper-keys)

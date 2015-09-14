@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -41,39 +41,88 @@
 ;;
 ;;; Code:
 
-;; remap and add some standard functionality
-(global-unset-key (kbd "<C-down-mouse-1>"))
-(global-set-key [f11] 'apk:toggle-fullscreen)
-(global-set-key [f12] 'apk:toggle-menubar)
-(global-set-key (kbd "M-b") (lambda (arg)
-                              (interactive "p")
-                              (forward-symbol (- arg))))
-(global-set-key (kbd "M-f") 'forward-symbol)
-(global-set-key (kbd "M-i") 'indent-for-tab-command)
-(global-set-key (kbd "M-n") 'next-error)
-(global-set-key (kbd "M-p") 'previous-error)
-(global-set-key (kbd "C-\\") 'apk:whack-whitespace)
-;; XXXX good key, but I now use a hyper key
-;; (global-set-key (kbd "C-x M-x") 'menu-bar-open)
-(global-set-key (kbd "C-c f") 'find-file-at-point)
-(global-set-key (kbd "C-c o") 'occur)
-(global-set-key (kbd "C-c w") 'compare-windows)
-(global-set-key (kbd "C-h a") 'apropos)
-;; steve yegge suggestion
-;; (global-set-key (kbd "C-w") 'backward-kill-word)
-;; (global-set-key (kbd "C-x C-k") 'kill-region)
-(global-set-key (kbd "C-x M-c") (lambda () (interactive)
-                                  (when (fboundp 'gnus-group-exit)
-                                      (gnus-group-exit))
-                                  (save-buffers-kill-emacs)))
-(global-set-key (kbd "C-x C-b") 'buffer-menu)
-(global-set-key (kbd "C-x r i") 'string-insert-rectangle)
-(global-set-key (kbd "C-x r \\") 'delete-whitespace-rectangle)
-;; zap up to char
-(requiring-package (misc)
-  (global-set-key (kbd "s-z") 'zap-up-to-char))
+(define-minor-mode emacs-stdlib-keys-mode
+  :global t
+  ;; :lighter "Some standard keys."
+  :keymap (let ((map (make-sparse-keymap)))
+            ;; remap and add some standard functionality
+            (define-key map [f11] 'cic:toggle-fullscreen)
+            (define-key map [f12] 'cic:toggle-menubar)
+            (define-key map (kbd "M-b") 'cic:backward-symbol)
+            (define-key map (kbd "M-f") 'forward-symbol)
+            (define-key map (kbd "M-i") 'indent-for-tab-command)
+            (define-key map (kbd "C-\\") 'cic:whack-whitespace)
+            (define-key map (kbd "C-c f") 'find-file-at-point)
+            (define-key map (kbd "C-c o") 'occur)
+            (define-key map (kbd "C-c w") 'compare-windows)
+            (define-key map (kbd "C-h a") 'apropos)
+            ;; steve yegge suggestion
+            ;; (global-set-key (kbd "C-w") 'backward-kill-word)
+            ;; (global-set-key (kbd "C-x C-k") 'kill-region)
+            (define-key map (kbd "C-x M-c") 'cic:save-buffers-kill-emacs)
+            (define-key map (kbd "C-x C-b") 'buffer-menu)
+            (define-key map (kbd "C-x r i") 'string-insert-rectangle)
+            (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
+            ;; zap up to char
+            ;; TODO: eliminate error?
+            (requiring-package (misc)
+              (define-key map (kbd "s-z") 'zap-up-to-char))
+            map)
+  (global-unset-key (kbd "<C-down-mouse-1>"))
+  (requiring-package (dired-x)
+    (define-key dired-mode-map (kbd "M-o") 'dired-omit-mode)))
+
+(define-minor-mode emacs-stdlib-keys-non-term-mode
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "M-n") 'next-error)
+            (define-key map (kbd "M-p") 'previous-error)
+            map))
+
+(requiring-package (org)
+  (define-minor-mode emacs-stdlib-keys-org-mode
+    :global t
+    ;; :lighter "Some standard keys for org-mode."
+    :keymap (let ((map (make-sparse-keymap)))
+              (define-key map (kbd "C-c a") 'org-agenda)
+              (define-key map (kbd "C-c c") 'org-capture)
+              ;; want key to be the same everywhere
+              (define-key map (kbd "C-c C-o") 'org-open-at-point-global)
+              map)
+    ;; make org-mode calendar navigation more convienient without needing arrow keys
+    ;; capitals not need
+    (define-key org-read-date-minibuffer-local-map (kbd "F") 'cic:org-calendar-forward)
+    (define-key org-read-date-minibuffer-local-map (kbd "B") 'cic:org-calendar-backward)
+    (define-key org-read-date-minibuffer-local-map (kbd "P") 'cic:org-calendar-backward-week)
+    (define-key org-read-date-minibuffer-local-map (kbd "N") 'cic:org-calendar-forward-week)
+    (define-key org-read-date-minibuffer-local-map (kbd "M-F") 'cic:org-calendar-forward-month)
+    (define-key org-read-date-minibuffer-local-map (kbd "M-B") 'cic:org-calendar-backward-month))
+  (emacs-stdlib-keys-org-mode t))
+
+(defun cic:stdlib-keys-term-setup-hook ()
+  (emacs-stdlib-keys-non-term-mode 0))
+(add-hook 'term-mode-hook 'cic:stdlib-keys-term-setup-hook)
+
+(defun cic:stdlib-keys-minibuffer-setup-hook ()
+  (emacs-stdlib-keys-mode 0)
+  (emacs-stdlib-keys-org-mode 0)
+  (emacs-stdlib-keys-non-term-mode 0))
+(add-hook 'minibuffer-setup-hook 'cic:stdlib-keys-minibuffer-setup-hook)
+
+(defun cic:backward-symbol (&optional arg)
+  (interactive "P")
+  (if arg
+      (forward-symbol (- arg))
+    (forward-symbol (- 1))))
+
+(defun cic:save-buffers-kill-emacs ()
+  (interactive)
+  (when (fboundp 'gnus-group-exit)
+    (gnus-group-exit))
+  (save-buffers-kill-emacs))
+
 ;; misc keys
-;; TODO what do these do again?
+;; TODO why are these here again?
 (define-key minibuffer-local-completion-map
   " " 'self-insert-command)
 (define-key minibuffer-local-must-match-map
@@ -81,8 +130,6 @@
 
 ;; org-agenda
 ;; XXXX do these conflict with any of my modes?
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
 ;; TODO do I care about this anymore?
 ;; (global-set-key (kbd "C-c l") 'org-store-link)
 ;; (global-set-key (kbd "C-c L") 'org-insert-link-global)
@@ -90,28 +137,23 @@
 (requiring-package (flyspell)
   (define-key flyspell-mode-map (kbd "C-M-i") nil))
 
-(requiring-package (org)
-  ;; want key to be the same everywhere
-  (global-set-key (kbd "C-c C-o") 'org-open-at-point-global)
-  ;; make org-mode calendar navigation more convienient without needing arrow keys
-  ;; capitals not need
-  (define-key org-read-date-minibuffer-local-map (kbd "F") (lambda ()
-                                                             (interactive)
-                                                           (org-eval-in-calendar '(calendar-forward-day 1))))
-  (define-key org-read-date-minibuffer-local-map (kbd "B") (lambda ()
-                                                             (interactive)
-                                                             (org-eval-in-calendar '(calendar-backward-day 1))))
-  (define-key org-read-date-minibuffer-local-map (kbd "P") (lambda ()
-                                                             (interactive)
-                                                             (org-eval-in-calendar '(calendar-backward-week 1))))
-  (define-key org-read-date-minibuffer-local-map (kbd "N") (lambda ()
-                                                             (interactive)
-                                                             (org-eval-in-calendar '(calendar-forward-week 1))))
-  (define-key org-read-date-minibuffer-local-map (kbd "M-F") (lambda ()
-                                                               (interactive)
-                                                               (org-eval-in-calendar '(calendar-forward-month 1))))
-  (define-key org-read-date-minibuffer-local-map (kbd "M-B") (lambda ()
-                                                               (interactive)
-                                                               (org-eval-in-calendar '(calendar-backward-month 1)))))
+(defun cic:org-calendar-forward ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-forward-day 1)))
+(defun cic:org-calendar-backward ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-backward-day 1)))
+(defun cic:org-calendar-backward-week ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-backward-week 1)))
+(defun cic:org-calendar-forward-week ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-forward-week 1)))
+(defun cic:org-calendar-forward-month ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-forward-month 1)))
+(defun cic:org-calendar-backward-month ()
+  (interactive)
+  (org-eval-in-calendar '(calendar-backward-month 1)))
 
 (provide 'emacs-stdlib-keys)

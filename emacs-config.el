@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -78,7 +78,7 @@
 ; quiet, please! No dinging!
 (setq visible-bell t)
 ;; avoid as much window splitting as possible
-;; XXXX think I've mostly solved this issue with popwin package
+;; XXXX think I've mostly solved this issue by using the popwin package
 (setq split-height-threshold 0
       max-mini-window-height 0.75)
 ;; show point a little better
@@ -108,13 +108,13 @@
 ;; try not to warn about large files unless necessary
 (setq large-file-warning-threshold 100000000000)
 ;; http://stackoverflow.com/questions/18316665/how-to-improve-emacs-performace-when-view-large-file
-(defun apk:large-file-read-only-hook ()
+(defun cic:large-file-read-only-hook ()
   "If a file is over a given size, make the buffer read only."
   (when (> (buffer-size) (* 1024 1024))
     (setq buffer-read-only t)
     (buffer-disable-undo)
     (fundamental-mode)))
-(add-hook 'find-file-hooks 'apk:large-file-read-only-hook)
+(add-hook 'find-file-hooks 'cic:large-file-read-only-hook)
 ;; set an appropriate tmp directory
 ;; XXXX: this directory might have to be explicitely created
 (setq temporary-file-directory "~/.emacs.d/tmp/")
@@ -145,7 +145,7 @@
 ;; making scrolling and moving nice
 (setq scroll-margin 3
       scroll-step 0
-      ;; TODO maybe wish to make this 10...
+      ;; TODO maybe wish to make this 10 or 0???
       scroll-conservatively 5)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; search
@@ -166,12 +166,15 @@
 ;; dired
 (requiring-package (dired-x)
   (setq dired-omit-files-p t
+        ;; these help avoid unwanted file operations
+        delete-by-moving-to-trash t
+        dired-keep-marker-rename nil
         dired-dwim-target t
         dired-omit-files "^\\.+\\|^\\.$\\|^\\.\\.$"
         ;; TODO: would like ".out" but only for latex
         dired-omit-extensions '("_flymake.aux" "_flymake.log" "_flymake.pdf" "_flymake.pdfsync" "_flymake.py"
                                 "_.log" "_.pdf" "_.pdfsync"  "_.prv" "_.tex"
-                                ".aux" ".bbl" ".blg" ".bst" ".pdfsync" ".snm" ".synctex.gz" ".toc"
+                                ".aux" ".bbl" ".blg" ".bst" ".fdb_latexmk" ".fls" ".lof" ".lot" ".pdfsync" ".snm" ".synctex.gz" ".toc"
                                 ".pyd" ".pyc" ))
   (setq dired-listing-switches "--group-directories-first -alh")
   ;; set omit by default
@@ -199,9 +202,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
 (setq ido-create-new-buffer 'always
-      ido-file-extensions-order '(".el" ".org" ".py" ".txt")
+      ido-file-extensions-order '(".el" ".org" ".py" ".sage" ".tex" ".txt")
       ido-ignore-extensions t)
+(unless (boundp 'ido-ignore-files)
+  (setq ido-ignore-files nil))
+(add-to-list 'ido-ignore-files "\\`_region_")
+(add-to-list 'completion-ignored-extensions ".aux")
+(add-to-list 'completion-ignored-extensions ".bbl")
+(add-to-list 'completion-ignored-extensions ".dvi")
+(add-to-list 'completion-ignored-extensions ".fdb_latexmk")
+(add-to-list 'completion-ignored-extensions ".fls")
 (add-to-list 'completion-ignored-extensions ".org.archive")
+(add-to-list 'completion-ignored-extensions ".pdfsync")
+(add-to-list 'completion-ignored-extensions ".synctex.gz")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; imenu
 (requiring-package (imenu))
@@ -231,17 +245,17 @@
         org-agenda-todo-list-sublevels nil
         org-agenda-todo-ignore-scheduled t
         org-agenda-todo-ignore-deadlines t
-        org-ctrl-k-protect-subtree nil
-        org-deadline-warning-days 0)
-  ;; TODO not sure why this works, if it works, and if I still need it
+        org-ctrl-k-protect-subtree nil)
+  ;; TODO: not sure why this works, if it works, and if I still need it
   (add-hook 'org-mode-hook (lambda ()  (when (display-graphic-p)
-                                         (setq org-startup-with-inline-images t
-                                               org-image-actual-width '(400)))))
-  ;; TODO clean this up!!!!
+                                    (setq org-startup-with-inline-images t
+                                          ;; XXXX: want images look reasonable on most systems
+                                          ;; TODO: set differently for different screens
+                                          org-image-actual-width '(400)))))
+  ;; TODO: clean this up!!!!
   (add-hook 'org-mode-hook
             (lambda ()
               (font-lock-add-keywords 'org-mode
-                                      ;;
                                       '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
                                          ;; font-lock-warning-face
                                          font-lock-keyword-face
@@ -256,9 +270,9 @@
   (setq org-reverse-note-order t)
   (setq org-agenda-dim-blocked-tasks t)
   ;; show 7 days by default
-  (setq org-agenda-span 7)
+  (setq org-agenda-span 10)
   ;; how many days early a deadline item will appear
-  (setq org-deadline-warning-days 14)
+  (setq org-deadline-warning-days 0)
   ;; show days with no tasks, so "free days" can be seen
   (setq org-agenda-show-all-dates t)
   ;; deadlines that are completed will not show up
@@ -297,7 +311,7 @@
 ;; truncate buffers continuously
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 ;; track directory when cding in a shell
-(defun track-shell-directory/procfs ()
+(defun cic:track-shell-directory/procfs ()
     (shell-dirtrack-mode 0)
     (add-hook 'comint-preoutput-filter-functions
               (lambda (str)
@@ -308,11 +322,12 @@
                                                  (get-buffer-process
                                                   (current-buffer)))))))))
               nil t))
-(add-hook 'shell-mode-hook 'track-shell-directory/procfs)
+(add-hook 'shell-mode-hook 'cic:track-shell-directory/procfs)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tramp-mode
-;; TODO tramp mode not working the way I want?
 (setq tramp-default-method "ssh")
+;; this detects my standard bash prompt
+(setq tramp-shell-prompt-pattern "\\(?:^\\|\r\\)[^]#$%>\n]*#?[]#$%>].* *\\(^[\\[[0-9;]*[a-zA-Z] *\\)*")
 ;; disable password prompts for some of my scripts where it is automagic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; uniquify

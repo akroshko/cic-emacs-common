@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20150522
+;; Version: 20150914
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -36,32 +36,30 @@
 ;; Generally only requires a basic Emacs installation.
 ;; TODO: Want to list requirements eventually, but see
 ;; emacs-config.el for some potential requires.
-;; XXXX: Have not added some extremely common functions to having apk:
+;; XXXX: Have not added some extremely common functions to having cic:
 ;; prefix.  May put these in their own file.
 ;;
 ;;; Code:
 
-(defun mpp (value &optional buffer)
+(defun cic:mpp (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
 time-stamp in the message.
-XXXX: not adding apk: prefix before this function is called so often in adhoc code
-TODO: flag to remove timestamp
-TODO: have a decent default buffer that is not the normal message one"
-  (let ((message-string (concat (apk:time-stamp) "\n" (with-output-to-string (princ value)))))
+XXXX: not adding cic: prefix before this function is called so often in adhoc code
+TODO: flag to not use timestamp"
+  (let ((message-string (concat (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
     (save-excursion (with-current-buffer (get-buffer-create buffer)
                       (goto-char (point-max))
                       (insert (concat message-string "\n"))))))
 
-(defun mpp-echo (value &optional buffer)
+(defun cic:mpp-echo (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
 time-stamp in the message.  Echo in minibuffer area as well.
-XXXX: not adding apk: prefix before this function is called so often in adhoc code
-TODO: flag to remove timestamp
-TODO: have a decent default buffer that is not the normal message one"
+XXXX: not adding cic: prefix before this function is called so often in adhoc code
+TODO: flag to not use timestamp"
   (let* ((raw-message-string (with-output-to-string (princ value)))
-         (message-string (concat (apk:time-stamp) "\n" raw-message-string)))
+         (message-string (concat (cic:time-stamp) "\n" raw-message-string)))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
     (save-excursion (with-current-buffer (get-buffer-create buffer)
@@ -69,38 +67,39 @@ TODO: have a decent default buffer that is not the normal message one"
                       (insert (concat message-string "\n"))))
     (message raw-message-string)))
 
-(defun apk:time-stamp ()
+(defun cic:time-stamp ()
   "Create a time-stamp."
   (format-time-string "%H:%M:%S" (current-time)))
 
-(defun strip-full (str)
-  "Strip-Full leading and trailing whitespace from STR.  Does
+(defun cic:strip-full (str)
+  "Strip full leading and trailing whitespace from STR.  Does
 this for every line."
   (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
                        str)
     (setq str (replace-match "" t t str)))
   str)
 
-(defun chomp (str)
+(defun cic:chomp (str)
   "Chomp leading and tailing whitespace from STR.  Just beginning and end of lines
-TODO: are one of this and strip-full redundant?"
+TODO: are this one and strip-full redundant?
+TODO: determine which is more efficient"
   (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
                                     (: (* (any " \t\n")) eos)))
                             ""
                             str))
 
-(defun strip-full-no-properties (str)
+(defun cic:strip-full-no-properties (str)
   "Like strip-full but remove text properties."
   (substring-no-properties (strip-full str)))
 
-(defun strip-full-single-spaces (str)
+(defun cic:strip-full-single-spaces (str)
   "Convert STR into one line with no leading or trailing whitespace."
   (while (string-match "[[:space:]]*\n+[[:space:]]*\\|[[:space:]]\\{2,\\}"
                        str)
     (setq str (replace-match " " t t str)))
   (strip-full str))
 
-(defun strip-colons (str)
+(defun cic:strip-colons (str)
   "Strip leading and trailing colons off of STR."
   (when (stringp str)
     (while (string-match "^:" str)
@@ -127,35 +126,35 @@ TODO: are one of this and strip-full redundant?"
       (setq str (replace-match "" t t str))))
   str)
 
-(defun remove-trailing-whitespace (str)
+(defun cic:remove-trailing-whitespace (str)
   "Strip trailing whitespace off of STR."
   (when (string-match "[ \t\n]*$" str)
     (concat (replace-match "" nil nil str))))
 
-(defun remove-leading-whitespace (str)
+(defun cic:remove-leading-whitespace (str)
   "Strip leading whitespace off of STR."
   (when (string-match "^[ \t\n]*" str)
     (concat (replace-match "" nil nil str))))
 
-(defun full-string-p (thing-or-string)
+(defun cic:full-string-p (thing-or-string)
   "Determine if something is nil or an empty string."
   (if (or (not thing-or-string) (equal (strip-full thing-or-string) ""))
       nil
     t))
 
-; taken from stackoverflow
-(defun apk:count-occurences (regex string)
+;; taken from stackoverflow
+(defun cic:count-occurences (regex string)
   "Count the occurences of REGEX in STRING."
-  (apk:recursive-count regex string 0))
+  (cic:recursive-count regex string 0))
 
-(defun apk:recursive-count (regex string start)
-  "Recursively count REGEX in STRING from the START character.
-TODO: Better docs."
+(defun cic:recursive-count (regex string start)
+  "Helper function for cic:count-occurences to Recursively count
+REGEX in STRING from the START character."
   (if (string-match regex string start)
-      (+ 1 (apk:recursive-count regex string (match-end 0)))
+      (+ 1 (cic:recursive-count regex string (match-end 0)))
     0))
 
-(defun string-to-float (str)
+(defun cic:string-to-float (str)
   "Convert STR to float."
   (let (new-var)
     (when (stringp str)
@@ -164,24 +163,24 @@ TODO: Better docs."
       (setq str (float str)))
     str))
 
-(defun apk:flyspell-init-text ()
+(defun cic:flyspell-init-text ()
   "Inititalize flyspell for text modes."
   (flyspell-mode t)
   (flyspell-buffer))
 
-(defun apk:flyspell-init-prog ()
+(defun cic:flyspell-init-prog ()
   "Inititalize flyspell from programming modes."
   (flyspell-prog-mode)
   (flyspell-buffer))
 
-(defun apk:make-some-files-read-only ()
+(defun cic:make-some-files-read-only ()
   "When files are opened for certain modes, make them read only."
   (when (or (not (string-match (expand-file-name "~") (buffer-file-name)))
             (memq major-mode '(doc-view-mode)))
     (toggle-read-only 1)))
 
-; http://www.emacswiki.org/emacs/ElispCookbook#toc59
-(defun apk:walk-path (dir action)
+;; http://www.emacswiki.org/emacs/ElispCookbook#toc59
+(defun cic:walk-path (dir action)
   "Walk DIR executing ACTION with arugments (dir file)"
   (cond ((file-directory-p dir)
          (or (char-equal ?/ (aref dir(1- (length dir))))
@@ -196,45 +195,45 @@ TODO: Better docs."
                     (and (funcall action dir file)
                          (setq fullname (concat dir file))
                          (file-directory-p fullname)
-                         (apk:walk-path fullname action)))))))
+                         (cic:walk-path fullname action)))))))
         (t
          (funcall action
                   (file-name-directory dir)
                   (file-name-nondirectory dir)))))
 
-(defun apk:org-find-headline (headline &optional buffer)
+(defun cic:org-find-headline (headline &optional buffer)
   "Find a particular HEADLINE in BUFFER."
   (goto-char (org-find-exact-headline-in-buffer headline)))
 
-(defun apk:org-find-checkbox (name)
+(defun cic:org-find-checkbox (name)
   "Find a particular checkbox with text NAME in BUFFER.
 TODO: Currently prefix search, do I want an exact search?"
-  (search-forward-regexp (concat apk:emacs-stdlib-checkbox-regexp name))
+  (search-forward-regexp (concat cic:emacs-stdlib-checkbox-regexp name))
   (move-beginning-of-line 1))
 
-(defun apk:org-find-list-item (name)
+(defun cic:org-find-list-item (name)
   "Find a particular list item with text NAME in BUFFER.
-TODO: Currently prefix search, do I want an exact search?"
-  (search-forward-regexp (concat apk:emacs-stdlib-list-exact-regexp name))
+TODO: Currently actually prefix search, do I want an exact search?"
+  (search-forward-regexp (concat cic:emacs-stdlib-list-exact-regexp name))
   (move-beginning-of-line 1))
 
-(defun apk:org-find-table (&optional count)
+(defun cic:org-find-table (&optional count)
   "Find a particular table with text NAME (based on headline) in BUFFER.
-TODO: Currently prefix search, do I want an exact search?"
+TODO: Currently actually a prefix search, do I want an exact search?"
   (unless count
     (setq count 1))
   (dotimes (i count)
     (while (not (or (org-table-p) (eobp)))
       (forward-line 1))
     (when (< i (- count 1))
-      (apk:org-table-last-row)
+      (cic:org-table-last-row)
       (forward-line 2))))
 
-(defun apk:org-table-to-lisp-no-separators ()
+(defun cic:org-table-to-lisp-no-separators ()
   "Convert the org-table to lisp and eliminate seperators."
   (delq nil (mapcar (lambda (x) (if (eq x 'hline) nil x)) (org-table-to-lisp))))
 
-(defun apk:org-table-last-row ()
+(defun cic:org-table-last-row ()
   "Goto the last row of the next table in the buffer.."
   (let (table-next
         seperator-next
@@ -244,7 +243,7 @@ TODO: Currently prefix search, do I want an exact search?"
         (save-excursion
           (forward-line 1)
           (setq table-next (org-table-p))
-          (setq seperator-next (string-match "|-+\+.*|" (get-current-line)))
+          (setq seperator-next (string-match "|-+\+.*|" (cic:get-current-line)))
           (forward-line 1)
           (setq table-next-next (org-table-p)))
         (if (or
@@ -253,7 +252,7 @@ TODO: Currently prefix search, do I want an exact search?"
             (forward-line)
           (setq keep-going nil)))))
 
-(defun apk:org-table-lookup-location (filename table-name key-value &optional column)
+(defun cic:org-table-lookup-location (filename table-name key-value &optional column)
   "Lookup the location (in buffer) of KEY-VALUE from TABLE-NAME
 in FILENAME given COLUMN number."
   (unless column
@@ -265,7 +264,7 @@ in FILENAME given COLUMN number."
                          (setq found (list filename (point)))))
     found))
 
-(defun apk:org-table-lookup-row (filename table-name key-value  &optional column)
+(defun cic:org-table-lookup-row (filename table-name key-value  &optional column)
   "Lookup the row (in elisp) of KEY-VALUE from TABLE-NAME in FILENAME given COLUMN.
 number."
   (unless column
@@ -273,14 +272,14 @@ number."
   (let (lisp-table
         found-row)
     (with-current-file-org-table filename table-name
-                                 (setq lisp-table (apk:org-table-to-lisp-no-separators)))
+                                 (setq lisp-table (cic:org-table-to-lisp-no-separators)))
     (do-org-table-rows filename table-name row
                        (org-table-goto-column column)
                        (when (string= key-value (strip-full (org-table-get nil column)))
-                         (setq found-row (apk:org-table-assoc lisp-table key-value column))))
+                         (setq found-row (cic:org-table-assoc lisp-table key-value column))))
     found-row))
 
-(defun apk:org-table-get-keys (filename table-name &optional column)
+(defun cic:org-table-get-keys (filename table-name &optional column)
   "Get the list of keys from TABLE-NAME in FILENAME given
 COLUMN. number"
   (unless column
@@ -292,21 +291,22 @@ COLUMN. number"
     (remove-if 'full-string-p key-values)
     key-values))
 
-(defun apk:org-table-select-key (filename table-name prompt &optional column history-variable)
+(defun cic:org-table-select-key (filename table-name prompt &optional column history-variable)
   "Select key using completing-read with PROMPT from TABLE-NAME
 in FILENAME given COLUMN number."
   (unless column
     (setq column 1))
-  (completing-read prompt (apk:org-table-get-keys filename table-name column) nil t history-variable))
+  (completing-read prompt (cic:org-table-get-keys filename table-name column) nil t history-variable))
 
-(defun apk:org-table-assoc (lisp-table key &optional column equal-test)
+(defun cic:org-table-assoc (lisp-table key &optional column equal-test)
   "Get row associated with KEY from LISP-TABLE."
   (unless column
     (setq column 1))
-  (apk:assoc-nth column key lisp-table equal-test))
+  (cic:assoc-nth column key lisp-table equal-test))
 
-(defun apk:assoc-nth (n key assoc-list &optional equal-test)
-  "TODO: not sure what this does?"
+(defun cic:assoc-nth (n key assoc-list &optional equal-test)
+  "Get the Nth item from the KEY from ASSOC-LIST with an optional
+EQUAL-TEST that defaults to equal"
   (unless equal-test
     (setq equal-test 'equal))
   (let (selected
@@ -316,32 +316,32 @@ in FILENAME given COLUMN number."
         (setq selected item)))
     selected))
 
-(defun apk:get-headline-text (headline-line)
+(defun cic:get-headline-text (headline-line)
   "Get just the clean headline text from HEADLINE-LINE
 representing the text of a line the headline is on."
   (let (headline-text)
-    (when (string-match apk:emacs-stdlib-headline-regexp headline-line)
+    (when (string-match cic:emacs-stdlib-headline-regexp headline-line)
       (setq headline-text (match-string 1 headline-line)))))
 
-(defun org-headline-p (line-substring)
+(defun cic:org-headline-p (line-substring)
   "Is LINE-SUBSTRING an org-mode headline?"
-  (string-match apk:emacs-stdlib-headline-regexp line-substring))
+  (string-match cic:emacs-stdlib-headline-regexp line-substring))
 
-(defun org-list-p (line-substring)
+(defun cic:org-list-p (line-substring)
   "Is LINE-SUBSTRING an org-mode list item?"
-  (string-match apk:emacs-stdlib-list-regexp line-substring))
+  (string-match cic:emacs-stdlib-list-regexp line-substring))
 
-(defun org-plain-list-p (line-substring)
+(defun cic:org-plain-list-p (line-substring)
   "Is LINE-SUBSTRING a plain (no checkboxes) org-mode list item?"
   (and
-   (string-match apk:emacs-stdlib-list-regexp line-substring)
-   (not (string-match apk:emacs-stdlib-checkbox-regexp line-substring))))
+   (string-match cic:emacs-stdlib-list-regexp line-substring)
+   (not (string-match cic:emacs-stdlib-checkbox-regexp line-substring))))
 
-(defun org-checkbox-p (line-substring)
+(defun cic:org-checkbox-p (line-substring)
   "Is LINE-SUBSTRING an org-mode checkbox item?"
-  (string-match apk:emacs-stdlib-checkbox-regexp line-substring))
+  (string-match cic:emacs-stdlib-checkbox-regexp line-substring))
 
-(defun apk:org-check-last-heading-level-1 ()
+(defun cic:org-check-last-heading-level-1 ()
   "Check if we are at the last heading level 1 in the file.  To
 see if a loop can keep going."
   (let ((line-no (line-number-at-pos)))
@@ -375,7 +375,7 @@ the HEADLINE represents."
          (if (re-search-forward (concat "^\* .*")  nil t)
              (progn
                (beginning-of-line)
-               (let ((current-line (get-current-line)))
+               (let ((current-line (cic:get-current-line)))
                  (setq ,headline-name (when (string-match "^\* \\(.*\\)" current-line)
                                         (match-string 1 current-line)))
                  (setq ,headline-subtree (buffer-substring (point) (save-excursion
@@ -401,19 +401,19 @@ of this macro, just in case."
      (let ((keep-going t))
        (while keep-going
          ;; next headline same level
-         (when (string-match apk:emacs-stdlib-headline-regexp (get-current-line))
-           (setq ,table-name (match-string 1 (get-current-line))))
+         (when (string-match cic:emacs-stdlib-headline-regexp (cic:get-current-line))
+           (setq ,table-name (match-string 1 (cic:get-current-line))))
          (save-excursion
            (forward-line 1)
            (setq ,table nil)
-           (while (not (or (and (org-headline-p (get-current-line)) (= (org-outline-level) 1)) (org-table-p) (eobp)))
+           (while (not (or (and (cic:org-headline-p (cic:get-current-line)) (= (org-outline-level) 1)) (org-table-p) (eobp)))
              (forward-line 1))
            (when (org-table-p)
-             (setq ,table (apk:org-table-to-lisp-no-separators))))
+             (setq ,table (cic:org-table-to-lisp-no-separators))))
          (when (and ,table-name ,table)
            ,@body)
          ;; see if we can keep going
-         (setq keep-going (apk:org-check-last-heading-level-1))
+         (setq keep-going (cic:org-check-last-heading-level-1))
          ;; if not end
          (when keep-going
            (org-forward-heading-same-level 1 nil))))))
@@ -429,12 +429,12 @@ ROW contains the current row converted into elisp."
      (goto-char (point-min))
      ;; TODO replace with org-headline-goto???
      (when (re-search-forward (concat "^\* " ,table-name) nil t)
-       (apk:org-find-table)
+       (cic:org-find-table)
        (let ((keep-going t)
-             (lisp-table (apk:org-table-to-lisp-no-separators))
+             (lisp-table (cic:org-table-to-lisp-no-separators))
              (row-count 0))
          (while keep-going
-           (unless (string-match "|-+\+.*|" (get-current-line))
+           (unless (string-match "|-+\+.*|" (cic:get-current-line))
              (setq ,row (nth row-count lisp-table))
              ,@body
              (setq row-count (1+ row-count)))
@@ -459,11 +459,11 @@ ITEM-LINE contains the line that a particular item is on."
        (forward-line 1)
        (let ((keep-going t))
          (while keep-going
-           (setq ,item-line (get-current-line))
+           (setq ,item-line (cic:get-current-line))
            ,@body
            (save-excursion
              (forward-line 1)
-             (when (or (and (org-headline-p (get-current-line)) (= (org-outline-level) 1)) (progn (end-of-line) (eobp)))
+             (when (or (and (cic:org-headline-p (cic:get-current-line)) (= (org-outline-level) 1)) (progn (end-of-line) (eobp)))
                (setq keep-going nil)))
            (when keep-going
              (forward-line 1)))))))
@@ -515,7 +515,7 @@ Uses with-filename-filter."
            )
   `(save-excursion
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
-     (apk:org-find-headline ,headline)
+     (cic:org-find-headline ,headline)
      ,@body))
 
 (defmacro with-current-file-min (filename &rest body)
@@ -535,17 +535,17 @@ Uses with-filename-filter."
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      (goto-char (point-min))
      (when (re-search-forward (concat "^\* " ,table-name) nil t)
-       (apk:org-find-table)
+       (cic:org-find-table)
        ,@body)))
 
-(defun car-fallthrough (object)
+(defun cic:car-fallthrough (object)
   "If car-safe does not work, just return the object.  Otherwise
 return car of OBJECT."
   (if (car-safe object)
       (car object)
     object))
 
-(defun cdr-fallthrough (object)
+(defun cic:cdr-fallthrough (object)
   "If cdr-safe does not work, just return OBJECT. Otherwise
 return cdr of OBJECT."
   (if (cdr-safe object)
@@ -553,55 +553,57 @@ return cdr of OBJECT."
     object))
 
 ; http://www.emacswiki.org/emacs/ElispCookbook#toc20
-(defun string-integer-p (string)
+(defun cic:string-integer-p (string)
   "Check if STRING is an integer."
   (if (string-match "\\`[-+]?[0-9]+\\'" string)
       t
     nil))
 
-(defun string-float-p (string)
+(defun cic:string-float-p (string)
   "Check if STRING is a floating point number."
   (if (string-match "\\`[-+]?[0-9]+\\.[0-9]*\\'" string)
       t
     nil))
 
 ;; XXXX: why does this work?
-(defun zip (&rest streams)
+(defun cic:zip (&rest streams)
   "Zip function like in many programming languages."
   (apply #'mapcar* #'list streams))
 
-(defun ensure-list (object)
+(defun cic:ensure-list (object)
   "Turn an OBJECT that is not a list into a list.  If it is
 already a list then leave it alone."
   (unless (listp object)
           (setq object (list object)))
   object)
 
-(defun car-only (lst)
+(defun cic:car-only (lst)
   "Ensure a list is only length 1 and get the car.  Raise an
 error is list is longer than length 1."
   (when (> (length lst) 1)
     (error))
   (car lst))
 
-(defun nts-nan (num)
+(defun cic:nts-nan (num &optional format-string)
   "Like number-to-string but returns a nil for nan.
 TODO: Make formatting an option so more universal."
+  (unless format-string
+    (setq format-string "%4.3f"))
   (if (or (not num) (isnan (float num)) (= num 1.0e+INF) (= num -1.0e+INF))
       ""
-    (format "%4.3f" num)))
+    (format format-string num)))
 
-(defun apk:org-last-headline ()
+(defun cic:org-last-headline ()
   "Goto last headline in the current buffer."
   (goto-char (point-min))
-  (when (not (org-headline-p))
+  (when (not (cic:org-headline-p))
     (org-forward-element))
   (let (headline-position-list)
     (do-org-headlines (buffer-file-name) headline subtree
                       (setq headline-position-list (append headline-position-list (list (point)))))
     (goto-char (car (last headline-position-list)))))
 
-(defun delete-substring (substring-regexp string)
+(defun cic:delete-substring (substring-regexp string)
   "Delete the substring matched by SUBSTRING-REGEXP from STRING."
   (if (string-match substring-regexp string)
       (let ((beg (match-beginning 0))
@@ -633,7 +635,7 @@ TODO: Make formatting an option so more universal."
 ;; TODO this can be fixed a lot!!!
 ;; TODO ensure no line argument goes to line 1
 ;; make sure existing buffer is opened!!!
-(defun find-file-other-window-goto-line (filename &optional line alternate)
+(defun cic:find-file-other-window-goto-line (filename &optional line alternate)
   "Find and select FILENAME in other window and goto line number
 LINE."
   (let ((old-buffer (current-buffer))
@@ -649,15 +651,13 @@ LINE."
   (select-window old-window)
   (set-buffer old-buffer)))
 
-(defun list-files (path)
-  "List files in PATH.
-TODO: move this to somewhere generic, but have it also handle cic
-paths."
-  (filter-excise (lambda (e)
-                   (not (file-directory-p (join-paths path e))))
+(defun cic:list-files (path)
+  "List files in PATH."
+  (cic:filter-excise (lambda (e)
+                   (not (file-directory-p (cic:join-paths path e))))
                  (directory-files path)))
 
-(defun find-file-goto-line (filename &optional line)
+(defun cic:find-file-goto-line (filename &optional line)
   (let ((old-buffer (current-buffer))
         (old-window (get-buffer-window))
         new-buffer)
@@ -672,16 +672,16 @@ paths."
   (select-window old-window)
   (set-buffer old-buffer)))
 
-(defun apk:is-empty-string-whitespace (str)
+(defun cic:is-empty-string-whitespace (str)
   "Test if STR is empty or all whitespace."
   (string-equal (strip-full str) ""))
 
-(defun apk:is-not-empty-string-nil (str)
+(defun cic:is-not-empty-string-nil (str)
   "Check if STR is an empty string (no characters or all
 whitespace) or a nil."
   (and str (not (string= (strip-full str) ""))))
 
-(defun delete-current-line ()
+(defun cic:delete-current-line ()
   "Delete the current line without touching the kill ring.
 TODO: this function needs work."
   (let ((p1 (line-beginning-position))
@@ -700,18 +700,13 @@ TODO: this function needs work."
     ))
 
 ;;from http://ergoemacs.org/emacs/elisp_all_about_lines.html
-(defun get-current-line ()
+(defun cic:get-current-line ()
   "Get the current line."
   (let ((p1 (line-beginning-position))
         (p2 (line-end-position)))
     (buffer-substring-no-properties p1 p2)))
 
-(defun apk:get-current-location ()
-  "Get the current location as <<filename>>::<<lineno>>"
-  ;; TODO not sure if this should be here
-  (concat (buffer-file-name) "::" (number-to-string (line-number-at-pos))))
-
-(defun apk:check-convert-number-to-string (number)
+(defun cic:check-convert-number-to-string (number)
   "Try and convert NUMBER to a string, or just return untouched
 if not possible."
   (if (string-integer-p number)
@@ -723,7 +718,7 @@ if not possible."
 like time data to integer seconds.  If TIME-OUTPUT-P then return
 the result as a time value."
   (list
-   (if time-output-p 'apk:org-time-seconds-to-string 'identity)
+   (if time-output-p 'cic:org-time-seconds-to-string 'identity)
    (cons 'progn
          (mapcar
           (lambda (expr)
@@ -732,17 +727,17 @@ the result as a time value."
                      (lambda (el)
                        (if (listp el)
                            (list 'with-time nil el)
-                         (apk:org-time-string-to-seconds el)))
+                         (cic:org-time-string-to-seconds el)))
                      (cdr expr))))
           `,@exprs))))
 
-(defun apk:org-time-seconds-to-string (secs)
+(defun cic:org-time-seconds-to-string (secs)
   "Convert a number of seconds to a time string."
   (cond ((>= secs 3600) (format-seconds "%h:%.2m:%.2s" secs))
         ((>= secs 60) (format-seconds "%m:%.2s" secs))
         (t (format-seconds "%s" secs))))
 
-(defun apk:org-time-string-to-seconds (s)
+(defun cic:org-time-string-to-seconds (s)
   "Convert a string HH:MM:SS to a number of seconds."
   (cond
    ((and (stringp s)
@@ -759,7 +754,7 @@ the result as a time value."
    ((stringp s) (string-to-number s))
    (t s)))
 
-(defun apk:symbol-to-string-or-list (maybe-string-list)
+(defun cic:symbol-to-string-or-list (maybe-string-list)
   "Dereference a symbol to (presumably) a string or list of
 strings. Leave alone if already a string or list of strings"
   (let (new-string-list)
@@ -778,23 +773,28 @@ strings. Leave alone if already a string or list of strings"
          "1")
         (t
          (char-to-string (+ (string-to-char ch) 1)))))
-
-(defun select-list-item (lst &optional string-key)
+;; (cic:select-list-item (list "hello" "jaws"))
+(defun cic:select-list-item (lst &optional string-key)
   "Select a string from a list of strings LST using alphabet then number keys.
 TODO: use string-key to select a string"
   (let* ((count "a")
+         (index-count 0)
          (cancel 'cancel)
          (select-alist (mapcar (lambda (e)
-                                 (let ((thelist (list count e e)))
+                                 (let (the-list)
+                                   (if string-key
+                                       (setq thelist (list count (funcall string-key e) index-count))
+                                     (setq thelist (list count e e)))
                                    (setq count (increment-char count))
+                                   (setq index-count (+ index-count 1))
                                    thelist))
                                lst)))
     (setq select-alist (append select-alist (list (list "-" "cancel" 'cancel))))
-    (select-nested-alist (lambda (e)
+    (cic:select-nested-alist (lambda (e)
                            (setq selected e))
                          select-alist)))
 
-(defun select-list-item-default-index (lst &optional string-key default-value)
+(defun cic:select-list-item-default-index (lst &optional string-key default-value)
   "Select a list item from LST.
 TODO: document more"
   (let* ((count "a")
@@ -814,7 +814,7 @@ TODO: document more"
     (if default-value
         (setq select-alist (append select-alist (list (list "0" (concat "default " default-value) 'default) (list "-" "cancel" 'cancel))))
       (setq select-alist (append select-alist (list (list "0" "default" 'default) (list "-" "cancel" 'cancel)))))
-    (select-nested-alist (lambda (e)
+    (cic:select-nested-alist (lambda (e)
                            (setq selected e))
                          select-alist)))
 
@@ -824,34 +824,34 @@ TODO: No str variable name and replace some bad characters with
 dsimilar ones."
   (replace-regexp-in-string "[^[:print:]]" "" str))
 
-(defun apk:get-list-duplicates (lst)
+(defun cic:get-list-duplicates (lst)
   "Get the duplicate items in list LST."
   (set-difference lst (delete-duplicates lst :test 'equal)))
 
-(defun apk:test-strings-in-list (lst1 lst2)
+(defun cic:test-strings-in-list (lst1 lst2)
   "Tests if any items in LST1 are also in LST2."
   (cl-intersection lst1 lst2 :test 'string=))
 
 ;; http://ergoemacs.org/emacs/elisp_read_file_content.html
-(defun apk:read-file-lines (filepath)
+(defun cic:read-file-lines (filepath)
   "Return a list of lines of a file at filePath."
   (with-temp-buffer
     (insert-file-contents filepath)
     (split-string (buffer-string) "\n" t)))
 
-(defun apk:read-file-regexp (filepath)
+(defun cic:read-file-regexp (filepath)
   "Return a list of lines of a file at FILEPATH.  All lines are
 properly escaped and combined with | to be an emacs regexp."
-  (let ((file-lines (apk:read-file-lines filepath)))
+  (let ((file-lines (cic:read-file-lines filepath)))
     ;; rather than identity I need a generic escape function
-    (mapconcat 'apk:escape-posix-regexp file-lines "\\|")))
+    (mapconcat 'cic:escape-posix-regexp file-lines "\\|")))
 
-(defun apk:escape-posix-regexp (posix-regexp)
+(defun cic:escape-posix-regexp (posix-regexp)
   "Escapes a few select posix regexps to emacs regexps.
   Generally functionality is added here as needed."
   (replace-regexp-in-string (regexp-quote "\\\\") "\\\\" posix-regexp))
 
-(defun join-paths (&rest args)
+(defun cic:join-paths (&rest args)
   "Join paths in elisp.
 
    XXX: Only works with two arguments!"
@@ -861,7 +861,245 @@ properly escaped and combined with | to be an emacs regexp."
   "Count the indentation level in CURRENT-LINE, if nil use the
 current line at point."
   (unless current-line
-    (setq current-line (get-current-line)))
+    (setq current-line (cic:get-current-line)))
   (- (length current-line) (length (remove-leading-whitespace current-line))))
+
+(defun cic:list-from-file-filename (filename)
+  "Get a list based on the lines in FILENAME."
+  (remove-if-not 'cic:is-not-empty-string-nil
+                 (with-temp-buffer
+                   (insert-file-contents filename)
+                   (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n"))))
+
+;; http://emacswiki.org/emacs/ElispCookbook#toc39
+(defun cic:filter-excise (condp lst)
+  "Remove any elements that do not meet CONDP."
+  (delq nil
+        (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; filesystem helper functions
+
+(defun cic:find-file-upwards (file-to-find)
+  "Recursively searches each parent directory starting from the default-directory.
+looking for a file with name file-to-find.  Returns the path to it
+or nil if not found."
+  (labels
+      ((find-file-r (path)
+                    (let* ((parent (file-name-directory path))
+                           (possible-file (concat parent file-to-find)))
+                      (cond
+                       ((file-exists-p possible-file) possible-file) ;; Found
+                       ;; The parent of ~ is nil and the parent of / is itself.
+                       ;; Thus the terminating condition for not finding the file
+                       ;; accounts for both.
+                       ((or (null parent) (equal parent (directory-file-name parent))) nil) ;; Not found
+                       (t (find-file-r (directory-file-name parent))))))) ;; Continue
+    (find-file-r default-directory)))
+
+(defun cic:org-show-previous-heading-tidily ()
+  "Show previous entry, keeping other entries closed.
+TODO: figure out what to do with this and whether I use it?"
+  (let ((pos (point)))
+    (outline-previous-heading)
+    (unless (and (< (point) pos) (bolp) (org-on-heading-p))
+      (goto-char pos)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; new functions
+
+(defun goto-location (location)
+  "XXXX: A helper function that will soon be replaced.
+Abstraction level is too high."
+  (if (stringp (car location))
+      (progn
+        (find-file (car location))
+        (when (eq major-mode 'org-mode)
+          (org-cycle '(64)))
+        (goto-char (cadr location)))
+    (progn
+      (switch-to-buffer (car location))
+      (when (eq major-mode 'org-mode)
+        (org-cycle '(64)))
+      (goto-char (cadr location)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; string, shell command, and shell helpers
+
+(defun cic:make-shell-command (&rest args)
+  "Create a shell command from ARGS.
+
+XXXX: Not currently used or tested."
+  (concat (car args) " " (combine-and-quote-strings (cdr args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; thing at point bounds
+
+(defun cic:region-or-thing-at-point-no-properties (thing)
+  "Select either a region if active or the thing-at-point."
+  (let ((current-thing (cic:region-or-thing-at-point thing)))
+    (if current-thing
+        (substring-no-properties current-thing)
+      nil)))
+
+(defun cic:region-or-thing-at-point (thing)
+  "Select either a region if active or the thing-at-point."
+  (let (selected-text)
+    (if (region-active-p)
+        (setq selected-text (buffer-substring (mark) (point)))
+      (setq selected-text (thing-at-point thing)))
+    selected-text))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; current filename
+(defun cic:get-current-filename ()
+  "Get the current filename based on context."
+  (cond ((eq major-mode 'dired-mode)
+         (file-name-nondirectory (dired-file-name-at-point)))
+        (t
+         (file-name-nondirectory (buffer-file-name)))))
+
+;; from https://github.com/jimm/elisp/blob/master/emacs.el
+;; http://en.wikipedia.org/wiki/Password_strength
+;; 24 alphanumpunc characters = 144 bits of entropy
+
+(defconst cic:password-characters-Alphanum
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  "This is 62 characters total")
+
+(defconst cic:password-characters-Alphanum-punct
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?@#$%^&*-_=+/.,"
+  "This is 78 characters total.")
+
+(defun cic:create-password-12-Alphanum ()
+  "Create a 12 character alphanumeric password. Don't know of
+  anywhere that can't do alphanum with capitals."
+  (cic:create-password cic:password-characters-Alphanum 12))
+
+(defun cic:create-password-12-Alphanum-punct ()
+  "Create a 12 character alphanumeric password with punctuation
+  and capitals."
+  (cic:create-password cic:password-characters-Alphanum-punct 12))
+
+(defun cic:create-password-24-Alphanum ()
+  "Create a 24 character alphanumeric password with capitals.  Don't know of
+  anywhere that can't do alphanum with capitals."
+  (cic:create-password cic:password-characters-Alphanum 24))
+
+(defun cic:create-password-24-Alphanum-punct ()
+  "Create a 24 character alphanumeric password with punctuation
+  and capitals."
+  (cic:create-password cic:password-characters-Alphanum-punct 24))
+
+(defun cic:create-password (char-set char-num &optional random-source)
+  "Create a random password from CHAR-SET that is CHAR-NUM
+characters long.  The shell command 'openssl rand' is used, but
+setting RANDOM-SOURCE non-nil uses built-in random function.
+
+XXXX: This function should absolutely be checked before using for
+anything too critical!!!
+
+TODO: Even more options for random numbers might be better but I
+think openssl is find for this purpose."
+  (let ((length-passwordchars (length char-set)))
+    (cond (random-source
+           (mapconcat (lambda (dummy)
+                        (let ((idx (random length-passwordchars)))
+                          (substring char-set idx (+ idx 1))))
+                      (number-sequence 0 (- char-num 1))
+                      ""))
+          (t
+           (let ((new-password "")
+                 (new-password-char))
+             (dotimes (n char-num)
+               ;; get a random number
+               (setq new-password-char nil)
+               (while (not new-password-char)
+                 (setq new-password-char (string-to-number (strip-full (shell-command-to-string "openssl rand -hex 1")) 16))
+                 (if (>= new-password-char length-passwordchars)
+                     (setq new-password-char nil)
+                   (setq new-password (concat new-password (substring char-set new-password-char (+ new-password-char 1)))))))
+             new-password)))))
+
+(defun cic:select-nested-alist (&optional command filter-alists) ;;  filter-alist-first)
+  "Allows user to select from an alist.
+TODO: I don't actually use the nested function and I think this
+can be greatly simplified."
+  ;; "Allows user to select a symbol from a nested alist"
+  (interactive)
+  ;; get keys until alist is exhausted
+  (let ((minibuffer-prompt "")
+        (key-press nil)
+        (current-alist filter-alists)
+        ;; (current-alist-index filter-alist-first)
+        ;; (continue-filter t)
+        (continue t)
+        (escape-action nil)
+        (inner-alist nil)
+        (inner-selected)
+        (selected)
+        (selected-text))
+    ;; keep reading input while there are inner alists
+    (while continue
+      ;; read input
+      ;; initialise variables
+      (setq minibuffer-prompt "")
+      ;; TODO do I want this?
+      (setq escape-action nil)
+      (dolist (search-key current-alist)
+        (setq minibuffer-prompt (concat minibuffer-prompt
+                                        (concat "(" (car search-key) ") " (cadr search-key) "\n"))))
+      ;; read a key
+      (setq key-press (make-string 1 (read-key minibuffer-prompt)))
+      ;; test for valid keypress, inner-selection is nil if not valid
+      (setq inner-selection (assoc key-press current-alist))
+      ;; use input, decide if alist is in fact an inner alist
+      (cond ((not inner-selection)
+             ;; continue at same level
+             )
+            ((not (cic:nested-alist-maybe inner-selection))
+             ;; bottomed out, don't continue
+             ;; select alist
+             (setq selected (caddr inner-selection))
+             (setq selected-text (cadr inner-selection))
+             (setq continue nil))
+            (t
+             ;; a list was selected, go down a level
+             (setq current-alist (elt (cdr inner-selection) 1)))))
+    (apply command (cic:symbol-to-string-or-list selected))))
+
+(defun cic:nested-alist-maybe (maybe-nested)
+  "XXXX: A helper function that may not be required."
+  (and
+   (listp (cddr maybe-nested))
+   (listp (caddr maybe-nested))))
+   ;; (listp ())))
+   ;; is the second element a nested list
+   ;; (listp (car (cdr maybe-nested)))))
+   ;; ;; is the first element of the second also a list?
+   ;; (listp (cdr (car (cdr maybe-nested))))))
+
+(defun cic:org-insert-indent-list-item ()
+  "XXXX: A helper function that may not be required."
+  (if (cic:org-headline-p (cic:get-current-line))
+      (progn
+        (move-end-of-line 1)
+        (insert "\n")
+        (org-cycle)
+        (insert " - "))
+    (progn
+      (move-end-of-line 1)
+      (org-meta-return))))
+
+(defun cic:uid-64 ()
+  "Create an 11 character (>64bit) unique ID."
+  (cic:create-password "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_" 11))
 
 (provide 'emacs-stdlib-functions)
