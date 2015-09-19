@@ -44,7 +44,7 @@
 ;;; Code:
 
 (define-minor-mode emacs-stdlib-super-keys-mode
-  "Some standard keys bound to super."
+  ;; "Some standard keys bound to super."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
             ;; org keys
@@ -91,7 +91,7 @@
             map))
 
 (define-minor-mode emacs-stdlib-hyper-keys-mode
-  "Some standard keys bound to hyper."
+  ;; "Some standard keys bound to hyper."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
             ;; Hyper keys
@@ -116,8 +116,8 @@
             map))
 
 (define-minor-mode emacs-stdlib-hyper-keys-all-mode
-  "Some standard keys bound to hyper that should work in all
-   modes including minibuffer."
+  ;;"Some standard keys bound to hyper that should work in all
+  ;; modes including minibuffer."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "H-]") 'other-frame)
