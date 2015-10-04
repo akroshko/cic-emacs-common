@@ -83,6 +83,8 @@
       max-mini-window-height 0.75)
 ;; show point a little better
 (setq-default cursor-type 'box)
+;; truncate lines
+(setq truncate-lines t)
 ;; this is essential for viewing images
 ;; (setq-default cursor-in-non-selected-windows 'nil)
 ;; remove the "waiting time", dialog box, and other annoyances at startup
@@ -108,9 +110,12 @@
 ;; try not to warn about large files unless necessary
 (setq large-file-warning-threshold 100000000000)
 ;; http://stackoverflow.com/questions/18316665/how-to-improve-emacs-performace-when-view-large-file
+;; TODO: can become a problem with some files used for capturing
+;;       temporarily increased to 10mb
+;;       should only do for large files that are not text (e.g. org, above a certain threshold)
 (defun cic:large-file-read-only-hook ()
   "If a file is over a given size, make the buffer read only."
-  (when (> (buffer-size) (* 1024 1024))
+  (when (> (buffer-size) (* 1024 1024 10))
     (setq buffer-read-only t)
     (buffer-disable-undo)
     (fundamental-mode)))
@@ -145,8 +150,8 @@
 ;; making scrolling and moving nice
 (setq scroll-margin 3
       scroll-step 0
-      ;; TODO maybe wish to make this 10 or 0???
-      scroll-conservatively 5)
+      ;; think I want this 15 so I can see around searches
+      scroll-conservatively 15)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; search
 (setq search-upper-case nil)

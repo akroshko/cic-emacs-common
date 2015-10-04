@@ -1100,6 +1100,11 @@ can be greatly simplified."
 
 (defun cic:uid-64 ()
   "Create an 11 character (>64bit) unique ID."
+  ;; TODO: change to uid-11 to relect it may not quite be 64 bit
   (cic:create-password "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_" 11))
+
+(defun browse-url-conkeror (url &rest args)
+  (let ((browse-url-generic-program "conkeror"))
+    (browse-url-generic url)))
 
 (provide 'emacs-stdlib-functions)

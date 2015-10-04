@@ -79,6 +79,7 @@
             ;; O == Open, meaning I'm Opening Outside of emacs
             (define-key map (kbd "s-i c") 'cic:browse-url-at-point-conkeror)
             (define-key map (kbd "s-i f") 'cic:browse-url-at-point-firefox)
+            (define-key map (kbd "s-i g") 'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-i w") 'cic:browse-url-at-point-w3m)
             ;; view
             ;; requires???

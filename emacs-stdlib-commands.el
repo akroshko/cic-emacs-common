@@ -157,6 +157,11 @@ types of headings.  Does nothing if already in desired state."
   (interactive)
   (browse-url-firefox (cic:url-at-point-or-line 'url)))
 
+(defun cic:browse-url-at-point-gnome-web ()
+  "Find the URL at point and browse in the Firefox web browser."
+  (interactive)
+  (browse-url-epiphany (cic:url-at-point-or-line 'url)))
+
 (defun cic:browse-url-at-point-w3m ()
   "Find the URL at point and browse in the w3m web browser."
   (interactive)
