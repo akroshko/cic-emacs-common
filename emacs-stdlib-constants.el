@@ -36,7 +36,7 @@
   "A regexp that matches most urls.")
 
 (defconst cic:emacs-stdlib-url-regexp-complete
-  (concat "\\[\\[\\("  cic:emacs-stdlib-url-regexp "\\)\\(\\]\\[.*\\)?::[a-zA-Z0-9_-]\\{10,11\\}::\\]\\]")
+  (concat "\\[\\[\\("  cic:emacs-stdlib-url-regexp "\\)\\(\\]\\[.*\\)?::[a-zA-Z0-9_-]\\{11\\}::\\]\\]")
   "A regexp that matches a complete url.")
 
 (defconst cic:emacs-stdlib-url-regexp-org

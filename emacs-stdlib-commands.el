@@ -104,10 +104,13 @@ types of headings.  Does nothing if already in desired state."
         return-true)
     ;; check the cic:org-mark-toggle-headline-hook first
     (dolist (heading-hook cic:org-mark-toggle-headline-hook)
-      (setq return-value (funcall heading-hook))
-      (when return-value
-        (setq return-true t)))
-    (unless return-value
+      ;; make sure only one is run
+      (unless return-true
+        (setq return-value (funcall heading-hook))
+        (when return-value
+          (setq return-true t))))
+    ;; TODO: do the org-mode thing if other values are not done?
+    (unless return-true
       (cond ((eq major-mode 'org-agenda-mode)
              (when (cic:org-at-todo-p)
                (org-agenda-todo)))
@@ -348,7 +351,7 @@ TODO: not sure if this works at all."
           ;; TODO: there's probably a more secure way to do this than
           ;; random shell commands in temp files
           (setq temp-filename (make-temp-file "emacs-command-"))
-          (with-current-file temp-filename
+          (with-current-file-min temp-filename
             (insert "#!/bin/bash\n")
             (insert (concat "/usr/bin/screen -R " session "\n"))
             (save-buffer))
@@ -401,10 +404,12 @@ visit it."
       (message "Loading tags file: %s" my-tags-file)
       (visit-tags-table my-tags-file))))
 
-(defun cic:ansi-term-localhost ()
+(defun cic:ansi-term-localhost (&optional command)
   "Start up an ansi-term on localhost."
   (interactive)
-  (ansi-term "/bin/bash" "localhost"))
+  (if command
+      (ansi-term (concat "-i -c \"" command ";bash\""))
+    (ansi-term "/bin/bash" "localhost")))
 
 ;; http://oremacs.com/2015/01/01/three-ansi-term-tips/
 ;; TODO: maybe burrying an old term buffer might be better?
@@ -432,7 +437,6 @@ whether it is active or inactive.  And whether it is in line or
 character mode, indicating whether it can be a normal buffer or
 not."
   (interactive)
-
   (when (eq major-mode 'term-mode)
     (if (term-in-char-mode)
         (progn

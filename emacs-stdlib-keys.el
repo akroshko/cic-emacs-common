@@ -45,6 +45,26 @@
   :global t
   ;; :lighter "Some standard keys."
   :keymap (let ((map (make-sparse-keymap)))
+            ;; these make working on a laptop or tablet type computer great
+            ;; TODO: would centering be useful?
+            (define-key map (kbd "<up>") (lambda ()
+                                           (interactive)
+                                           (forward-line -1)))
+            (define-key map (kbd "<down>") (lambda ()
+                                             (interactive)
+                                             (forward-line)))
+            (define-key map (kbd "C-<up>") (lambda ()
+                                           (interactive)
+                                           (scroll-down-line 5)))
+            (define-key map (kbd "C-<down>") (lambda ()
+                                             (interactive)
+                                             (scroll-up-line 5)))
+            (define-key map (kbd "S-<up>") (lambda ()
+                                             (interactive)
+                                             (scroll-down)))
+            (define-key map (kbd "S-<down>") (lambda ()
+                                               (interactive)
+                                               (scroll-up)))
             ;; remap and add some standard functionality
             (define-key map [f11] 'cic:toggle-fullscreen)
             (define-key map [f12] 'cic:toggle-menubar)
@@ -63,10 +83,6 @@
             (define-key map (kbd "C-x C-b") 'buffer-menu)
             (define-key map (kbd "C-x r i") 'string-insert-rectangle)
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
-            ;; zap up to char
-            ;; TODO: eliminate error?
-            (requiring-package (misc)
-              (define-key map (kbd "s-z") 'zap-up-to-char))
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))
   (requiring-package (dired-x)
@@ -129,10 +145,10 @@
   " " 'self-insert-command)
 
 ;; org-agenda
-;; XXXX do these conflict with any of my modes?
-;; TODO do I care about this anymore?
-;; (global-set-key (kbd "C-c l") 'org-store-link)
-;; (global-set-key (kbd "C-c L") 'org-insert-link-global)
+;; TODO do these conflict with any of my modes?
+(global-set-key (kbd "C-c l") 'org-store-link)
+;; do I really want control as intert?
+(global-set-key (kbd "C-c c-l") 'org-insert-link-global)
 
 (requiring-package (flyspell)
   (define-key flyspell-mode-map (kbd "C-M-i") nil))

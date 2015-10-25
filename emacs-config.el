@@ -252,23 +252,25 @@
         org-agenda-todo-ignore-deadlines t
         org-ctrl-k-protect-subtree nil)
   ;; TODO: not sure why this works, if it works, and if I still need it
-  (add-hook 'org-mode-hook (lambda ()  (when (display-graphic-p)
-                                    (setq org-startup-with-inline-images t
-                                          ;; XXXX: want images look reasonable on most systems
-                                          ;; TODO: set differently for different screens
-                                          org-image-actual-width '(400)))))
+  (defun org-image-setup ()
+    (when (display-graphic-p)
+      (setq org-startup-with-inline-images t
+            ;; XXXX: want images look reasonable on most systems
+            ;; TODO: set differently for different screens
+            org-image-actual-width '(400))))
   ;; TODO: clean this up!!!!
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (font-lock-add-keywords 'org-mode
-                                      '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
-                                         ;; font-lock-warning-face
-                                         font-lock-keyword-face
-                                         )))))
-  ;; literal hyperlinks
-  (add-hook 'org-mode-hook (lambda ()
-                             (org-remove-from-invisibility-spec '(org-link))
-                             (org-restart-font-lock)))
+  (defun org-list-highlight-setup ()
+    (font-lock-add-keywords 'org-mode
+                            '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
+                               ;; font-lock-warning-face
+                               font-lock-keyword-face))))
+  ;; literal hyperlinks setup
+  (defun org-literal-hyperlinks-setup ()
+    (org-remove-from-invisibility-spec '(org-link))
+    (org-restart-font-lock))
+  (add-hook 'org-mode-hook 'org-image-setup)
+  (add-hook 'org-mode-hook 'org-list-highlight-setup)
+  (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   ;; (setq org-log-done 'time)
   ;; (setq org-log-done 'note)
   ;; most recent notes is always at the top

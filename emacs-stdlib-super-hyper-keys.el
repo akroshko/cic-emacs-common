@@ -47,6 +47,10 @@
   ;; "Some standard keys bound to super."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "s-[") 'cic:previous-buffer-same-mode)
+            (define-key map (kbd "s-]") 'cic:next-buffer-same-mode)
+            (define-key map (kbd "s-}") 'cic:next-file-dired)
+            (define-key map (kbd "s-{") 'cic:previous-file-dired)
             ;; org keys
             (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
             (define-key map (kbd "s-*") 'cic:recalculate)
@@ -85,10 +89,16 @@
             ;; requires???
             (define-key map (kbd "s-v l") 'hl-line-mode)
             ;; x=fix
-            (define-key map (kbd "s-x c") (cic:toggle-variable case-fold-search
-                                                               "Case fold search enabled."
-                                                               "Case fold search disabled."))
-            (define-key map (kbd "s-x w") 'cic:fix-whitespace)
+            ;; zap up to char
+            ;; TODO: something else here due to other keys I'm trying
+            ;; (define-key map (kbd "s-x c") (cic:toggle-variable case-fold-search
+            ;;                                                    "Case fold search enabled."
+            ;;                                                    "Case fold search disabled."))
+            ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
+            ;; zap up to char
+            ;; TODO: disabled for now due to conflict with other keys I'm trying
+            ;; (requiring-package (misc)
+            ;;   (define-key map (kbd "s-z") 'zap-up-to-char))
             map))
 
 (define-minor-mode emacs-stdlib-hyper-keys-mode
@@ -101,8 +111,6 @@
             ;; add control U?
             (define-key map (kbd "H->") 'next-buffer)
             (define-key map (kbd "H-<") 'previous-buffer)
-            (define-key map (kbd "H-}") 'cic:next-file-dired)
-            (define-key map (kbd "H-{") 'cic:previous-file-dired)
             (define-key map (kbd "H-)") 'cic:org-end-of-next-heading)
             (define-key map (kbd "H-(") 'cic:org-end-of-prev-heading)
             (define-key map (kbd "H-d") 'cic:org-heading-timestamp)

@@ -151,7 +151,7 @@ TODO: determine which is more efficient"
   "Helper function for cic:count-occurences to Recursively count
 REGEX in STRING from the START character."
   (if (string-match regex string start)
-      (+ 1 (cic:recursive-count regex string (match-end 0)))
+      (1+ (cic:recursive-count regex string (match-end 0)))
     0))
 
 (defun cic:string-to-float (str)
@@ -163,6 +163,13 @@ REGEX in STRING from the START character."
       (setq str (float str)))
     str))
 
+(defun cic:string-to-float-empty-zero (str)
+  "Convert STR to float or return zero for a nil or empty
+string."
+  (if (cic:is-not-empty-string-nil str)
+      (cic:string-to-float str)
+    0))
+
 (defun cic:flyspell-init-text ()
   "Inititalize flyspell for text modes."
   (flyspell-mode t)
@@ -172,12 +179,6 @@ REGEX in STRING from the START character."
   "Inititalize flyspell from programming modes."
   (flyspell-prog-mode)
   (flyspell-buffer))
-
-(defun cic:make-some-files-read-only ()
-  "When files are opened for certain modes, make them read only."
-  (when (or (not (string-match (expand-file-name "~") (buffer-file-name)))
-            (memq major-mode '(doc-view-mode)))
-    (toggle-read-only 1)))
 
 ;; http://www.emacswiki.org/emacs/ElispCookbook#toc59
 (defun cic:walk-path (dir action)
@@ -219,7 +220,8 @@ TODO: Currently actually prefix search, do I want an exact search?"
 
 (defun cic:org-find-table (&optional count)
   "Find a particular table with text NAME (based on headline) in BUFFER.
-TODO: Currently actually a prefix search, do I want an exact search?"
+TODO: Currently actually a prefix search, do I want an exact search?
+TODO: wrong comment"
   (unless count
     (setq count 1))
   (dotimes (i count)
@@ -696,7 +698,7 @@ TODO: this function needs work."
     (delete-region p1 p2)
     ;; restore text properties
     ;; TODO make actually work for all situations
-    ;; (add-text-properties (point) (+ (point) 1) saved-text-properties)
+    ;; (add-text-properties (point) (1+ (point)) saved-text-properties)
     ))
 
 ;;from http://ergoemacs.org/emacs/elisp_all_about_lines.html
@@ -706,6 +708,7 @@ TODO: this function needs work."
         (p2 (line-end-position)))
     (buffer-substring-no-properties p1 p2)))
 
+;; TODO: this is odd, can't seem to work
 (defun cic:check-convert-number-to-string (number)
   "Try and convert NUMBER to a string, or just return untouched
 if not possible."
@@ -772,7 +775,7 @@ strings. Leave alone if already a string or list of strings"
         ((string= ch "Z")
          "1")
         (t
-         (char-to-string (+ (string-to-char ch) 1)))))
+         (char-to-string (1+ (string-to-char ch))))))
 ;; (cic:select-list-item (list "hello" "jaws"))
 (defun cic:select-list-item (lst &optional string-key)
   "Select a string from a list of strings LST using alphabet then number keys.
@@ -786,7 +789,7 @@ TODO: use string-key to select a string"
                                        (setq thelist (list count (funcall string-key e) index-count))
                                      (setq thelist (list count e e)))
                                    (setq count (increment-char count))
-                                   (setq index-count (+ index-count 1))
+                                   (setq index-count (1+ index-count))
                                    thelist))
                                lst)))
     (setq select-alist (append select-alist (list (list "-" "cancel" 'cancel))))
@@ -807,7 +810,7 @@ TODO: document more"
                                        (setq thelist (list count (funcall string-key e) index-count))
                                      (setq thelist (list count e index-count)))
                                    (setq count (increment-char count))
-                                   (setq index-count (+ index-count 1))
+                                   (setq index-count (1+ index-count))
                                    thelist))
                                lst)))
 
@@ -1012,7 +1015,7 @@ think openssl is find for this purpose."
     (cond (random-source
            (mapconcat (lambda (dummy)
                         (let ((idx (random length-passwordchars)))
-                          (substring char-set idx (+ idx 1))))
+                          (substring char-set idx (1+ idx))))
                       (number-sequence 0 (- char-num 1))
                       ""))
           (t
@@ -1025,7 +1028,7 @@ think openssl is find for this purpose."
                  (setq new-password-char (string-to-number (strip-full (shell-command-to-string "openssl rand -hex 1")) 16))
                  (if (>= new-password-char length-passwordchars)
                      (setq new-password-char nil)
-                   (setq new-password (concat new-password (substring char-set new-password-char (+ new-password-char 1)))))))
+                   (setq new-password (concat new-password (substring char-set new-password-char (1+ new-password-char)))))))
              new-password)))))
 
 (defun cic:select-nested-alist (&optional command filter-alists) ;;  filter-alist-first)
@@ -1104,7 +1107,110 @@ can be greatly simplified."
   (cic:create-password "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_" 11))
 
 (defun browse-url-conkeror (url &rest args)
+  "Browse a url in the Conkeror web browser."
   (let ((browse-url-generic-program "conkeror"))
     (browse-url-generic url)))
+
+(defun cic:org-table-elisp-replace (elisp-table-original elisp-table-replacement)
+  "Replace the original table at point ELISP-TABLE-ORIGINAL with
+the ELISP-TABLE-REPLACEMENT.  Only uses expensive org-table-put
+when values has changed.
+
+Meant to be used programatically and behaviour is undefined if
+there is not mutual correspondance between table at point,
+ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
+  ;; TODO: add some quick sanity checks here
+  (when (org-at-table-p)
+    (save-excursion
+      (let ((nrows (length elisp-table-original))
+            (ncols (length (car elisp-table-original))))
+        ;; TODO: do better than straight imperative programming?
+        (dotimes (i nrows)
+          (dotimes (j ncols)
+            (when (not (string= (cic:elisp-array-string elisp-table-original i j)
+                                (cic:elisp-array-string elisp-table-replacement i j)))
+              (org-table-put (1+ i) (1+ j) (cic:elisp-array-string elisp-table-replacement i j)))))))))
+
+(defun cic:elisp-array-string (elisp-array i j)
+  (let ((thestr (elt (elt elisp-array i) j)))
+    (if (stringp thestr)
+        (cic:strip-full-no-properties thestr)
+      "")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tbel functions
+;; TODO: make an independnent package
+
+(defun cic:org-table-tblel-p ()
+  "Find if we are at a location associated with an org-table
+along with a #+TBLEL line."
+  (or
+   (cic:org-table-tblel-line-p)
+   (save-excursion
+     (and
+      (org-table-p)
+      (progn
+        (goto-char (org-table-end))
+        (beginning-of-line)
+        (looking-at "\\s-+#\\+TBLEL:"))))))
+
+(defun cic:org-table-tblel-line-p ()
+  "Check if at a #+TBLEL line."
+  (save-excursion
+    (beginning-of-line)
+    (looking-at "\\s-+#\\+TBLEL:")))
+
+(defun cic:org-table-eval-tblel-line (&rest args)
+  "Evalute the function on a #+TBLEL line."
+  (when (cic:org-table-tblel-line-p)
+    (cic:org-table-eval-tblel)))
+
+(defun cic:org-table-eval-tblel (&rest args)
+  "Get the lisp table and run the appropriate function on it (several functions?)."
+  ;; TODO: unwind protect to avoid nuking table
+  ;; TODO: avoid back-to-heading/find-table and use a better methodology for tables
+  (interactive)
+  (when (cic:org-table-tblel-p)
+    (let (lisp-table
+          lisp-function
+          new-lisp-table)
+      ;; get elisp function to run
+      (save-excursion
+        (unless (cic:org-table-tblel-line-p)
+            (goto-char (org-table-end)))
+        (beginning-of-line)
+        ;; TODO: eventually get forms
+        (setq lisp-function (substring-no-properties (elt (split-string (cic:get-current-line)) 1))))
+      (save-excursion
+        (when (cic:org-table-tblel-line-p)
+          (forward-line -1)
+          (back-to-indentation))
+        ;; TODO: just evaluating a single lisp function, want more and want to check error before nuking current able
+        (setq lisp-table (cic:org-table-to-lisp-no-separators))
+        (setq new-lisp-table (funcall (intern lisp-function) lisp-table))
+        ;; finally put it back if all is well
+        (cic:org-table-elisp-replace lisp-table new-lisp-table)
+        ;; TODO: option to avoid this?
+        (org-table-align)))
+    t))
+
+(defun cic:org-table-tblel-ctrl-c-recalc (orig-fun &rest args)
+  "Function to advise ctrl-c and org-table evaluate functions."
+  ;; kill ctrl-c-ctrol-c and just do our own thing until TBLEL==keyword is fixed
+  (when (cic:org-table-tblel-line-p)
+    (funcall orig-fun args)))
+
+;; add some advice to intercept org-table functions and commands
+(advice-add 'org-table-recalculate :before #'cic:org-table-eval-tblel)
+(add-hook 'org-ctrl-c-ctrl-c-hook 'cic:org-table-eval-tblel-line)
+
+(defun cic:org-table-tblel-setup ()
+  "Set up some things so tblel is as integrated as possible in org-table."
+  ;; set up fontification
+  (font-lock-add-keywords 'org-mode
+                          ;; TODO: change to org-meta-line, in keyword-face for convienience right now
+                          '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . font-lock-comment-face))))
+
+(add-hook 'org-mode-hook 'cic:org-table-tblel-setup)
 
 (provide 'emacs-stdlib-functions)
