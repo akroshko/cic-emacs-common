@@ -86,14 +86,15 @@
             (define-key map (kbd "s-i g") 'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-i w") 'cic:browse-url-at-point-w3m)
             ;; view
-            ;; requires???
-            (define-key map (kbd "s-v l") 'hl-line-mode)
+            ;; requires??? changing becaus s-v used for other things
+            ;; (define-key map (kbd "s-v l") 'hl-line-mode)
             ;; x=fix
             ;; zap up to char
             ;; TODO: something else here due to other keys I'm trying
-            ;; (define-key map (kbd "s-x c") (cic:toggle-variable case-fold-search
-            ;;                                                    "Case fold search enabled."
-            ;;                                                    "Case fold search disabled."))
+            ;; TODO: decide if I want to toggle global default value or ???
+            (define-key map (kbd "s-5") (cic:toggle-variable case-fold-search
+                                                             "Case fold search enabled."
+                                                             "Case fold search disabled."))
             ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
             ;; zap up to char
             ;; TODO: disabled for now due to conflict with other keys I'm trying
@@ -113,8 +114,10 @@
             (define-key map (kbd "H-<") 'previous-buffer)
             (define-key map (kbd "H-)") 'cic:org-end-of-next-heading)
             (define-key map (kbd "H-(") 'cic:org-end-of-prev-heading)
-            (define-key map (kbd "H-d") 'cic:org-heading-timestamp)
+            (define-key map (kbd "H-$") 'cic:flyspell-here)
+            (define-key map (kbd "H-,") 'cic:wordlist-current-word)
             (define-key map (kbd "H-\\") 'indent-sexp)
+            (define-key map (kbd "H-d") 'cic:org-heading-timestamp)
             ;; navigation of files
             (define-key map (kbd "H-i") 'imenu)
             (define-key map (kbd "H-y") 'cic:copy-file-name-to-clipboard)

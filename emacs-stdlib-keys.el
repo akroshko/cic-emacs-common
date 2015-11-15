@@ -150,7 +150,17 @@
 ;; do I really want control as intert?
 (global-set-key (kbd "C-c c-l") 'org-insert-link-global)
 
+;; TODO may not need this anymore, has it been superceded
 (requiring-package (flyspell)
+  (defun cic:flyspell-init-text ()
+    "Inititalize flyspell for text modes."
+    (flyspell-mode t)
+    (flyspell-buffer))
+
+  (defun cic:flyspell-init-prog ()
+    "Inititalize flyspell from programming modes."
+    (flyspell-prog-mode)
+    (flyspell-buffer))
   (define-key flyspell-mode-map (kbd "C-M-i") nil))
 
 (defun cic:org-calendar-forward ()

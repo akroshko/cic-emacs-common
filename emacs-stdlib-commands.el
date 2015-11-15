@@ -582,4 +582,56 @@ alphanumeric."
   (interactive)
   (text-scale-adjust 0))
 
+(defconst cic:prog-modes
+  ;; TODO: expand to more likely modes
+  (list 'c-mode 'emacs-lisp-mode 'java-mode 'js-mode 'python-mode 'scheme-mode 'sh-mode))
+
+;; TODO: separate programming and text lists
+(unless (boundp 'cic:user-wordlist)
+  "The file to keep the word list in."
+  (setq cic:user-wordlist ""))
+
+(defun cic:prog-mode-p ()
+  "Check if in one of my typical programming modes."
+  (member major-mode cic:prog-modes))
+
+(defun cic:text-mode-p ()
+  "Check if this is a text mode."
+  (not (cic:prog-mode-p)))
+
+  ;; TODO add to flyspell buffer
+  ;; TODO move out of keys and into somewhere else?
+(defun cic:flyspell-here ()
+  ""
+  (interactive)
+  ;; reload word list by killing ispell
+  (ispell-kill-ispell t)
+  ;; detect prog mode first
+  (cond ((cic:prog-mode-p)
+         (cic:flyspell-init-prog))
+        ((cic:text-mode-p)
+         (cic:flyspell-init-text))))
+
+;; TODO: move to somewhere more appropriate
+(setq flyspell-issue-message-flag nil)
+
+(defun cic:wordlist-current-word ()
+  "Add current word to user-defined wordlist."
+  (interactive)
+  (let ((word (thing-at-point 'word)))
+    (when word
+      ;; TODO unhard-code
+      (with-current-file cic:user-wordlist
+        (goto-char (point-max))
+        (insert (concat "\n" word "\n"))
+        (flush-lines "^\\s-*$" (point-min) (point-max))
+        (sort-lines nil (point-min) (point-max))
+        (save-buffer))
+      (shell-command "\"echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+      (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+      (ispell-kill-ispell t)
+      (cic:flyspell-here)
+      ;; reset word list
+      (message (concat "Successfully added " word " to list!")))))
+
 (provide 'emacs-stdlib-commands)

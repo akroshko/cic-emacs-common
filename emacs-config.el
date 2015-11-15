@@ -184,12 +184,11 @@
   (setq dired-listing-switches "--group-directories-first -alh")
   ;; set omit by default
   (add-hook 'dired-mode-hook '(lambda ()  (dired-omit-mode 1))))
-(requiring-package (flyspell)
+(requiring-package (ispell)
   (setq ispell-program-name "aspell"
         ;; I do really write in Canadian, except for all the z's I use
         ispell-dictionary "canadian"
-        ispell-extra-args '("--sug-mode=ultra"))
-  (setq flyspell-issue-message-flag nil))
+        ispell-extra-args '("--sug-mode=ultra")))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emacs lisp mode
 ;; https://stackoverflow.com/questions/18289329/how-to-highlight-all-the-functions-name-in-emacs-lisp-mode
@@ -235,6 +234,9 @@
   ;; http://newartisans.com/2007/08/using-org-mode-as-a-day-planner/
   ;; prompt for notes with each change state
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
+  (requiring-package (org-compat)
+    ;; this one may only be necessary if exists
+      )
   (setq org-archive-location "%s.archive::"
         org-todo-keywords
         '((sequence "TODO(!@)" "NEXT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))

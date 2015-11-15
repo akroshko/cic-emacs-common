@@ -170,16 +170,6 @@ string."
       (cic:string-to-float str)
     0))
 
-(defun cic:flyspell-init-text ()
-  "Inititalize flyspell for text modes."
-  (flyspell-mode t)
-  (flyspell-buffer))
-
-(defun cic:flyspell-init-prog ()
-  "Inititalize flyspell from programming modes."
-  (flyspell-prog-mode)
-  (flyspell-buffer))
-
 ;; http://www.emacswiki.org/emacs/ElispCookbook#toc59
 (defun cic:walk-path (dir action)
   "Walk DIR executing ACTION with arugments (dir file)"
@@ -704,9 +694,7 @@ TODO: this function needs work."
 ;;from http://ergoemacs.org/emacs/elisp_all_about_lines.html
 (defun cic:get-current-line ()
   "Get the current line."
-  (let ((p1 (line-beginning-position))
-        (p2 (line-end-position)))
-    (buffer-substring-no-properties p1 p2)))
+  (buffer-substring-no-properties(line-beginning-position) (line-end-position)))
 
 ;; TODO: this is odd, can't seem to work
 (defun cic:check-convert-number-to-string (number)
