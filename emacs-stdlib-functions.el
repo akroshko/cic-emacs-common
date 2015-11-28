@@ -665,8 +665,9 @@ LINE."
   (set-buffer old-buffer)))
 
 (defun cic:is-empty-string-whitespace (str)
-  "Test if STR is empty or all whitespace."
-  (string-equal (strip-full str) ""))
+  "Test if STR is empty, all whitespace, or nil."
+  (when str
+    (string-equal (strip-full str) "")))
 
 (defun cic:is-not-empty-string-nil (str)
   "Check if STR is an empty string (no characters or all
