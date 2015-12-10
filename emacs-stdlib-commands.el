@@ -508,8 +508,9 @@ into current buffer.  Without ARG, defaults to 24 character
 alphanumeric."
   (interactive "P")
   (let ((select-list (list
-                      (list '24anp  "24 character alphanumeric with punctuation")
-                      (list '12anp  "12 character alphanumeric with punctuation")
+                      (list '30l "30 character alphabet with punctuation")
+                      (list '24anp "24 character alphanumeric with punctuation")
+                      (list '12anp "12 character alphanumeric with punctuation")
                       (list '24an  "24 character alphanumeric")
                       (list '12an "12 character alphanumeric")))
         selected)
@@ -518,15 +519,17 @@ alphanumeric."
           (setq selected (cic:select-list-item select-list
                                            'cadr))
           (setq selected (car (elt select-list selected))))
-      (setq selected '24anp))
+      (setq selected '30l))
     (cond ((eq selected '12an)
            (insert (cic:create-password-12-Alphanum)))
           ((eq selected '12anp)
            (insert (cic:create-password-12-Alphanum-punct)))
           ((eq selected '24an)
            (insert (cic:create-password-24-Alphanum)))
+          ((eq selected '24anp)
+           (insert (cic:create-password-24-Alphanum-punct)))
           (t
-           (insert (cic:create-password-24-Alphanum-punct))))))
+           (insert (cic:create-password-30-alpha-lower))))))
 
 (defun cic:create-password-insert-select ()
   "Select a random password type and insert into current buffer."
