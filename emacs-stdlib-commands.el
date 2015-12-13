@@ -492,12 +492,15 @@ similar languages."
       (modify-syntax-entry ?. "_" temp-table)
       (sort-regexp-fields reverse "\\_<.*?\\_>" "\\&" beg end))))
 
-(defun cic:copy-file-name-to-clipboard ()
+(defun cic:copy-file-name-to-clipboard (&optional arg)
   "Copy the current buffer file name to the clipboard."
-  (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      (file-name-nondirectory default-directory)
-                    (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))))
+  (interactive "P")
+  (let (filename)
+    (if arg
+        (setq filename (buffer-file-name))
+      (setq filename (if (equal major-mode 'dired-mode)
+                         (file-name-nondirectory default-directory)
+                       (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))))
     (when filename
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
