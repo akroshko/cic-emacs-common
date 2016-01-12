@@ -58,7 +58,7 @@
                 (if ,error-if-fail
                     (error msg)
                   (throw 'requiring-package-fail nil))))))))
-(put 'requiring-package 'lisp-indent-function 1))
+    (put 'requiring-package 'lisp-indent-function 1))
 
 ;; set proper fonts, characters, and colors
 (global-font-lock-mode t)
@@ -75,6 +75,8 @@
 ;; bluish/reddish modeline
 (set-face-background 'mode-line "#6699cc")
 (set-face-background 'modeline-inactive "#ffaa88")
+;; highlight in olive green, visible on many of my modes
+(set-face-attribute 'region nil :background "#c0ff3e")
 ; quiet, please! No dinging!
 (setq visible-bell t)
 ;; avoid as much window splitting as possible

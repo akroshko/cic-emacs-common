@@ -611,6 +611,8 @@ alphanumeric."
   ""
   (interactive)
   ;; reload word list by killing ispell
+  (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+  (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
   (ispell-kill-ispell t)
   ;; detect prog mode first
   (cond ((cic:prog-mode-p)
@@ -633,7 +635,7 @@ alphanumeric."
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
         (save-buffer))
-      (shell-command "\"echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+      (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
       (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
       (ispell-kill-ispell t)
       (cic:flyspell-here)
