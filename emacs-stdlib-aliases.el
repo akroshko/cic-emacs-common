@@ -34,7 +34,6 @@
 ;;
 ;;; Code:
 
-
 (defalias 'mpp 'cic:mpp)
 (defalias 'mpp-echo 'cic:mpp)
 (defalias 'chomp 'cic:chomp)
