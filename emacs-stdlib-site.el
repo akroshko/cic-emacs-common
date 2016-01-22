@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20150914
+;; Version: 20160121
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -216,7 +216,9 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
   (add-hook 'lisp-mode-hook 'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook 'enable-paredit-mode))
+  (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+  (eval-after-load "paredit.el"
+    (requiring-package (paredit-menu))))
 ;; TODO move seperately, maybe have an emacs-lisp.el
 (requiring-package (eldoc)
   ;; if not already loaded
@@ -402,5 +404,80 @@ TODO broken, provided a diff cleanup function too! "
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vline
 (add-hook 'calendar-mode-hook (lambda () (setq cursor-type 'box) (hl-line-mode) (vline-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; some nice packages I like
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ;; ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ;; ("org" . "http://orgmode.org/elpa/")
+                         ))
+(setq package-check-signature nil)
+(setq cic:package-list '(ace-jump-mode
+                         apache-mode
+                         arduino-mode
+                         auctex
+                         auctex-latexmk
+                         conkeror-minor-mode
+                         apropos-fn+var
+                         bash-completion
+                         benchmark-init
+                         bbdb
+                         bbdb-ext
+                         capture
+                         company
+                         ;; company-auctex
+                         company-quickhelp
+                         cl-lib
+                         crontab-mode
+                         cython-mode
+                         dired-avfs
+                         dired-rainbow
+                         eldoc
+                         emms
+                         ess
+                         flymake-cursor
+                         fuzzy-match
+                         gh-md
+                         gnuplot
+                         gnuplot-mode
+                         ;; hexrgb
+                         ido-hacks
+                         ido-ubiquitous
+                         idomenu
+                         ;; TODO get rid of
+                         lacarte
+                         ;; letcheck
+                         json-mode
+                         magit
+                         markdown-mode
+                         matlab-mode
+                         mew
+                         org
+                         paredit
+                         paredit-menu
+                         popwin
+                         prolog
+                         ;; pylint
+                         ;; py-import-check
+                         rainbow-delimiters
+                         readline-complete
+                         sicp
+                         slime
+                         slime-company
+                         smartscan
+                         ssh-config-mode
+                         ssh-tunnels
+                         tracwiki-mode
+                         twittering-mode
+                         ;; w3m
+                         xml-rpc
+                         vline))
+
+(defun cic:install-packages ()
+  (interactive)
+  (dolist (package cic:package-list)
+    (unless (package-installed-p package)
+      (package-install package))))
 
 (provide 'emacs-stdlib-site)
