@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20160121
+;; Version: 20160130
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -179,6 +179,11 @@ TODO broken, provided a diff cleanup function too! "
   (emms-all)
   (emms-default-players)
   (setq emms-info-function '(emms-info-libtag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; free keys
+(requiring-package (free-keys)
+  (setq free-keys-modifiers '("" "C" "M" "C-M" "s" "H")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gnuplot
@@ -437,6 +442,7 @@ TODO broken, provided a diff cleanup function too! "
                          emms
                          ess
                          flymake-cursor
+                         free-keys
                          fuzzy-match
                          gh-md
                          gnuplot
