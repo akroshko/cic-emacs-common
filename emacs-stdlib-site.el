@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20160130
+;; Version: 20160131
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -261,14 +261,12 @@ TODO broken, provided a diff cleanup function too! "
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Python
+;; Python and sage
 ;; add to minor mode and flymake map?
 ;; http://stackoverflow.com/questions/2571436/emacs-annoying-flymake-dialog-box
 ;; TODO: put into message box
 ;; TODO: navigate functions/defun
 (requiring-package (python)
-  (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
-  (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode))
   (defconst python-fulldoc-setup-code
     "def __PYDOC_get_fulldoc(obj):
     try:
@@ -361,6 +359,26 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'python-mode-hook 'python-detect-interpreter)
   ;; (add-hook 'python-mode-hook 'anaconda-mode)
   ;; (add-hook 'python-mode-hook 'eldoc-mode)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;
+  ;; After installation of the spkg, you must add something like the
+  ;; following to your .emacs:
+  ;; XXXX: obviously this is specific to a particular installation
+  (add-to-list 'load-path "/opt/sage-7.0/local/share/emacs/site-lisp/sage-mode")
+  (requiring-package (sage)
+    (require 'sage "sage")
+    ;; TODO: have a else for requiring-package
+    (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
+    (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
+  (setq sage-command "/opt/sage-7.0/sage")
+  ;; If you want sage-view to typeset all your output and display plot()
+  ;; commands inline, uncomment the following line and configure sage-view:
+  ;; (add-hook 'sage-startup-after-prompt-hook 'sage-view)
+  ;; In particular customize the variable sage-view-default-commands.
+  ;; Using sage-view to typeset output requires a working LaTeX
+  ;; installation with the preview package.
+  ;; Also consider running (customize-group 'sage) to see more options.
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

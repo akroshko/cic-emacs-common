@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160130
+;; Version: 20160131
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -181,18 +181,6 @@ CURRENT-LINE if specified."
         (when url-start
           (setq url (substring current-line url-start (match-end 0))))))
     url))
-
-(defun cic:org-heading-timestamp (&optional arg)
-  "Create an org-mode heading with the current time and date.
-ARG has not effect currently.  Behaviour based on
-org-insert-heading."
-  (interactive "P")
-  (org-insert-heading)
-  (cond
-   ((eq arg '(4))
-    (insert (format-time-string "%a %b %d, %Y")))
-   (t
-    (insert (format-time-string "%a %b %d, %Y")))))
 
 (defun cic:org-insert-two-level (&optional arg)
   "This is a really good function actually.  It inserts a top
@@ -641,5 +629,28 @@ alphanumeric."
       (cic:flyspell-here)
       ;; reset word list
       (message (concat "Successfully added " word " to list!")))))
+
+(defun cic:insert-current-time (&optional arg)
+  "Insert the current time and date written out.  ARG only
+inserts date. Create an org-mode heading with the current time
+and date.  Behaviour based on org-insert-heading."
+  (interactive "P")
+  (when (eq major-mode 'org-mode)
+    (org-insert-heading))
+  (if arg
+      (insert (format-time-string "%a %b %d, %Y"))
+    (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))))
+
+(defun cic:insert-current-timestamp (&optional arg)
+  "Insert the current time and date written out.  ARG only
+inserts date. Create an org-mode heading with the current time
+and date.  Behaviour based on org-insert-heading."
+  (interactive "P")
+  (when (eq major-mode 'org-mode)
+    (org-insert-heading))
+  (let ((time (current-time)))
+    (if arg
+        (insert (format-time-string "%Y%m%d" time))
+      (insert (format-time-string "%Y%m%d%H%M%S" time)))))
 
 (provide 'emacs-stdlib-commands)

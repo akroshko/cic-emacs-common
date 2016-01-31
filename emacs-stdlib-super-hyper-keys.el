@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160130
+;; Version: 20160131
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -117,7 +117,8 @@
             (define-key map (kbd "H-$") 'cic:flyspell-here)
             (define-key map (kbd "H-,") 'cic:wordlist-current-word)
             (define-key map (kbd "H-\\") 'indent-sexp)
-            (define-key map (kbd "H-d") 'cic:org-heading-timestamp)
+            ;; TODO: update so I can enter a date (and/or time) into
+            ;;       comments anywhere
             ;; navigation of files
             (define-key map (kbd "H-i") 'imenu)
             (define-key map (kbd "H-y") 'cic:copy-file-name-to-clipboard)

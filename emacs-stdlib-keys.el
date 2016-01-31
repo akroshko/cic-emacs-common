@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160130
+;; Version: 20160131
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -75,6 +75,8 @@
             (define-key map (kbd "C-c f") 'find-file-at-point)
             (define-key map (kbd "C-c o") 'occur)
             (define-key map (kbd "C-c w") 'compare-windows)
+            (define-key map (kbd "C-;") 'cic:insert-current-time)
+            (define-key map (kbd "C-:") 'cic:insert-current-timestamp)
             (define-key map (kbd "C-h a") 'apropos)
             ;; steve yegge suggestion
             ;; (global-set-key (kbd "C-w") 'backward-kill-word)
