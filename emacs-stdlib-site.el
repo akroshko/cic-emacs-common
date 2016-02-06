@@ -53,7 +53,6 @@ TODO broken, provided a diff cleanup function too! "
 (add-to-list 'auto-mode-alist '("bash_profile_agents" . sh-mode))
 (add-to-list 'auto-mode-alist '("bashrc_functions" . sh-mode))
 (add-to-list 'auto-mode-alist '("bash_library" . sh-mode))
-(add-to-list 'auto-mode-alist '("bash_completion" . sh-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys

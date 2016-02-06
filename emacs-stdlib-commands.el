@@ -488,7 +488,8 @@ similar languages."
         (setq filename (buffer-file-name))
       (setq filename (if (equal major-mode 'dired-mode)
                          (file-name-nondirectory default-directory)
-                       (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))))
+                       (file-name-nondirectory (buffer-file-name))))
+      )
     (when filename
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))

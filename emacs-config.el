@@ -182,7 +182,7 @@
         dired-omit-extensions '("_flymake.aux" "_flymake.log" "_flymake.pdf" "_flymake.pdfsync" "_flymake.py"
                                 "_.log" "_.pdf" "_.pdfsync"  "_.prv" "_.tex"
                                 ".aux" ".bbl" ".blg" ".bst" ".fdb_latexmk" ".fls" ".lof" ".lot" ".pdfsync" ".snm" ".synctex.gz" ".toc"
-                                ".pyd" ".pyc" ))
+                                ".pyd" ".pyc" ".sage.py"))
   (setq dired-listing-switches "--group-directories-first -alh")
   ;; set omit by default
   (add-hook 'dired-mode-hook '(lambda ()  (dired-omit-mode 1))))
@@ -220,6 +220,7 @@
 (add-to-list 'completion-ignored-extensions ".fls")
 (add-to-list 'completion-ignored-extensions ".org.archive")
 (add-to-list 'completion-ignored-extensions ".pdfsync")
+(add-to-list 'completion-ignored-extensions ".sage.py")
 (add-to-list 'completion-ignored-extensions ".synctex.gz")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
