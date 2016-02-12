@@ -135,9 +135,6 @@
 
 (defun cic:save-buffers-kill-emacs ()
   (interactive)
-  ;; TODO: no gnus is good gnus
-  ;; (when (fboundp 'gnus-group-exit)
-  ;;   (gnus-group-exit))
   (save-buffers-kill-emacs))
 
 ;; misc keys

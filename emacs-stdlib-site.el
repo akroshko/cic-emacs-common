@@ -91,7 +91,6 @@ TODO broken, provided a diff cleanup function too! "
                  (require 'tex-site)
                  (require 'texmathp)
                  (setq TeX-PDF-mode t)
-                 ;; TODO platform specific configurations?
                  (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
                  (setq TeX-source-correlate-method 'synctex)
                  (setq TeX-source-correlate-mode t)
@@ -223,7 +222,6 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
   (eval-after-load "paredit.el"
     (requiring-package (paredit-menu))))
-;; TODO move seperately, maybe have an emacs-lisp.el
 (requiring-package (eldoc)
   ;; if not already loaded
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
@@ -328,7 +326,6 @@ TODO broken, provided a diff cleanup function too! "
     (eldoc-mode)
     (advice-remove 'python-shell-get-or-create-process #'python-shell-get-or-create-process--non-interactive)
     ;; XXXX: change name
-    ;; TODO: possibly change to C-c h
     (define-key python-mode-map (kbd "C-c h") 'python-fulldoc-at-point))
 
   (defun python-shell-get-or-create-process--non-interactive (orig-fun &rest args)
@@ -367,7 +364,7 @@ TODO broken, provided a diff cleanup function too! "
   (add-to-list 'load-path "/opt/sage-7.0/local/share/emacs/site-lisp/sage-mode")
   (requiring-package (sage)
     (require 'sage "sage")
-    ;; TODO: have a else for requiring-package
+    ;; TODO: have an else for requiring-package
     (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
     (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
   (setq sage-command "/opt/sage-7.0/sage")

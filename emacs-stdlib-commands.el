@@ -594,8 +594,8 @@ alphanumeric."
   "Check if this is a text mode."
   (not (cic:prog-mode-p)))
 
-  ;; TODO add to flyspell buffer
-  ;; TODO move out of keys and into somewhere else?
+;; TODO add to flyspell buffer
+;; TODO move out of keys and into somewhere else?
 (defun cic:flyspell-here ()
   ""
   (interactive)
@@ -617,7 +617,6 @@ alphanumeric."
   (interactive)
   (let ((word (thing-at-point 'word)))
     (when word
-      ;; TODO unhard-code
       (with-current-file cic:user-wordlist
         (goto-char (point-max))
         (insert (concat "\n" word "\n"))
@@ -653,5 +652,11 @@ and date.  Behaviour based on org-insert-heading."
     (if arg
         (insert (format-time-string "%Y%m%d" time))
       (insert (format-time-string "%Y%m%d%H%M%S" time)))))
+
+;; https://stackoverflow.com/questions/5346107/emacs-case-sensitive-replace-string
+(defun cic:query-replace-case-sensitive ()
+  (interactive "")
+  (let ((case-fold-search nil))
+    (call-interactively 'query-replace)))
 
 (provide 'emacs-stdlib-commands)

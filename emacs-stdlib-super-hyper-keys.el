@@ -49,10 +49,9 @@
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "s-[") 'cic:previous-buffer-same-mode)
             (define-key map (kbd "s-]") 'cic:next-buffer-same-mode)
-            (define-key map (kbd "s-}") 'cic:next-file-dired)
-            (define-key map (kbd "s-{") 'cic:previous-file-dired)
             ;; org keys
             (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
+            (define-key map (kbd "s-%") 'cic:query-replace-case-sensitive)
             (define-key map (kbd "s-*") 'cic:recalculate)
             (define-key map (kbd "s-c w") 'wdired-change-to-wdired-mode)
             ;; generic emacs development
@@ -73,7 +72,7 @@
             (define-key map (kbd "s-h l") 'find-library)
             (define-key map (kbd "s-h o") 'cic:help-org)
             (define-key map (kbd "s-h r") 'cic:help-elisp)
-            ;; TODO better name/key for this
+            ;; TODO better name/key for this u neq v
             (define-key map (kbd "s-h u") 'apropos-value)
             (define-key map (kbd "s-h v") 'find-variable)
             ;; m==system manager
@@ -114,11 +113,12 @@
             (define-key map (kbd "H-<") 'previous-buffer)
             (define-key map (kbd "H-)") 'cic:org-end-of-next-heading)
             (define-key map (kbd "H-(") 'cic:org-end-of-prev-heading)
+            (define-key map (kbd "H-}") 'cic:next-file-dired)
+            (define-key map (kbd "H-{") 'cic:previous-file-dired)
             (define-key map (kbd "H-$") 'cic:flyspell-here)
             (define-key map (kbd "H-,") 'cic:wordlist-current-word)
             (define-key map (kbd "H-\\") 'indent-sexp)
-            ;; TODO: update so I can enter a date (and/or time) into
-            ;;       comments anywhere
+            (define-key map (kbd "H-m") 'cic:term-toggle-modes)
             ;; navigation of files
             (define-key map (kbd "H-i") 'imenu)
             (define-key map (kbd "H-y") 'cic:copy-file-name-to-clipboard)
@@ -127,6 +127,10 @@
             ;; universal align
             (define-key map (kbd "H-q") 'align-current)
             map))
+
+;; TODO: update so I can enter a date (and/or time) into
+;;       comments anywhere
+;;       used to have key for this
 
 (define-minor-mode emacs-stdlib-hyper-keys-all-mode
   ;;"Some standard keys bound to hyper that should work in all
@@ -146,7 +150,8 @@
             (define-key map (kbd "H--") 'text-scale-decrease)
             (define-key map (kbd "H-=") 'text-scale-increase)
             (define-key map (kbd "H-+") 'text-scale-increase)
-            (define-key map (kbd "H-<return>") 'buffer-menu)
+            ;; TODO: decided this was better used for other things
+            ;; (define-key map (kbd "H-<return>") 'buffer-menu)
             (define-key map (kbd "H-<backspace>") 'delete-frame)
             map))
 

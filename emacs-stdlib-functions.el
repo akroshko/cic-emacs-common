@@ -210,8 +210,7 @@ TODO: Currently actually prefix search, do I want an exact search?"
 
 (defun cic:org-find-table (&optional count)
   "Find a particular table with text NAME (based on headline) in BUFFER.
-TODO: Currently actually a prefix search, do I want an exact search?
-TODO: wrong comment"
+"
   (unless count
     (setq count 1))
   (dotimes (i count)
@@ -995,9 +994,8 @@ XXXX: Not currently used or tested."
   (cic:create-password cic:password-characters-Alphanum-punct 24))
 
 (defun cic:create-password-30-alpha-lower ()
-  "Create a 24 character alphanumeric password with punctuation
+  "Create a 30 character alphanumeric password with punctuation
   and capitals."
-  ;; TODO: write mroe, my lastest one
   (downcase (cic:create-password cic:password-characters-Alpha 30)))
 
 (defun cic:create-password (char-set char-num &optional random-source)
@@ -1138,7 +1136,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tbel functions
-;; TODO: make an independnent package
+;; TODO: make an independent package
 
 (defun cic:org-table-tblel-p ()
   "Find if we are at a location associated with an org-table
