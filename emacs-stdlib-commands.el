@@ -79,6 +79,7 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
+;; TODO: this may be obsolete because minor modes are better
 (defvar cic:org-mark-toggle-headline-hook
   nil
   "Add functions to be run with cic:org-mark-toggle-headline.")
@@ -581,7 +582,10 @@ alphanumeric."
   ;; TODO: expand to more likely modes
   (list 'c-mode 'emacs-lisp-mode 'java-mode 'js-mode 'python-mode 'scheme-mode 'sh-mode))
 
-;; TODO: separate programming and text lists
+(defconst cic:user-wordlist
+  "~/.words")
+
+;; TODO: separate programming/code and text wordlists
 (unless (boundp 'cic:user-wordlist)
   "The file to keep the word list in."
   (setq cic:user-wordlist ""))

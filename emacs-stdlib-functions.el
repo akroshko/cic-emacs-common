@@ -817,7 +817,7 @@ dsimilar ones."
 
 (defun cic:get-list-duplicates (lst)
   "Get the duplicate items in list LST."
-  (set-difference lst (delete-duplicates lst :test 'equal)))
+  (set-difference lst (remove-duplicates lst :test 'equal)))
 
 (defun cic:test-strings-in-list (lst1 lst2)
   "Tests if any items in LST1 are also in LST2."
@@ -1182,9 +1182,12 @@ along with a #+TBLEL line."
         (when (cic:org-table-tblel-line-p)
           (forward-line -1)
           (back-to-indentation))
-        ;; TODO: just evaluating a single lisp function, want more and want to check error before nuking current able
+        ;; TODO: just evaluating a single lisp function, want more and
+        ;; want to check error before nuking current table
         (setq lisp-table (cic:org-table-to-lisp-no-separators))
-        (setq new-lisp-table (funcall (intern lisp-function) lisp-table))
+        ;; XXXX: found it essential to send copy-tree of lisp-table to
+        ;; function, stops many subtle bugs
+        (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table)))
         ;; finally put it back if all is well
         (cic:org-table-elisp-replace lisp-table new-lisp-table)
         ;; TODO: option to avoid this?
