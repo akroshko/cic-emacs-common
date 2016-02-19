@@ -321,9 +321,10 @@ TODO: Often called from .emacs so should handle errors well."
   (interactive)
   (ansi-term "/usr/bin/screen"))
 
+;; TODO: not sure if this works at all.
+;;       do I want to use list item or my shell command?
 (defun cic:ansi-term-screen-select ()
-  "Select screen sessions in an ansi term.
-TODO: not sure if this works at all."
+  "Select screen sessions in an ansi term."
   (interactive)
   ;; get list of running screen sessions
   (let ((ansi-term-screen-sessions (remove "" (split-string (shell-command-to-string "ls /var/run/screen/S-$(whoami)") "\n")))
