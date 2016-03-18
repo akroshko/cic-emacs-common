@@ -361,6 +361,7 @@ TODO broken, provided a diff cleanup function too! "
   ;; After installation of the spkg, you must add something like the
   ;; following to your .emacs:
   ;; XXXX: obviously this is specific to a particular installation
+  ;; TODO: maybe have a load log warning thing
   (add-to-list 'load-path "/opt/sage-7.0/local/share/emacs/site-lisp/sage-mode")
   (requiring-package (sage)
     (require 'sage "sage")
