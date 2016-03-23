@@ -121,6 +121,7 @@
             (define-key map (kbd "H-m") 'cic:term-toggle-modes)
             ;; navigation of files
             (define-key map (kbd "H-i") 'imenu)
+            (define-key map (kbd "H-l") 'cic:goto-previous-mark)
             (define-key map (kbd "H-y") 'cic:copy-file-name-to-clipboard)
             ;; todo commands
             (define-key map (kbd "H-t") 'cic:org-mark-toggle-headline)

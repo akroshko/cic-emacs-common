@@ -75,6 +75,8 @@ TODO broken, provided a diff cleanup function too! "
 (requiring-package (ace-jump-mode)
   ;; TODO: not sure which one I want
   (global-set-key (kbd "H-SPC") 'ace-jump-mode)
+  ;; TODO: this is fun for now
+  (global-set-key (kbd "<menu>") 'ace-jump-mode)
   ;; (global-set-key (kbd "S-SPC") 'ace-jump-mode)
   (eval-after-load "ace-jump-mode"
     '(ace-jump-mode-enable-mark-sync))

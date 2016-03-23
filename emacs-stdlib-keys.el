@@ -71,6 +71,8 @@
             (define-key map (kbd "M-b") 'cic:backward-symbol)
             (define-key map (kbd "M-f") 'forward-symbol)
             (define-key map (kbd "M-i") 'indent-for-tab-command)
+            (define-key map (kbd "M-[") 'cic:decrease-indent)
+            (define-key map (kbd "M-]") 'cic:increase-indent)
             (define-key map (kbd "C-\\") 'cic:whack-whitespace)
             (define-key map (kbd "C-c f") 'find-file-at-point)
             (define-key map (kbd "C-c o") 'occur)

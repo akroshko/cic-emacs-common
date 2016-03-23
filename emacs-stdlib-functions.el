@@ -1213,4 +1213,62 @@ along with a #+TBLEL line."
 
 (add-hook 'org-mode-hook 'cic:org-table-tblel-setup)
 
+;; from https://stackoverflow.com/questions/6532898/is-there-a-apply-function-to-region-lines-in-emacs
+(defun apply-function-to-region-lines (fn)
+  "Apply a function FN to each line in the region."
+  (interactive)
+  (when (region-active-p)
+    (save-excursion
+      (region-beginning)
+      ;; loop over lines till region at end
+      (goto-char (region-end))
+      (let ((end-marker (copy-marker (point-marker)))
+            next-line-marker)
+        (goto-char (region-beginning))
+        (if (not (bolp))
+            (forward-line 1))
+        (setq next-line-marker (point-marker))
+        (while (< next-line-marker end-marker)
+        (let ((start nil)
+              (end nil))
+          (goto-char next-line-marker)
+          (save-excursion
+            (setq start (point))
+            (forward-line 1)
+            (set-marker next-line-marker (point))
+            (setq end (point)))
+          (save-excursion
+            (let ((mark-active nil))
+              (narrow-to-region start end)
+              (funcall fn)
+              (widen)))))
+      (set-marker end-marker nil)
+      (set-marker next-line-marker nil)
+      (setq deactivate-mark nil)))))
+
+
+(defun cic:increase-indent ()
+  "Increase the indent of a line or a region if that is active."
+  (interactive)
+  (if (region-active-p)
+      (apply-function-to-region-lines (lambda ()
+                                        (beginning-of-line)
+                                        (insert " ")))
+    (save-excursion
+      (beginning-of-line)
+      (insert " "))))
+
+(defun cic:decrease-indent ()
+  "Decrease the indent of a line or a region if that is active."
+  (interactive)
+  (if (region-active-p)
+      (apply-function-to-region-lines (lambda ()
+                                        (beginning-of-line)
+                                        (when (looking-at " ")
+                                          (delete-char 1))))
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at " ")
+        (delete-char 1)))))
+
 (provide 'emacs-stdlib-functions)

@@ -187,6 +187,8 @@
   ;; set omit by default
   (add-hook 'dired-mode-hook '(lambda ()  (dired-omit-mode 1)))
   (add-hook 'dired-mode-hook '(lambda ()  (hl-line-mode 1))))
+(add-hook 'package-menu-mode-hook '(lambda ()  (hl-line-mode 1)))
+(add-hook 'occur-mode-hook '(lambda ()  (hl-line-mode 1)))
 (requiring-package (ispell)
   (setq ispell-program-name "aspell"
         ;; I do really write in Canadian, except for all the z's I use
