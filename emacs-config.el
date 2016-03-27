@@ -87,6 +87,8 @@
 (setq-default cursor-type 'box)
 ;; truncate lines
 (setq truncate-lines t)
+;; don't need prefix for popping mark
+(setq set-mark-command-repeat-pop t)
 ;; this is essential for viewing images
 ;; (setq-default cursor-in-non-selected-windows 'nil)
 ;; remove the "waiting time", dialog box, and other annoyances at startup

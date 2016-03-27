@@ -409,7 +409,7 @@ of this macro, just in case."
          (when keep-going
            (org-forward-heading-same-level 1 nil))))))
 
-;; TODO make sure we can deal with seperators
+;; TODO: make sure we can deal with seperators
 (defmacro do-org-table-rows (filename table-name row &rest body)
   "Iterate over the rows of the table TABLE-NAME in FILENAME.
 ROW contains the current row converted into elisp."
@@ -419,7 +419,8 @@ ROW contains the current row converted into elisp."
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      (goto-char (point-min))
      ;; TODO replace with org-headline-goto???
-     (when (re-search-forward (concat "^\* " ,table-name) nil t)
+     ;; XXXX: complicated regexp deals with tags
+     (when (re-search-forward (concat "^\* " ,table-name "\\([[:space:]]:.*\\)?$") nil t)
        (cic:org-find-table)
        (let ((keep-going t)
              (lisp-table (cic:org-table-to-lisp-no-separators))
@@ -446,7 +447,7 @@ ITEM-LINE contains the line that a particular item is on."
   `(save-excursion
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      (goto-char (point-min))
-     (when (re-search-forward (concat "^\* " ,list-name) nil t)
+     (when (re-search-forward (concat "^\* " ,list-name "$") nil t)
        (forward-line 1)
        (let ((keep-going t))
          (while keep-going
@@ -525,7 +526,7 @@ Uses with-filename-filter."
   `(save-excursion
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      (goto-char (point-min))
-     (when (re-search-forward (concat "^\* " ,table-name) nil t)
+     (when (re-search-forward (concat "^\* " ,table-name "$") nil t)
        (cic:org-find-table)
        ,@body)))
 
