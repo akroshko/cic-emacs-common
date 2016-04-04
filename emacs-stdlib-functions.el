@@ -108,6 +108,13 @@ TODO: determine which is more efficient"
       (setq str (replace-match "" t t str))))
   str)
 
+(defun cic:strip-after-double-colon (str)
+  "Strip everything after and including a double colon in STR."
+  (when (stringp str)
+    (if (string-match "\\(.*\\)::.*" str)
+        (setq str (match-string 1 str))))
+  str)
+
 (defun strip-square-brackets (str)
   "Strip leading and trailing square brackets off of STR."
   (when (stringp str)

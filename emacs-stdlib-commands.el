@@ -174,13 +174,13 @@ types of headings.  Does nothing if already in desired state."
 (defun cic:url-at-point-or-line (&optional current-line)
   "Find the URL at point and return.  Find the url in
 CURRENT-LINE if specified."
-  (let ((url (thing-at-point 'url)))
+  (let ((url (cic:strip-after-double-colon (thing-at-point 'url))))
     (unless url
       (unless current-line
         (setq current-line (cic:get-current-line)))
       (let ((url-start (string-match cic:emacs-stdlib-url-regexp current-line)))
         (when url-start
-          (setq url (substring current-line url-start (match-end 0))))))
+          (setq url (cic:strip-after-double-colon (substring current-line url-start (match-end 0)))))))
     url))
 
 (defun cic:org-insert-two-level (&optional arg)
