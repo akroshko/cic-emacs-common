@@ -1196,10 +1196,12 @@ along with a #+TBLEL line."
         ;; XXXX: found it essential to send copy-tree of lisp-table to
         ;; function, stops many subtle bugs
         (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table)))
-        ;; finally put it back if all is well
-        (cic:org-table-elisp-replace lisp-table new-lisp-table)
-        ;; TODO: option to avoid this?
-        (org-table-align)))
+        ;; XXXX: make sure nil does not erase table
+        (when new-lisp-table
+          ;; finally put it back if all is well
+          (cic:org-table-elisp-replace lisp-table new-lisp-table)
+          ;; TODO: option to avoid this?
+          (org-table-align))))
     t))
 
 (defun cic:org-table-tblel-ctrl-c-recalc (orig-fun &rest args)
