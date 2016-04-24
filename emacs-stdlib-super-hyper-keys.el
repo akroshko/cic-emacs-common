@@ -58,12 +58,14 @@
             (define-key map (kbd "s-e b") 'cic:elisp-eval-buffer)
             (define-key map (kbd "s-e d") 'cic:elisp-eval-call-defun)
             (define-key map (kbd "s-e i") 'ielm)
+            ;; TODO: these aren't in line with my current scheme
             (define-key map (kbd "s-e j") 'cic:elisp-pp-capture-buffer)
             (define-key map (kbd "s-e m") 'cic:elisp-messages-buffer)
             (define-key map (kbd "s-e e") 'cic:elisp-debug-on-error)
             (define-key map (kbd "s-e s") 'cic:elisp-scratch-buffer)
             (define-key map (kbd "s-f w") 'cic:search-word-other-window)
             ;; h==help
+            ;; TODO: these badly need a menu
             (define-key map (kbd "s-h a") 'info-apropos)
             (define-key map (kbd "s-h f") 'find-function)
             ;; put c-u to just go to front of manual

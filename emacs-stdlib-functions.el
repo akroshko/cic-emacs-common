@@ -760,9 +760,7 @@ strings. Leave alone if already a string or list of strings"
     (if (symbolp maybe-string-list)
         (setq new-string-list (symbol-value maybe-string-list))
       (setq new-string-list maybe-string-list))
-    (unless (listp new-string-list)
-      (setq new-string-list (list new-string-list)))
-    new-string-list))
+    (cic:ensure-list new-string-list)))
 
 (defun increment-char (ch)
   "Not perfect, need better way sometimes to select file..."

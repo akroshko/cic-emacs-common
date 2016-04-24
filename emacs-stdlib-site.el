@@ -364,13 +364,13 @@ TODO broken, provided a diff cleanup function too! "
   ;; following to your .emacs:
   ;; XXXX: obviously this is specific to a particular installation
   ;; TODO: maybe have a load log warning thing
-  (add-to-list 'load-path "/opt/sage-7.0/local/share/emacs/site-lisp/sage-mode")
+  (add-to-list 'load-path "/opt/sage-7.1/local/share/emacs/site-lisp/sage-mode")
   (requiring-package (sage)
     (require 'sage "sage")
     ;; TODO: have an else for requiring-package
     (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
     (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
-  (setq sage-command "/opt/sage-7.0/sage")
+  (setq sage-command "/opt/sage-7.1/sage")
   ;; If you want sage-view to typeset all your output and display plot()
   ;; commands inline, uncomment the following line and configure sage-view:
   ;; (add-hook 'sage-startup-after-prompt-hook 'sage-view)
