@@ -1279,4 +1279,12 @@ along with a #+TBLEL line."
       (when (looking-at " ")
         (delete-char 1)))))
 
+(defun cic:make-file-finder (f)
+  "Make a command to find a particular file."
+  (let ((sym (gensym)))
+    (set sym f)
+    `(lambda ()
+       (interactive)
+       (find-file ,sym))))
+
 (provide 'emacs-stdlib-functions)
