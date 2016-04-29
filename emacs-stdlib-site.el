@@ -440,6 +440,7 @@ TODO broken, provided a diff cleanup function too! "
                          arduino-mode
                          auctex
                          auctex-latexmk
+                         auto-overlays
                          conkeror-minor-mode
                          apropos-fn+var
                          bash-completion
