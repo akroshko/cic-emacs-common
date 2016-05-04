@@ -1,6 +1,6 @@
 ;;; emacs-stdlib-constants.el --- Generic constants for emacs.
 ;;
-;; Copyright (C) 2015, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2015-2016, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
