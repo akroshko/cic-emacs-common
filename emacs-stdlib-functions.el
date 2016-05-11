@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160131
+;; Version: 20160511
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -1219,7 +1219,48 @@ along with a #+TBLEL line."
                           ;; TODO: change to org-meta-line, in keyword-face for convienience right now
                           '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . font-lock-comment-face))))
 
+
 (add-hook 'org-mode-hook 'cic:org-table-tblel-setup)
+
+;; a nice generic sum function, sum all sumable solumns
+;; TODO: get a table with seperators!!!!
+(defun tblel-generic-sum (lisp-table)
+  "Sum any column that is summable to the line at the end, and
+excluding a header."
+  (let ((sums (make-list (length (car lisp-table)) nil))
+        (count 0)
+        tmp-lisp-table)
+    (dolist (row (cdr (butlast lisp-table)))
+      (setq count 0)
+      (dolist (e row)
+        (when (or (cic:string-float-p (elt row count))
+                  (cic:string-integer-p (elt row count)))
+          (unless (elt sums count)
+            (setcar (nthcdr count sums) 0))
+          (setcar (nthcdr count sums) (+ (elt sums count) (string-to-number (elt row count)))))
+        (setq count (+ count 1))))
+    ;; now just insert it in last thing
+    (setq tmp-lisp-table (butlast lisp-table))
+    (append tmp-lisp-table (list (mapcar (lambda (e) (ignore-errors (number-to-string e))) sums)))))
+
+(defun tblel-generic-sum-quantity (lisp-table)
+  "Sums a quantity in second column with value in third column,
+into the last row."
+  (let ((sum nil)
+        tmp-lisp-table
+        last-row)
+    (dolist (row (cdr (butlast lisp-table)))
+      (when (and (or (cic:string-float-p (elt row 1))
+                    (cic:string-integer-p (elt row 1)))
+                 (or (cic:string-float-p (elt row 2))
+                     (cic:string-integer-p (elt row 2))))
+        (unless sum
+          (setq sum 0))
+        (setq sum (+ sum (* (string-to-number (elt row 1)) (string-to-number (elt row 2)))))))
+    (setq tmp-lisp-table (butlast lisp-table))
+    (setq last-row (car (last lisp-table)))
+    (setcar (nthcdr 2 last-row) (ignore-errors (number-to-string sum)))
+    (append tmp-lisp-table (list last-row))))
 
 ;; from https://stackoverflow.com/questions/6532898/is-there-a-apply-function-to-region-lines-in-emacs
 (defun apply-function-to-region-lines (fn)

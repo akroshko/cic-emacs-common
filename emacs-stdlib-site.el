@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20160131
+;; Version: 20160511
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -141,7 +141,7 @@ TODO broken, provided a diff cleanup function too! "
                  ;; This raises the frame when using Evince.
                  (add-hook 'TeX-source-correlate-mode-hook
                            (lambda ()
-                             (when (TeX-evince-dbus-p)
+                             (when (TeX-evince-dbus-p "gnome" "evince")
                                (dbus-register-signal
                                 :session nil "/org/gnome/evince/Window/0"
                                 "org.gnome.evince.Window" "SyncSource"

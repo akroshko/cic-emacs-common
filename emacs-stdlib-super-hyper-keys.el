@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160131
+;; Version: 20160511
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -144,6 +144,7 @@
             (define-key map (kbd "H-[") 'cic:prev-frame)
             (define-key map (kbd "H-;") 'menu-bar-open)
             ;; window management
+            (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
             (define-key map (kbd "H-f") 'windmove-right)
