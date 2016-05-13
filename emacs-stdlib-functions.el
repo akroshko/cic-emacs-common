@@ -67,6 +67,17 @@ TODO: flag to not use timestamp"
                       (insert (concat message-string "\n"))))
     (message raw-message-string)))
 
+;; XXXX: this could cause issues with debugging if function is made more complex
+(when (not (fboundp 'cic:find-file-meta))
+  (defun cic:find-file-meta (filename &optional wildcards)
+    "A find file function that is often replaced with something else in my special setups"
+    (find-file filename wildcards)))
+
+(when (not (fboundp 'cic:get-filename--meta))
+  (defun cic:get-filename--meta (filename)
+    "A get file function that is often replaced with something else in my special setups"
+    filename))
+
 (defun cic:time-stamp ()
   "Create a time-stamp."
   (format-time-string "%H:%M:%S" (current-time)))
@@ -1430,19 +1441,37 @@ into the last row."
                  ;; go to the end of the tree
                  (insert "\n")
                  ;; now insert it
-                 (insert region-to-move)))
+                 (insert region-to-move)
+                 (cic:org-kill-trailing-blank-lines)))
              ;; TODO: save-buffers once this is a stable function
              )))))
 
-;; XXXX: this could cause issues with debugging if function is made more complex
-(when (not (fboundp 'cic:find-file-meta))
-  (defun cic:find-file-meta (filename &optional wildcards)
-    "A find file function that is often replaced with something else in my special setups"
-    (find-file filename wildcards)))
-
-(when (not (fboundp 'cic:get-filename--meta))
-  (defun cic:get-filename--meta (filename)
-    "A get file function that is often replaced with something else in my special setups"
-    filename))
+;; TODO: add more cases at some point, start putting more places
+(defun cic:org-kill-trailing-blank-lines ()
+  "Kill trailing blanks at end of trees and after :END:"
+  ;; XXXX: lightly tested, be sure to diff before committing for now
+  (interactive)
+  (let ((line-found nil))
+   (when (eq major-mode 'org-mode)
+     (save-excursion
+       (goto-char (point-min))
+       (while (not (eobp))
+         (forward-line)
+         (cond ((string-match "^\\s-*$" (cic:get-current-line))
+                (setq line-found nil)
+                (save-excursion
+                  (forward-line)
+                  (when (and (not (eobp)) (string-match "^\\*" (cic:get-current-line)))
+                    (setq line-found t)))
+                (when line-found
+                  (beginning-of-line)
+                  (kill-line)))
+               ((string-match ":END:" (cic:get-current-line))
+                (setq line-found nil)
+                (save-excursion
+                  (forward-line)
+                  (when (and (not (eobp)) (string-match "^\\s-*$" (cic:get-current-line)))
+                    (beginning-of-line)
+                    (kill-line))))))))))
 
 (provide 'emacs-stdlib-functions)
