@@ -1420,7 +1420,7 @@ into the last row."
                (setq end-of-region (region-end))
                (setq region-to-move (buffer-substring beg-of-region end-of-region))
                (delete-region beg-of-region end-of-region)
-               (with-current-file (cic:group-path-unique destination-file)
+               (with-current-file (cic:get-filename-meta destination-file)
                  (goto-char (point-min))
                  (if (ignore-errors (cic:org-find-headline current-toplevel-tree))
                      (goto-char (org-end-of-subtree))
@@ -1440,6 +1440,9 @@ into the last row."
     "A find file function that is often replaced with something else in my special setups"
     (find-file filename wildcards)))
 
-
+(when (not (fboundp 'cic:get-filename--meta))
+  (defun cic:get-filename--meta (filename)
+    "A get file function that is often replaced with something else in my special setups"
+    filename))
 
 (provide 'emacs-stdlib-functions)
