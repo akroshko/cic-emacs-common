@@ -79,10 +79,12 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
-;; TODO: this may be obsolete because minor modes are better
-(defvar cic:org-mark-toggle-headline-hook
-  nil
-  "Add functions to be run with cic:org-mark-toggle-headline.")
+;; create  minor mode
+(define-minor-mode org-toggle-headline-mode
+  :global nil
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "H-t" ) 'cic:org-mark-toggle-headline)
+            map))
 
 (defun cic:org-at-todo-p ()
   (let (matched
@@ -101,51 +103,42 @@ or TODO with prefix ARG.  These can be highlighted a different
 color to easily indicate doneness.  Also has a hook for custom
 types of headings.  Does nothing if already in desired state."
   (interactive "P")
-  (let (return-value
-        return-true)
-    ;; check the cic:org-mark-toggle-headline-hook first
-    (dolist (heading-hook cic:org-mark-toggle-headline-hook)
-      ;; make sure only one is run
-      (unless return-true
-        (setq return-value (funcall heading-hook))
-        (when return-value
-          (setq return-true t))))
-    ;; TODO: do the org-mode thing if other values are not done?
-    (unless return-true
-      (cond ((eq major-mode 'org-agenda-mode)
-             (when (cic:org-at-todo-p)
-               (org-agenda-todo)))
-            ((and (org-at-heading-p) (cic:org-at-todo-p))
-             (if arg
-                 (org-todo 'todo)
-               (org-todo 'done)))
-            ((org-at-item-p)
-             (save-excursion
+  (cond ((eq major-mode 'org-agenda-mode)
+         (when (cic:org-at-todo-p)
+           (org-agenda-todo)))
+        ((and (org-at-heading-p) (cic:org-at-todo-p))
+         (if arg
+             (org-todo 'todo)
+           (org-todo 'done)))
+        ((org-at-item-p)
+         (save-excursion
+           (beginning-of-line)
+           (let* ((current-line (cic:get-current-line))
+                  (current-indentation (count-indentation current-line))
+                  replace-regexp
+                  regplace-item)
+             (when (and (not arg) (string-match "\\s-*- " current-line))
+               (setq replace-regexp "^\\s-*\\(-\\) .*$")
+               (setq replace-item "+"))
+             (when (and arg (string-match "\\s-*\\+ " current-line))
+               (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
+               (setq replace-item "-"))
+             (when replace-regexp
+               ;; replace
                (beginning-of-line)
-               (let* ((current-line (cic:get-current-line))
-                      (current-indentation (count-indentation current-line))
-                      replace-regexp
-                      regplace-item)
-                 (when (and (not arg) (string-match "\\s-*- " current-line))
-                   (setq replace-regexp "^\\s-*\\(-\\) .*$")
-                   (setq replace-item "+"))
-                 (when (and arg (string-match "\\s-*\\+ " current-line))
-                   (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
-                   (setq replace-item "-"))
-                 (when replace-regexp
-                   ;; replace
-                   (beginning-of-line)
-                   (when (re-search-forward replace-regexp nil t)
-                     (replace-match replace-item nil nil nil 1))
-                   (forward-line)
-                   (while (> (count-indentation (cic:get-current-line)) current-indentation)
-                     ;; replace again
-                     (beginning-of-line)
-                     (when (re-search-forward replace-regexp nil t)
-                       (replace-match replace-item nil nil nil 1))
-                     (forward-line))))))
-            (t
-             (error "Not at an item or valid TODO!"))))))
+               (when (re-search-forward replace-regexp nil t)
+                 (replace-match replace-item nil nil nil 1))
+               (forward-line)
+               (while (> (count-indentation (cic:get-current-line)) current-indentation)
+                 ;; replace again
+                 (beginning-of-line)
+                 (when (re-search-forward replace-regexp nil t)
+                   (replace-match replace-item nil nil nil 1))
+                 (forward-line))))))
+        (t
+         (error "Not at an item or valid TODO!"))))
+
+(add-hook 'org-mode-hook (lambda () (org-toggle-headline-mode 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands

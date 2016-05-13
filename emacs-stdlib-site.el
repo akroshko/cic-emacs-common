@@ -242,11 +242,13 @@ TODO broken, provided a diff cleanup function too! "
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (requiring-package (ido)
-         (require 'ido-hacks)
-         (require 'ido-ubiquitous)
-         (ido-mode t)
-         (ido-ubiquitous-mode 1)
-         (ido-hacks-mode 1))
+  (require 'ido-hacks)
+  (requiring-package (ido-ubiquitous)
+    ;; TODO: add any others
+    (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture"))))
+  (ido-mode t)
+  (ido-ubiquitous-mode 1)
+  (ido-hacks-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; popwin

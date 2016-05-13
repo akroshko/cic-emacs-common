@@ -1295,7 +1295,6 @@ into the last row."
       (set-marker next-line-marker nil)
       (setq deactivate-mark nil)))))
 
-
 (defun cic:increase-indent ()
   "Increase the indent of a line or a region if that is active."
   (interactive)
@@ -1327,5 +1326,120 @@ into the last row."
     `(lambda ()
        (interactive)
        (find-file ,sym))))
+
+(defun cic:org-refile-region-or-subtree (destination-file)
+  "Refile and indicate has been refiled."
+  ;; TODO: do I want this to be more general than org-file
+  ;; TODO: make sure destination file is an org-file
+  ;; TODO: maybe just check if destination file is symbol
+  (unless (or (not (eq major-mode 'org-mode)) (not destination-file) (eq destination-file 'cancel))
+    (let (region-to-move
+          (beg-of-region (region-beginning))
+          (end-of-region (region-end))
+          (current-filename (cic:current-grouppath (buffer-file-name)))
+          new-subtree
+          (check-input-char 13))
+      ;; ask about location
+      ;; TODO: pop-up showing things to be moved
+      (save-window-excursion
+        (cic:find-file-meta destination-file)
+        (goto-char (point-max))
+        (setq check-input-char (read-char "Refile to here (<enter> accepts and any other key cancels): "))
+        (message nil))
+      (message nil)
+      (when (equal check-input-char 13)
+        (when (not (region-active-p))
+          (org-mark-subtree)
+          (setq beg-of-region (region-beginning))
+          (setq end-of-region (region-end)))
+        (setq region-to-move (buffer-substring beg-of-region end-of-region))
+        (delete-region beg-of-region end-of-region)
+        (with-current-file destination-file
+          ;; is what I've cut a subtree
+          (with-temp-buffer
+            (org-mode)
+            ;; trim whitespace
+            (insert (chomp region-to-move))
+            ;; add subtree to the end with tag
+            (goto-char (point-min))
+            (if (cic:org-headline-p (cic:get-current-line))
+                (progn
+                  ;; cut headline to level 1
+                  (dotimes (count (- (org-outline-level) 1))
+                    (org-promote-subtree))
+                  ;; add tag to headline
+                  (when (not (string-match ":refiled:" (cic:get-current-line)))
+                    (end-of-line)
+                    (insert (concat " (from " current-filename ") :refiled:"))))
+              (progn
+                ;; add headline
+                (goto-char (point-min))
+                (while (not (eobp))
+                  (beginning-of-line)
+                  (insert "  ")
+                  (forward-line))
+                (goto-char (point-min))
+                (insert (concat "* (from " current-filename ") :refiled:\n"))))
+            (setq new-subtree (buffer-substring (point-min) (point-max))))
+          (with-current-file destination-file
+            (goto-char (point-max))
+            (when (not (= (current-column) 0))
+              (insert "\n"))
+            (insert new-subtree))))))
+  (when (not (eq major-mode 'org-mode))
+    (message "Refile only works in org-mode!")))
+
+(defun cic:org-refile-subtree-preserve-structure (destination-file)
+  "Refile and preserve structure."
+  (unless (or (not (eq major-mode 'org-mode)) (not destination-file) (eq destination-file 'cancel))
+    (cond ((region-active-p)
+           (message "Cannot refile while region is active!!!"))
+          ((/= (org-outline-level) 2)
+           (message "Must be at level 2 heading to refile!!!"))
+          (t
+           (let (new-subtree
+                 (current-filename (cic:current-grouppath (buffer-file-name)))
+                 (current-toplevel-tree (save-excursion (cic:goto-previous-heading-level 1)
+                                                        (org-back-to-heading)
+                                                        (cic:strip-full-no-properties (org-get-heading))))
+                 (check-input-char 13))
+             ;; avoid if region is active
+             (save-window-excursion
+               (cic:find-file-meta destination-file)
+               ;; find same heading
+               (goto-char (point-min))
+               (if (ignore-errors (cic:org-find-headline current-toplevel-tree))
+                   (goto-char (org-end-of-subtree))
+                 (goto-char (point-max)))
+               ;; if headline does not exist, just go to end
+               (setq check-input-char (read-char "Refile to here (<enter> accepts and any other key cancels): "))
+               (message nil))
+             (when (equal check-input-char 13)
+               (org-mark-subtree)
+               (setq beg-of-region (region-beginning))
+               (setq end-of-region (region-end))
+               (setq region-to-move (buffer-substring beg-of-region end-of-region))
+               (delete-region beg-of-region end-of-region)
+               (with-current-file (cic:group-path-unique destination-file)
+                 (goto-char (point-min))
+                 (if (ignore-errors (cic:org-find-headline current-toplevel-tree))
+                     (goto-char (org-end-of-subtree))
+                   (progn
+                     (goto-char (point-max))
+                     (insert (concat "* " current-toplevel-tree))))
+                 ;; go to the end of the tree
+                 (insert "\n")
+                 ;; now insert it
+                 (insert region-to-move)))
+             ;; TODO: save-buffers once this is a stable function
+             )))))
+
+;; XXXX: this could cause issues with debugging if function is made more complex
+(when (not (fboundp 'cic:find-file-meta))
+  (defun cic:find-file-meta (filename &optional wildcards)
+    "A find file function that is often replaced with something else in my special setups"
+    (find-file filename wildcards)))
+
+
 
 (provide 'emacs-stdlib-functions)
