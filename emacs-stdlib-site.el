@@ -489,6 +489,7 @@ TODO broken, provided a diff cleanup function too! "
                          rainbow-delimiters
                          readline-complete
                          sicp
+                         simple-call-tree
                          slime
                          slime-company
                          smartscan
@@ -504,6 +505,7 @@ TODO broken, provided a diff cleanup function too! "
   (interactive)
   (dolist (package cic:package-list)
     (unless (package-installed-p package)
+      ;; TODO: had issue installing 'org on laptop, not sure what
       (package-install package))))
 
 (provide 'emacs-stdlib-site)

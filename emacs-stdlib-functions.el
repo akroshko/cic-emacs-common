@@ -1474,4 +1474,16 @@ into the last row."
                     (beginning-of-line)
                     (kill-line))))))))))
 
+;; https://stackoverflow.com/questions/4870704/appending-characters-to-the-end-of-each-line-in-emacs
+;; create key for this and clean up language
+(defun add-string-to-end-of-lines-in-region (str b e)
+  "prompt for string, add it to end of lines in the region"
+  (interactive "sWhat shall we append? \nr")
+  (goto-char e)
+  (forward-line -1)
+  (while (> (point) b)
+    (end-of-line)
+    (insert str)
+    (forward-line -1)))
+
 (provide 'emacs-stdlib-functions)

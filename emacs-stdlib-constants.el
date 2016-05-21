@@ -33,7 +33,7 @@
 
 (defconst cic:emacs-stdlib-url-regexp
   ;; XXXX: taking off ending slash
-  "https\?://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*/[a-zA-Z0-9.!#%&+./\\\\;,:=?@~_()-]*[a-zA-Z0-9.!#%&+./\\\\:=?@~_()-]\\|https\?://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*"
+  "\\(https\?\\|ftp\\)://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*/[a-zA-Z0-9.!#%&+./\\\\;,:=?@~_()-]*[a-zA-Z0-9.!#%&+./\\\\:=?@~_()-]\\|https\?://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.?[a-zA-Z0-9.-]*"
   "A regexp that matches most urls.")
 
 (defconst cic:emacs-stdlib-url-regexp-complete
