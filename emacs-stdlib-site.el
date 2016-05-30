@@ -458,6 +458,7 @@ TODO broken, provided a diff cleanup function too! "
                          cython-mode
                          dired-avfs
                          dired-rainbow
+                         eimp
                          eldoc
                          emms
                          ess
@@ -474,6 +475,7 @@ TODO broken, provided a diff cleanup function too! "
                          ;; TODO get rid of
                          lacarte
                          ;; letcheck
+                         image-dired+
                          json-mode
                          magit
                          markdown-mode

@@ -66,26 +66,26 @@
             (define-key map (kbd "s-f w") 'cic:search-word-other-window)
             ;; h==help
             ;; TODO: these badly need a menu
-            (define-key map (kbd "s-h a") 'info-apropos)
-            (define-key map (kbd "s-h f") 'find-function)
+            (define-key map (kbd "s-h a")   'info-apropos)
+            (define-key map (kbd "s-h f")   'find-function)
             ;; put c-u to just go to front of manual
-            (define-key map (kbd "s-h e") 'info-lookup-symbol)
-            (define-key map (kbd "s-h k") 'find-function-on-key)
-            (define-key map (kbd "s-h l") 'find-library)
-            (define-key map (kbd "s-h o") 'cic:help-org)
-            (define-key map (kbd "s-h r") 'cic:help-elisp)
+            (define-key map (kbd "s-h e")   'info-lookup-symbol)
+            (define-key map (kbd "s-h k")   'find-function-on-key)
+            (define-key map (kbd "s-h l")   'find-library)
+            (define-key map (kbd "s-h o")   'cic:help-org)
+            (define-key map (kbd "s-h r")   'cic:help-elisp)
             ;; TODO better name/key for this u neq v
-            (define-key map (kbd "s-h u") 'apropos-value)
-            (define-key map (kbd "s-h v") 'find-variable)
+            (define-key map (kbd "s-h u")   'apropos-value)
+            (define-key map (kbd "s-h v")   'find-variable)
             ;; m==system manager
-            (define-key map (kbd "s-m p") 'cic:create-password-insert)
+            (define-key map (kbd "s-m p")   'cic:create-password-insert)
             (define-key map (kbd "s-m M-p") 'cic:create-password-insert-select)
             ;; j==jump
             ;; O == Open, meaning I'm Opening Outside of emacs
-            (define-key map (kbd "s-i c") 'cic:browse-url-at-point-conkeror)
-            (define-key map (kbd "s-i f") 'cic:browse-url-at-point-firefox)
-            (define-key map (kbd "s-i g") 'cic:browse-url-at-point-gnome-web)
-            (define-key map (kbd "s-i w") 'cic:browse-url-at-point-w3m)
+            (define-key map (kbd "s-i c")   'cic:browse-url-at-point-conkeror)
+            (define-key map (kbd "s-i f")   'cic:browse-url-at-point-firefox)
+            (define-key map (kbd "s-i g")   'cic:browse-url-at-point-gnome-web)
+            (define-key map (kbd "s-i w")   'cic:browse-url-at-point-w3m)
             ;; view
             ;; requires??? changing becaus s-v used for other things
             ;; (define-key map (kbd "s-v l") 'hl-line-mode)
@@ -93,9 +93,12 @@
             ;; zap up to char
             ;; TODO: something else here due to other keys I'm trying
             ;; TODO: decide if I want to toggle global default value or ???
-            (define-key map (kbd "s-5") (cic:toggle-variable case-fold-search
-                                                             "Case fold search enabled."
-                                                             "Case fold search disabled."))
+            (define-key map (kbd "s-5") 'toggle-case-fold-search)
+
+              ;; (cic:toggle-variable case-fold-search
+              ;;                                                "Case fold search enabled."
+              ;;                                                "Case fold search disabled."))
+
             ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
             ;; zap up to char
             ;; TODO: disabled for now due to conflict with other keys I'm trying
