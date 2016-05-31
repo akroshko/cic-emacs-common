@@ -127,6 +127,8 @@
 ;; set an appropriate tmp directory
 ;; XXXX: this directory might have to be explicitely created
 (setq temporary-file-directory "~/.emacs.d/tmp/")
+;; clipboard
+(setq x-select-enable-primary t)
 
 (auto-compression-mode 1)
 ;; locale information, just a generic Canadian location as default
