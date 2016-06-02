@@ -360,27 +360,29 @@ TODO broken, provided a diff cleanup function too! "
   ;; (add-hook 'python-mode-hook 'anaconda-mode)
   ;; (add-hook 'python-mode-hook 'eldoc-mode)
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
   ;; After installation of the spkg, you must add something like the
   ;; following to your .emacs:
   ;; XXXX: obviously this is specific to a particular installation
   ;; TODO: maybe have a load log warning thing
-  (add-to-list 'load-path "/opt/sage-7.1/local/share/emacs/site-lisp/sage-mode")
-  (requiring-package (sage)
-    (require 'sage "sage")
-    ;; TODO: have an else for requiring-package
-    (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
-    (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
-  (setq sage-command "/opt/sage-7.1/sage")
-  ;; If you want sage-view to typeset all your output and display plot()
-  ;; commands inline, uncomment the following line and configure sage-view:
-  ;; (add-hook 'sage-startup-after-prompt-hook 'sage-view)
-  ;; In particular customize the variable sage-view-default-commands.
-  ;; Using sage-view to typeset output requires a working LaTeX
-  ;; installation with the preview package.
-  ;; Also consider running (customize-group 'sage) to see more options.
-  )
+  ;; find latest installed sage and add to load path
+  (let ((sagedir (car (reverse (sort (delq nil (mapcar (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt"))) 'string<)))))
+    (add-to-list 'load-path (concat "/opt/" sagedir "/local/share/emacs/site-lisp/sage-mode"))
+    (requiring-package (sage)
+      (require 'sage "sage")
+      ;; TODO: have an else for requiring-package
+      (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
+      (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
+    (setq sage-command (concat "/opt/" sagedir "/sage"))
+    ;; If you want sage-view to typeset all your output and display plot()
+    ;; commands inline, uncomment the following line and configure sage-view:
+    ;; (add-hook 'sage-startup-after-prompt-hook 'sage-view)
+    ;; In particular customize the variable sage-view-default-commands.
+    ;; Using sage-view to typeset output requires a working LaTeX
+    ;; installation with the preview package.
+    ;; Also consider running (customize-group 'sage) to see more options.
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rainbow
