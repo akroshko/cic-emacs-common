@@ -723,46 +723,47 @@ if not possible."
       (string-to-number number)
     number))
 
-(defmacro with-time (time-output-p &rest exprs)
-  "Evaluate an org-table formula, converting all fields that look
-like time data to integer seconds.  If TIME-OUTPUT-P then return
-the result as a time value."
-  (list
-   (if time-output-p 'cic:org-time-seconds-to-string 'identity)
-   (cons 'progn
-         (mapcar
-          (lambda (expr)
-            `,(cons (car expr)
-                    (mapcar
-                     (lambda (el)
-                       (if (listp el)
-                           (list 'with-time nil el)
-                         (cic:org-time-string-to-seconds el)))
-                     (cdr expr))))
-          `,@exprs))))
+;; TODO: appears no longer used
+;; (defmacro with-time (time-output-p &rest exprs)
+;;   "Evaluate an org-table formula, converting all fields that look
+;; like time data to integer seconds.  If TIME-OUTPUT-P then return
+;; the result as a time value."
+;;   (list
+;;    (if time-output-p 'cic:org-time-seconds-to-string 'identity)
+;;    (cons 'progn
+;;          (mapcar
+;;           (lambda (expr)
+;;             `,(cons (car expr)
+;;                     (mapcar
+;;                      (lambda (el)
+;;                        (if (listp el)
+;;                            (list 'with-time nil el)
+;;                          (cic:org-time-string-to-seconds el)))
+;;                      (cdr expr))))
+;;           `,@exprs))))
 
-(defun cic:org-time-seconds-to-string (secs)
-  "Convert a number of seconds to a time string."
-  (cond ((>= secs 3600) (format-seconds "%h:%.2m:%.2s" secs))
-        ((>= secs 60) (format-seconds "%m:%.2s" secs))
-        (t (format-seconds "%s" secs))))
+;; (defun cic:org-time-seconds-to-string (secs)
+;;   "Convert a number of seconds to a time string."
+;;   (cond ((>= secs 3600) (format-seconds "%h:%.2m:%.2s" secs))
+;;         ((>= secs 60) (format-seconds "%m:%.2s" secs))
+;;         (t (format-seconds "%s" secs))))
 
-(defun cic:org-time-string-to-seconds (s)
-  "Convert a string HH:MM:SS to a number of seconds."
-  (cond
-   ((and (stringp s)
-         (string-match "\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)" s))
-    (let ((hour (string-to-number (match-string 1 s)))
-          (min (string-to-number (match-string 2 s)))
-          (sec (string-to-number (match-string 3 s))))
-      (+ (* hour 3600) (* min 60) sec)))
-   ((and (stringp s)
-         (string-match "\\([0-9]+\\):\\([0-9]+\\)" s))
-    (let ((min (string-to-number (match-string 1 s)))
-          (sec (string-to-number (match-string 2 s))))
-      (+ (* min 60) sec)))
-   ((stringp s) (string-to-number s))
-   (t s)))
+;; (defun cic:org-time-string-to-seconds (s)
+;;   "Convert a string HH:MM:SS to a number of seconds."
+;;   (cond
+;;    ((and (stringp s)
+;;          (string-match "\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)" s))
+;;     (let ((hour (string-to-number (match-string 1 s)))
+;;           (min (string-to-number (match-string 2 s)))
+;;           (sec (string-to-number (match-string 3 s))))
+;;       (+ (* hour 3600) (* min 60) sec)))
+;;    ((and (stringp s)
+;;          (string-match "\\([0-9]+\\):\\([0-9]+\\)" s))
+;;     (let ((min (string-to-number (match-string 1 s)))
+;;           (sec (string-to-number (match-string 2 s))))
+;;       (+ (* min 60) sec)))
+;;    ((stringp s) (string-to-number s))
+;;    (t s)))
 
 (defun cic:symbol-to-string-or-list (maybe-string-list)
   "Dereference a symbol to (presumably) a string or list of
@@ -1151,128 +1152,6 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
         (cic:strip-full-no-properties thestr)
       "")))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; tbel functions
-;; TODO: make an independent package
-
-(defun cic:org-table-tblel-p ()
-  "Find if we are at a location associated with an org-table
-along with a #+TBLEL line."
-  (or
-   (cic:org-table-tblel-line-p)
-   (save-excursion
-     (and
-      (org-table-p)
-      (progn
-        (goto-char (org-table-end))
-        (beginning-of-line)
-        (looking-at "\\s-+#\\+TBLEL:"))))))
-
-(defun cic:org-table-tblel-line-p ()
-  "Check if at a #+TBLEL line."
-  (save-excursion
-    (beginning-of-line)
-    (looking-at "\\s-+#\\+TBLEL:")))
-
-(defun cic:org-table-eval-tblel-line (&rest args)
-  "Evalute the function on a #+TBLEL line."
-  (when (cic:org-table-tblel-line-p)
-    (cic:org-table-eval-tblel)))
-
-(defun cic:org-table-eval-tblel (&rest args)
-  "Get the lisp table and run the appropriate function on it (several functions?)."
-  ;; TODO: unwind protect to avoid nuking table
-  ;; TODO: avoid back-to-heading/find-table and use a better methodology for tables
-  (interactive)
-  (when (cic:org-table-tblel-p)
-    (let (lisp-table
-          lisp-function
-          new-lisp-table)
-      ;; get elisp function to run
-      (save-excursion
-        (unless (cic:org-table-tblel-line-p)
-            (goto-char (org-table-end)))
-        (beginning-of-line)
-        ;; TODO: eventually get forms
-        (setq lisp-function (substring-no-properties (elt (split-string (cic:get-current-line)) 1))))
-      (save-excursion
-        (when (cic:org-table-tblel-line-p)
-          (forward-line -1)
-          (back-to-indentation))
-        ;; TODO: just evaluating a single lisp function, want more and
-        ;; want to check error before nuking current table
-        (setq lisp-table (cic:org-table-to-lisp-no-separators))
-        ;; XXXX: found it essential to send copy-tree of lisp-table to
-        ;; function, stops many subtle bugs
-        (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table)))
-        ;; XXXX: make sure nil does not erase table
-        (when new-lisp-table
-          ;; finally put it back if all is well
-          (cic:org-table-elisp-replace lisp-table new-lisp-table)
-          ;; TODO: option to avoid this?
-          (org-table-align))))
-    t))
-
-(defun cic:org-table-tblel-ctrl-c-recalc (orig-fun &rest args)
-  "Function to advise ctrl-c and org-table evaluate functions."
-  ;; kill ctrl-c-ctrol-c and just do our own thing until TBLEL==keyword is fixed
-  (when (cic:org-table-tblel-line-p)
-    (funcall orig-fun args)))
-
-;; add some advice to intercept org-table functions and commands
-(advice-add 'org-table-recalculate :before #'cic:org-table-eval-tblel)
-(add-hook 'org-ctrl-c-ctrl-c-hook 'cic:org-table-eval-tblel-line)
-
-(defun cic:org-table-tblel-setup ()
-  "Set up some things so tblel is as integrated as possible in org-table."
-  ;; set up fontification
-  (font-lock-add-keywords 'org-mode
-                          ;; TODO: change to org-meta-line, in keyword-face for convienience right now
-                          '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . font-lock-comment-face))))
-
-
-(add-hook 'org-mode-hook 'cic:org-table-tblel-setup)
-
-;; a nice generic sum function, sum all sumable solumns
-;; TODO: get a table with seperators!!!!
-(defun tblel-generic-sum (lisp-table)
-  "Sum any column that is summable to the line at the end, and
-excluding a header."
-  (let ((sums (make-list (length (car lisp-table)) nil))
-        (count 0)
-        tmp-lisp-table)
-    (dolist (row (cdr (butlast lisp-table)))
-      (setq count 0)
-      (dolist (e row)
-        (when (or (cic:string-float-p (elt row count))
-                  (cic:string-integer-p (elt row count)))
-          (unless (elt sums count)
-            (setcar (nthcdr count sums) 0))
-          (setcar (nthcdr count sums) (+ (elt sums count) (string-to-number (elt row count)))))
-        (setq count (+ count 1))))
-    ;; now just insert it in last thing
-    (setq tmp-lisp-table (butlast lisp-table))
-    (append tmp-lisp-table (list (mapcar (lambda (e) (ignore-errors (number-to-string e))) sums)))))
-
-(defun tblel-generic-sum-quantity (lisp-table)
-  "Sums a quantity in second column with value in third column,
-into the last row."
-  (let ((sum nil)
-        tmp-lisp-table
-        last-row)
-    (dolist (row (cdr (butlast lisp-table)))
-      (when (and (or (cic:string-float-p (elt row 1))
-                    (cic:string-integer-p (elt row 1)))
-                 (or (cic:string-float-p (elt row 2))
-                     (cic:string-integer-p (elt row 2))))
-        (unless sum
-          (setq sum 0))
-        (setq sum (+ sum (* (string-to-number (elt row 1)) (string-to-number (elt row 2)))))))
-    (setq tmp-lisp-table (butlast lisp-table))
-    (setq last-row (car (last lisp-table)))
-    (setcar (nthcdr 2 last-row) (ignore-errors (number-to-string sum)))
-    (append tmp-lisp-table (list last-row))))
-
 ;; from https://stackoverflow.com/questions/6532898/is-there-a-apply-function-to-region-lines-in-emacs
 (defun apply-function-to-region-lines (fn)
   "Apply a function FN to each line in the region."
@@ -1485,5 +1364,52 @@ into the last row."
     (end-of-line)
     (insert str)
     (forward-line -1)))
+
+(global-set-key (kbd "s-b") 'cic:current-build)
+
+(defvar cic:current-build-filename
+  nil
+  "Stores the current build filename for asyncronous processes and sentinels.")
+
+;; build, just latex for now
+(defun cic:current-build ()
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (let ((full-filename (buffer-file-name)))
+           (TeX-command "LatexMk" 'TeX-master-file nil)
+           (let* ((current-filename (file-name-sans-extension (file-name-nondirectory full-filename)))
+                  (active-process (with-current-file full-filename
+                                    (TeX-active-process))))
+             (setq cic:current-build-filename current-filename)
+             ;; TODO: how to stop this from overriding default message, move to emacs-stdlib
+             (if active-process
+                 (set-process-sentinel active-process
+                                       (lambda (process event)
+                                         (when (equal event "finished\n")
+                                           (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))
+                                         (message "Finished compiling and reloading xpdf! Type `C-c C-l' to see results!")))
+               (progn
+                 (message "No active process! Reloading anyways!")
+                 (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))))))
+        ((eq major-mode 'markdown-mode)
+         (gh-md-export-buffer))))
+
+;; see https://www.emacswiki.org/emacs/HalfScrolling
+;; TODO: might have some issues with cursor-preserve-positio
+;; TODO: idea... highlight previous top/bottow on scrolling
+;; TODO: not sure I want this
+(defun cic:window-twothirds ()
+  (max 1 (/ (* 2 (1- (window-height (selected-window)))) 3)))
+
+(defun cic:scroll-up-twothirds ()
+  (interactive)
+  (scroll-up (cic:window-twothirds)))
+
+(defun cic:scroll-down-twothirds ()
+  (interactive)
+  (scroll-down (cic:window-twothirds)))
+
+(global-set-key [next] 'cic:scroll-up-twothirds)
+(global-set-key [prior] 'cic:scroll-down-twothirds)
 
 (provide 'emacs-stdlib-functions)

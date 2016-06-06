@@ -54,11 +54,11 @@
                                              (interactive)
                                              (forward-line)))
             (define-key map (kbd "C-<up>") (lambda ()
-                                           (interactive)
-                                           (scroll-down-line 5)))
-            (define-key map (kbd "C-<down>") (lambda ()
                                              (interactive)
-                                             (scroll-up-line 5)))
+                                             (scroll-down-line 5)))
+            (define-key map (kbd "C-<down>") (lambda ()
+                                               (interactive)
+                                               (scroll-up-line 5)))
             (define-key map (kbd "S-<up>") (lambda ()
                                              (interactive)
                                              (scroll-down)))
@@ -68,9 +68,11 @@
             ;; remap and add some standard functionality
             (define-key map [f11]             'cic:toggle-fullscreen)
             (define-key map [f12]             'cic:toggle-menubar)
-            ;; TODO: not permanent yet
-             (define-key map (kbd "s-v")      'scroll-down-command)
-            (define-key map (kbd "s-SPC")     'scroll-up-command)
+            ;; M- most convienient for laptop, control most convienient for touch typing
+            (define-key map (kbd "M-,")       'scroll-down-command)
+            (define-key map (kbd "M-.")       'scroll-up-command)
+            (define-key map (kbd "C-,")       'scroll-down-command)
+            (define-key map (kbd "C-.")       'scroll-up-command)
             (define-key map (kbd "M-b")       'cic:backward-symbol)
             (define-key map (kbd "M-c")       'kill-ring-save)
             (define-key map (kbd "M-v")       'yank)
@@ -94,6 +96,7 @@
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))
+  (global-unset-key (kbd "C-v"))
   (requiring-package (dired-x)
     (define-key dired-mode-map (kbd "M-o") 'dired-omit-mode)))
 

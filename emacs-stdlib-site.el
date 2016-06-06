@@ -80,6 +80,7 @@ TODO broken, provided a diff cleanup function too! "
   ;; (global-set-key (kbd "S-SPC") 'ace-jump-mode)
   (eval-after-load "ace-jump-mode"
     '(ace-jump-mode-enable-mark-sync))
+  ;; TODO: maybe do super space for this
   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,9 +107,9 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
-                         (output-pdf "Evince")
+                         (output-pdf "xpdf")
                          (output-html "HTML Viewer")))
-                 (setq TeX-pr)
+                 ;; (setq TeX-pr)
                  (add-hook 'LaTeX-mode-hook (lambda () (add-to-list 'TeX-expand-list
                                                                     '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))))
                  ;; general syntax stuff
@@ -132,24 +133,7 @@ TODO broken, provided a diff cleanup function too! "
                    '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
                  (requiring-package (auctex-latexmk)
                    (unless (assoc "LatexMk" TeX-command-list)
-                     (auctex-latexmk-setup)))
-                 ;; https://tex.stackexchange.com/questions/170564/synctex-between-emacs-and-evince-which-would-move-focus-for-backward-search
-                 (defun raise-client-frame ()
-                   (let ((wmctrl (executable-find "wmctrl")))
-                     (if wmctrl
-                         (start-process "wmctrl" nil wmctrl "-R" (frame-parameter nil 'name)))))
-                 ;; This raises the frame when using Evince.
-                 (add-hook 'TeX-source-correlate-mode-hook
-                           (lambda ()
-                             (when (TeX-evince-dbus-p "gnome" "evince")
-                               (dbus-register-signal
-                                :session nil "/org/gnome/evince/Window/0"
-                                "org.gnome.evince.Window" "SyncSource"
-                                (lambda (file linecol &rest ignored)
-                                  (TeX-source-correlate-sync-source file linecol ignored)
-                                  (raise-client-frame))))))
-                 ;; This raises the frame when using all other viewers.
-                 (add-hook 'server-switch-hook 'raise-client-frame))
+                     (auctex-latexmk-setup))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion

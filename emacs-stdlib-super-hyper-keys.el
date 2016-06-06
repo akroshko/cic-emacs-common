@@ -82,10 +82,10 @@
             (define-key map (kbd "s-m M-p") 'cic:create-password-insert-select)
             ;; j==jump
             ;; O == Open, meaning I'm Opening Outside of emacs
-            (define-key map (kbd "s-i c")   'cic:browse-url-at-point-conkeror)
-            (define-key map (kbd "s-i f")   'cic:browse-url-at-point-firefox)
-            (define-key map (kbd "s-i g")   'cic:browse-url-at-point-gnome-web)
-            (define-key map (kbd "s-i w")   'cic:browse-url-at-point-w3m)
+            (define-key map (kbd "s-o c")   'cic:browse-url-at-point-conkeror)
+            (define-key map (kbd "s-o f")   'cic:browse-url-at-point-firefox)
+            (define-key map (kbd "s-o g")   'cic:browse-url-at-point-gnome-web)
+            (define-key map (kbd "s-o w")   'cic:browse-url-at-point-w3m)
             ;; view
             ;; requires??? changing becaus s-v used for other things
             ;; (define-key map (kbd "s-v l") 'hl-line-mode)
