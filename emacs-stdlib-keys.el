@@ -73,6 +73,8 @@
             (define-key map (kbd "M-.")       'scroll-up-command)
             (define-key map (kbd "C-,")       'scroll-down-command)
             (define-key map (kbd "C-.")       'scroll-up-command)
+            (define-key map (kbd "s-S-x")     'scroll-down-command)
+            (define-key map (kbd "s-x")       'scroll-up-command)
             (define-key map (kbd "M-b")       'cic:backward-symbol)
             (define-key map (kbd "M-c")       'kill-ring-save)
             (define-key map (kbd "M-v")       'yank)
