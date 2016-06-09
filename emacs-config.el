@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160525
+;; Version: 20160609
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -73,7 +73,8 @@
 (setq coding-system-for-read 'utf-8
       coding-system-for-write 'utf-8)
 ;; bluish/reddish modeline
-(set-face-background 'mode-line "#6699cc")
+;; (set-face-background 'mode-line "#6699cc")
+(set-face-background 'mode-line "#6699ff")
 (set-face-background 'modeline-inactive "#ffaa88")
 ;; highlight in olive green, visible on many of my modes
 (set-face-attribute 'region nil :background "#c0ff3e")

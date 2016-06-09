@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160525
+;; Version: 20160609
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -196,7 +196,7 @@ level with a bottom level heading"
 ;;      proabably need to fix up save-current-buffer, etc.
 (defun cic:next-file-dired (&optional motion)
   "Goto the next file from the current file as listed by dired.
-Effect of motion is unknown."
+Effect of motion is to go to previous."
   (interactive)
   (unless motion
     (setq motion 1))
@@ -218,6 +218,17 @@ Effect of motion is unknown."
             (error (setq keep-going nil))))))
     (when next-filename
       (find-file next-filename))))
+
+(defun cic:next-file-dired-pagedown (&optional motion)
+  "Page down in current file, then when at end goto the next file
+from the current file as listed by dired.  Effect of motion is to
+go to previous."
+  (interactive)
+  (if motion
+      (unless (ignore-errors (or (scroll-down) t))
+        (cic:next-file-dired motion))
+    (unless (ignore-errors (or (scroll-up) t))
+      (cic:next-file-dired motion))))
 
 (defun cic:search-word-other-window ()
   "Search in the other window for the word at point.
@@ -562,6 +573,9 @@ alphanumeric."
 (defun cic:previous-file-dired ()
   (interactive)
   (cic:next-file-dired -1))
+(defun cic:previous-file-dired-pageup ()
+  (interactive)
+  (cic:next-file-dired-pagedown -1))
 (defun cic:org-end-of-prev-heading ()
   (interactive)
   (cic:org-end-of-next-heading -1))
