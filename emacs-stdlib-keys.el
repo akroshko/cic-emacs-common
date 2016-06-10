@@ -47,12 +47,12 @@
   :keymap (let ((map (make-sparse-keymap)))
             ;; these make working on a laptop or tablet type computer great
             ;; TODO: would centering be useful?
-            (define-key map (kbd "<up>") (lambda ()
-                                           (interactive)
-                                           (forward-line -1)))
-            (define-key map (kbd "<down>") (lambda ()
-                                             (interactive)
-                                             (forward-line)))
+            ;; (define-key map (kbd "<up>") (lambda ()
+            ;;                                (interactive)
+            ;;                                (forward-line -1)))
+            ;; (define-key map (kbd "<down>") (lambda ()
+            ;;                                  (interactive)
+            ;;                                  (forward-line)))
             (define-key map (kbd "C-<up>") (lambda ()
                                              (interactive)
                                              (scroll-down-line 5)))

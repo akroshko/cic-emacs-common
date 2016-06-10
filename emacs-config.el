@@ -87,7 +87,8 @@
 ;; show point a little better
 (setq-default cursor-type 'box)
 ;; truncate lines
-(setq truncate-lines t)
+(setq truncate-lines t
+      line-move-visual nil)
 ;; don't need prefix for popping mark
 (setq set-mark-command-repeat-pop t)
 ;; this is essential for viewing images
