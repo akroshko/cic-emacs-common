@@ -1409,7 +1409,10 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (interactive)
   (scroll-down (cic:window-twothirds)))
 
-(global-set-key [next] 'cic:scroll-up-twothirds)
-(global-set-key [prior] 'cic:scroll-down-twothirds)
+;; (global-set-key [next] 'cic:scroll-up-twothirds)
+;; (global-set-key [prior] 'cic:scroll-down-twothirds)
+;; TODO: twothirds don't work with image-dired
+(global-set-key [next] 'scroll-up)
+(global-set-key [prior] 'scroll-down)
 
 (provide 'emacs-stdlib-functions)
