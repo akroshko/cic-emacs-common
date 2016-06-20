@@ -500,28 +500,32 @@ similar languages."
       (kill-new filename)
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 
-(defun cic:create-password-insert (&optional arg)
+(defun cic:create-password-insert (&optional arg select)
   "When ARG is given, select a random password type and insert
 into current buffer.  Without ARG, defaults to 24 character
 alphanumeric."
   (interactive "P")
   (let ((select-list (list
-                      (list '30l "30 character alphabet with punctuation")
+                      (list '30l   "30 character alphabet")
                       (list '24anp "24 character alphanumeric with punctuation")
                       (list '12anp "12 character alphanumeric with punctuation")
+                      (list '18anl "18 character alphanumeric lowercase")
                       (list '24an  "24 character alphanumeric")
-                      (list '12an "12 character alphanumeric")))
+                      (list '12an  "12 character alphanumeric")))
         selected)
-    (if arg
-        (progn
-          (setq selected (cic:select-list-item select-list
-                                           'cadr))
-          (setq selected (car (elt select-list selected))))
-      (setq selected '30l))
+    (cond ((eq select t)
+           (setq selected (cic:select-list-item select-list 'cadr))
+           (setq selected (car (elt select-list selected))))
+          (arg
+           (setq selected '18anl))
+          (t
+           (setq selected '30l)))
     (cond ((eq selected '12an)
            (insert (cic:create-password-12-Alphanum)))
           ((eq selected '12anp)
            (insert (cic:create-password-12-Alphanum-punct)))
+          ((eq selected '18anl)
+           (insert (cic:create-password-18-alphanum-lower)))
           ((eq selected '24an)
            (insert (cic:create-password-24-Alphanum)))
           ((eq selected '24anp)
@@ -532,7 +536,7 @@ alphanumeric."
 (defun cic:create-password-insert-select ()
   "Select a random password type and insert into current buffer."
   (interactive)
-  (cic:create-password-insert t))
+  (cic:create-password-insert nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emacs development

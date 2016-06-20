@@ -983,6 +983,10 @@ XXXX: Not currently used or tested."
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "This is 62 characters total")
 
+(defconst cic:password-characters-alphanum-lower
+  "0123456789abcdefghijklmnopqrstuvwxyz"
+  "This is 36 characters total")
+
 (defconst cic:password-characters-Alphanum-punct
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?@#$%^&*-_=+/.,"
   "This is 78 characters total.")
@@ -995,6 +999,11 @@ XXXX: Not currently used or tested."
   "Create a 12 character alphanumeric password. Don't know of
   anywhere that can't do alphanum with capitals."
   (cic:create-password cic:password-characters-Alphanum 12))
+
+(defun cic:create-password-18-alphanum-lower ()
+  "Create a 15 character alphanumeric password. Don't know of
+  anywhere that can't do alphanum with capitals."
+  (cic:create-password cic:password-characters-alphanum-lower 18))
 
 (defun cic:create-password-12-Alphanum-punct ()
   "Create a 12 character alphanumeric password with punctuation
