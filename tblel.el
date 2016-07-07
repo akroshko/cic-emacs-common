@@ -133,6 +133,39 @@ excluding a header."
     (setq tmp-lisp-table (butlast lisp-table))
     (append tmp-lisp-table (list (mapcar (lambda (e) (ignore-errors (number-to-string e))) sums)))))
 
+(defun tblel-generic-sum-cumulative-two-three (lisp-table)
+  "Sum column one and record cumulative sums in column two and
+three."
+  (let ((sum1 0)
+        (sums2 (make-list (length lisp-table) 0))
+        (sums3 (make-list (length lisp-table) 0))
+        (count 0)
+        (tmp-lisp-table (butlast lisp-table))
+        (sums (make-list (length (car lisp-table)) nil)))
+    (setq count 0)
+    (dolist (row (butlast lisp-table))
+      (when (and (not (equal count 0))
+                 (or (cic:string-float-p (elt row 1))
+                     (cic:string-integer-p (elt row 1)))
+             (setq sum1 (+ sum1 (string-to-number (elt row 1))))))
+      (when (not (equal count 0))
+        (cond ((or (cic:string-float-p   (elt row 1))
+                   (cic:string-integer-p (elt row 1)))
+               (setcar (nthcdr count sums2) (+ (elt sums2 (- count 1)) (string-to-number (elt row 1))))
+               (setcar (nthcdr count sums3) (+ (elt sums3 (- count 1)) (string-to-number (elt row 1)))))
+              (t
+               (setcar (nthcdr count sums2) (+ (elt sums2 (- count 1)) 0))
+               (setcar (nthcdr count sums3) (+ (elt sums3 (- count 1)) 0))))
+        (setcar (nthcdr 2 (elt tmp-lisp-table count)) (number-to-string (elt sums2 count)))
+        (setcar (nthcdr 3 (elt tmp-lisp-table count)) (number-to-string (elt sums3 count))))
+      (mpp tmp-lisp-table)
+      (setq count (+ count 1)))
+    ;; now just insert it in last thing
+    (setcar (nthcdr 1 sums) (number-to-string sum1))
+    (setcar (nthcdr 2 sums) sums2)
+    (setcar (nthcdr 3 sums) sums3)
+    (append tmp-lisp-table (list sums))))
+
 (defun tblel-generic-sum-quantity (lisp-table)
   "Sums a quantity in second column with value in third column,
 into the last row."
