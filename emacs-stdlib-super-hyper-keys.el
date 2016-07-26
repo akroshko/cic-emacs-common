@@ -47,26 +47,26 @@
   ;; "Some standard keys bound to super."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "s-[") 'cic:previous-buffer-same-mode)
-            (define-key map (kbd "s-]") 'cic:next-buffer-same-mode)
+            (define-key map (kbd "s-[")     'cic:previous-buffer-same-mode)
+            (define-key map (kbd "s-]")     'cic:next-buffer-same-mode)
             ;; great for scanning
-            (define-key map (kbd "s-}") 'cic:next-file-dired-pagedown)
-            (define-key map (kbd "s-{") 'cic:previous-file-dired-pageup)
+            (define-key map (kbd "s-}")     'cic:next-file-dired-pagedown)
+            (define-key map (kbd "s-{")     'cic:previous-file-dired-pageup)
             ;; org keys
             (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
-            (define-key map (kbd "s-%") 'cic:query-replace-case-sensitive)
-            (define-key map (kbd "s-*") 'cic:recalculate)
-            (define-key map (kbd "s-c w") 'wdired-change-to-wdired-mode)
+            (define-key map (kbd "s-%")        'cic:query-replace-case-sensitive)
+            (define-key map (kbd "s-*")        'cic:recalculate)
+            (define-key map (kbd "s-c w")      'wdired-change-to-wdired-mode)
             ;; generic emacs development
-            (define-key map (kbd "s-e b") 'cic:elisp-eval-buffer)
-            (define-key map (kbd "s-e d") 'cic:elisp-eval-call-defun)
-            (define-key map (kbd "s-e i") 'ielm)
+            (define-key map (kbd "s-e b")   'cic:elisp-eval-buffer)
+            (define-key map (kbd "s-e d")   'cic:elisp-eval-call-defun)
+            (define-key map (kbd "s-e i")   'ielm)
             ;; TODO: these aren't in line with my current scheme
-            (define-key map (kbd "s-e j") 'cic:elisp-pp-capture-buffer)
-            (define-key map (kbd "s-e m") 'cic:elisp-messages-buffer)
-            (define-key map (kbd "s-e e") 'cic:elisp-debug-on-error)
-            (define-key map (kbd "s-e s") 'cic:elisp-scratch-buffer)
-            (define-key map (kbd "s-f w") 'cic:search-word-other-window)
+            (define-key map (kbd "s-e j")   'cic:elisp-pp-capture-buffer)
+            (define-key map (kbd "s-e m")   'cic:elisp-messages-buffer)
+            (define-key map (kbd "s-e e")   'cic:elisp-debug-on-error)
+            (define-key map (kbd "s-e s")   'cic:elisp-scratch-buffer)
+            (define-key map (kbd "s-f w")   'cic:search-word-other-window)
             ;; h==help
             ;; TODO: these badly need a menu
             (define-key map (kbd "s-h a")   'info-apropos)
@@ -97,11 +97,9 @@
             ;; TODO: something else here due to other keys I'm trying
             ;; TODO: decide if I want to toggle global default value or ???
             (define-key map (kbd "s-5") 'toggle-case-fold-search)
-
-              ;; (cic:toggle-variable case-fold-search
-              ;;                                                "Case fold search enabled."
-              ;;                                                "Case fold search disabled."))
-
+            ;; (cic:toggle-variable case-fold-search
+            ;;  "Case fold search enabled."
+            ;;  "Case fold search disabled."))
             ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
             ;; zap up to char
             ;; TODO: disabled for now due to conflict with other keys I'm trying
@@ -117,24 +115,24 @@
             ;; are there cooler things than this?
             ;; time date stamp???
             ;; add control U?
-            (define-key map (kbd "H->")   'next-buffer)
-            (define-key map (kbd "H-<")   'previous-buffer)
-            (define-key map (kbd "H-)")   'cic:org-end-of-next-heading)
-            (define-key map (kbd "H-(")   'cic:org-end-of-prev-heading)
-            (define-key map (kbd "H-}")   'cic:next-file-dired)
-            (define-key map (kbd "H-{")   'cic:previous-file-dired)
-            (define-key map (kbd "H-$")   'cic:flyspell-here)
-            (define-key map (kbd "H-,")   'cic:wordlist-current-word)
-            (define-key map (kbd "H-\\")  'indent-sexp)
-            (define-key map (kbd "H-m")   'cic:term-toggle-modes)
+            (define-key map (kbd "H->")  'next-buffer)
+            (define-key map (kbd "H-<")  'previous-buffer)
+            (define-key map (kbd "H-)")  'cic:org-end-of-next-heading)
+            (define-key map (kbd "H-(")  'cic:org-end-of-prev-heading)
+            (define-key map (kbd "H-}")  'cic:next-file-dired)
+            (define-key map (kbd "H-{")  'cic:previous-file-dired)
+            (define-key map (kbd "H-$")  'cic:flyspell-here)
+            (define-key map (kbd "H-,")  'cic:wordlist-current-word)
+            (define-key map (kbd "H-\\") 'indent-sexp)
+            (define-key map (kbd "H-m")  'cic:term-toggle-modes)
             ;; navigation of files
-            (define-key map (kbd "H-i")   'imenu)
-            (define-key map (kbd "H-l")   'cic:goto-previous-mark)
-            (define-key map (kbd "H-y")   'cic:copy-file-name-to-clipboard)
+            (define-key map (kbd "H-i")  'imenu)
+            (define-key map (kbd "H-l")  'cic:goto-previous-mark)
+            (define-key map (kbd "H-y")  'cic:copy-file-name-to-clipboard)
             ;; todo commands
-            (define-key map (kbd "H-t")   'cic:org-mark-toggle-headline)
+            (define-key map (kbd "H-t")  'cic:org-mark-toggle-headline)
             ;; universal align
-            (define-key map (kbd "H-q")   'align-current)
+            (define-key map (kbd "H-q")  'align-current)
             map))
 
 ;; TODO: update so I can enter a date (and/or time) into

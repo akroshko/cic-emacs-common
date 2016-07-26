@@ -69,9 +69,16 @@ TODO: flag to not use timestamp"
 
 ;; XXXX: this could cause issues with debugging if function is made more complex
 (when (not (fboundp 'cic:find-file-meta))
-  (defun cic:find-file-meta (filename &optional wildcards)
+  (defun cic:find-file-meta (arg filename &optional wildcards)
     "A find file function that is often replaced with something else in my special setups"
-    (find-file filename wildcards)))
+    (cond ((equal arg nil)
+           (find-file filename wildcards))
+          ((equal arg '(4))
+           (create-frame-here)
+           (find-file filename wildcards))
+          ((equal arg '(16))
+           (create-frame-other-window-maximized)
+           (find-file filename wildcards)))))
 
 (when (not (fboundp 'cic:get-filename--meta))
   (defun cic:get-filename--meta (filename)
@@ -1241,7 +1248,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
       ;; ask about location
       ;; TODO: pop-up showing things to be moved
       (save-window-excursion
-        (cic:find-file-meta destination-file)
+        (cic:find-file-meta nil destination-file)
         (goto-char (point-max))
         (setq check-input-char (read-char "Refile to here (<enter> accepts and any other key cancels): "))
         (message nil))
@@ -1304,7 +1311,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                  (check-input-char 13))
              ;; avoid if region is active
              (save-window-excursion
-               (cic:find-file-meta destination-file)
+               (cic:find-file-meta nil destination-file)
                ;; find same heading
                (goto-char (point-min))
                (if (ignore-errors (cic:org-find-headline current-toplevel-tree))
@@ -1423,5 +1430,16 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: twothirds don't work with image-dired
 (global-set-key [next] 'scroll-up)
 (global-set-key [prior] 'scroll-down)
+
+(defun create-frame-other-window-maximized ()
+  (interactive)
+  (select-frame (make-frame-command))
+  (set-frame-position (selected-frame) 0 0)
+  (cic:x-force-maximized))
+
+(defun create-frame-here ()
+  (interactive)
+  (select-frame (make-frame-command))
+  (cic:x-force-maximized))
 
 (provide 'emacs-stdlib-functions)
