@@ -144,15 +144,15 @@
   ;; modes including minibuffer."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "H-]") 'other-frame)
-            (define-key map (kbd "H-[") 'cic:prev-frame)
+            (define-key map (kbd "H-]") 'cic:next-window-frame)
+            (define-key map (kbd "H-[") 'cic:prev-window-frame)
             (define-key map (kbd "H-;") 'menu-bar-open)
             ;; window management
             (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
-            (define-key map (kbd "H-f") 'windmove-right)
-            (define-key map (kbd "H-b") 'windmove-left)
+            ;; (define-key map (kbd "H-f") 'windowmove-right)
+            ;; (define-key map (kbd "H-b") 'windmove-left)
             ;; other cool keys
             (define-key map (kbd "H-0") 'cic:text-scale-neutral)
             (define-key map (kbd "H--") 'text-scale-decrease)

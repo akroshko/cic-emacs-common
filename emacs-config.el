@@ -72,6 +72,9 @@
 (prefer-coding-system 'utf-8)
 (setq coding-system-for-read 'utf-8
       coding-system-for-write 'utf-8)
+
+(setq-default cursor-type 'box)
+
 ;; bluish/reddish modeline
 ;; (set-face-background 'mode-line "#6699cc")
 (set-face-background 'mode-line "#6699ff")
@@ -84,8 +87,6 @@
 ;; XXXX think I've mostly solved this issue by using the popwin package
 (setq split-height-threshold 0
       max-mini-window-height 0.75)
-;; show point a little better
-(setq-default cursor-type 'box)
 ;; truncate lines
 (setq truncate-lines t
       line-move-visual nil)

@@ -217,12 +217,12 @@ TODO broken, provided a diff cleanup function too! "
    'paredit-close-round))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ido-mode
-; http://masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
-; TODO do I want to do something else for C-s C-r
-; TODO m-n/p is very good
-; TODO ffap
-; TODO good completion for org-mode
+;; ido-mode
+;; http://masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
+;; TODO do I want to do something else for C-s C-r
+;; TODO m-n/p is very good
+;; TODO ffap
+;; TODO good completion for org-mode
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (requiring-package (ido)
@@ -232,7 +232,29 @@ TODO broken, provided a diff cleanup function too! "
     (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture"))))
   (ido-mode t)
   (ido-ubiquitous-mode 1)
-  (ido-hacks-mode 1))
+  (ido-hacks-mode 1)
+  (require 'ido-vertical-mode)
+  (ido-vertical-mode 1)
+  ;;
+  ;; (require 'ido-grid-mode)
+  ;; (setq ido-grid-mode-max-columns 1
+  ;;     ido-grid-mode-max-rows 8
+  ;;     ido-grid-mode-prefix-scrolls t
+  ;;     ido-grid-mode-scroll-down #'ido-grid-mode-next-row
+  ;;     ido-grid-mode-scroll-up #'ido-grid-mode-previous-row
+  ;;     ido-grid-mode-order nil
+  ;;     ;; ido-grid-mode-start-collapsed t
+  ;;     )
+  ;; (setq ido-grid-min-rows 12
+  ;;       ido-grid-max-rows 12
+  ;;       ido-grid-mode-prefix-scrolls t
+  ;;       ido-grid-mode-order t)
+  ;; (ido-grid-mode 1)
+  ;; TODO: better, but not perfect
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only
+        ido-vertical-show-count t
+        ido-max-prospects 50
+        ido-vertical-pad-list nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; popwin
@@ -455,8 +477,10 @@ TODO broken, provided a diff cleanup function too! "
                          gnuplot
                          gnuplot-mode
                          ;; hexrgb
+                         ido-grid-mode
                          ido-hacks
                          ido-ubiquitous
+                         ido-vertical-mode
                          idomenu
                          ;; TODO get rid of
                          lacarte

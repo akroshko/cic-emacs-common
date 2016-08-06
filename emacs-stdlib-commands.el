@@ -583,9 +583,20 @@ alphanumeric."
 (defun cic:org-end-of-prev-heading ()
   (interactive)
   (cic:org-end-of-next-heading -1))
-(defun cic:prev-frame ()
+(defun cic:next-window-frame ()
   (interactive)
-  (other-frame -1))
+  (condition-case error-string
+      (progn
+        (windmove-right))
+    (error
+     (other-frame 1))))
+(defun cic:prev-window-frame ()
+  (interactive)
+  (condition-case error-string
+      (progn
+        (windmove-left))
+    (error
+     (other-frame -1))))
 (defun cic:text-scale-neutral ()
   (interactive)
   (text-scale-adjust 0))

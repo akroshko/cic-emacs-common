@@ -1442,4 +1442,10 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (select-frame (make-frame-command))
   (cic:x-force-maximized))
 
+(defun cic:disable-visuals ()
+  "Turn off any visuals that other functions might have put on."
+  (interactive)
+  (set-cursor-color "#ffffff")
+  (blink-cursor-mode -1))
+
 (provide 'emacs-stdlib-functions)
