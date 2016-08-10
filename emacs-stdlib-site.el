@@ -53,6 +53,9 @@ TODO broken, provided a diff cleanup function too! "
 (add-to-list 'auto-mode-alist '("bash_profile_agents" . sh-mode))
 (add-to-list 'auto-mode-alist '("bashrc_functions" . sh-mode))
 (add-to-list 'auto-mode-alist '("bash_library" . sh-mode))
+(requiring-package (sh-script)
+;; TODO: find another thing to run executable-interpret
+  (define-key sh-mode-map (kbd "C-c C-x") nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys
@@ -166,6 +169,31 @@ TODO broken, provided a diff cleanup function too! "
   (emms-all)
   (emms-default-players)
   (setq emms-info-function '(emms-info-libtag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; flycheck
+(requiring-package (flycheck)
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (setq flycheck-check-syntax-automatically nil)
+  (defun cic:flycheck-buffer-or-list ()
+      (interactive)
+      (if (eq last-command 'cic:flycheck-buffer-or-list)
+          (flycheck-list-errors)
+        (flycheck-buffer)))
+  (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
+  ;; TODO: temporary until I figure out what next
+  (global-set-key (kbd "M-,") 'flycheck-previous-error)
+  (global-set-key (kbd "M-.") 'flycheck-next-error)
+  ;; hacks for my own stuff
+  (put 'python-flake8    (intern "flycheck-modes") '(python-mode sage-mode))
+  (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
+  (requiring-package (flycheck-pyflakes)
+    (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
+  ;; I still install these, but most of my stuff is not good enough
+  (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+  (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+  ;; TODO: need to specify good defaults
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; free keys
@@ -383,8 +411,7 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'python-mode-hook 'python-detect-interpreter)
   ;; (add-hook 'python-mode-hook 'anaconda-mode)
   ;; (add-hook 'python-mode-hook 'eldoc-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
   ;; After installation of the spkg, you must add something like the
   ;; following to your .emacs:
@@ -488,7 +515,14 @@ TODO broken, provided a diff cleanup function too! "
                          eldoc
                          emms
                          ess
-                         flymake-cursor
+                         ;; ;; TODO: get rid of flymake
+                         ;; flymake-cursor
+                         flycheck
+                         flycheck-bashate
+                         flycheck-checkbashisms
+                         flycheck-cython
+                         flycheck-package
+                         flycheck-pyflakes
                          free-keys
                          fuzzy-match
                          gh-md
