@@ -215,6 +215,14 @@
  'emacs-lisp-mode
  '(("(\\s-*\\(\\_<\\(?:\\sw\\|\\s_\\)+\\)\\_>"
     1 'font-lock-func-face)))
+;; TODO: use paredit
+(define-key emacs-lisp-mode-map (kbd "M-a") 'beginning-of-defun)
+(define-key emacs-lisp-mode-map (kbd "M-e") 'end-of-defun)
+;; marking
+;; should override company mode quickhelp, done elsewhere
+;; TODO: make both work
+(define-key emacs-lisp-mode-map (kbd "C-x C-h") 'mark-defun)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
 (setq ido-create-new-buffer 'always
@@ -235,7 +243,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; imenu
-(requiring-package (imenu))
+(requiring-package (imenu)
+  (setq imenu-auto-rescan t))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; image-mode
 ;; TODO: find out how to animate images by default

@@ -442,12 +442,13 @@ not."
         (term-char-mode)
         ;; undo that change later
         ;; like this because green/red means program is in non-standard mode
-        (setq-local old-term-color (face-remap-add-relative 'mode-line :background "green"))
+        (setq-local old-term-color          (face-remap-add-relative 'mode-line          :background "green"))
         (setq-local old-term-color-inactive (face-remap-add-relative 'mode-line-inactive :background "red"))))))
-(add-hook 'term-mode-hook
-          (lambda ()
-            (setq-local old-term-color (face-remap-add-relative 'mode-line :background "green"))
-            (setq-local old-term-color-inactive (face-remap-add-relative 'mode-line-inactive :background "red"))))
+(defun cic:term-mode-setup ()
+  (setq-local old-term-color          (face-remap-add-relative 'mode-line          :background "green"))
+  (setq-local old-term-color-inactive (face-remap-add-relative 'mode-line-inactive :background "red"))
+  (setq-local term-buffer-maximum-size 0))
+(add-hook 'term-mode-hook 'cic:term-mode-setup)
 
 ;; https://jcubic.wordpress.com/2012/01/26/switching-between-buffers-with-the-same-major-mode-in-emacs/
 (defun cic:buffer-same-mode (change-buffer-fun)

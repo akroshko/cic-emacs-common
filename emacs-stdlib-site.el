@@ -133,7 +133,9 @@ TODO broken, provided a diff cleanup function too! "
                    '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
                  (requiring-package (auctex-latexmk)
                    (unless (assoc "LatexMk" TeX-command-list)
-                     (auctex-latexmk-setup))))
+                     (auctex-latexmk-setup)))
+                 ;; I remap these to other things
+                 (define-key TeX-mode-map (kbd "C-c C-b")  nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
@@ -146,6 +148,7 @@ TODO broken, provided a diff cleanup function too! "
   (global-company-mode)
   (company-quickhelp-mode 1)
   ;; (add-hook 'after-init-hook 'global-company-mode)
+  ;; (define-key company-quickhelp-mode-map (kbd "M-h")  nil)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -207,7 +210,18 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
   (eval-after-load "paredit.el"
-    (requiring-package (paredit-menu))))
+    (requiring-package (paredit-menu)))
+  ;; change keys around for easy navigation of pars
+  ;; XXXX: change capitalization keys
+  (global-set-key (kbd "M-C") 'capitalize-word)
+  (global-set-key (kbd "M-L") 'downcase-word)
+  (global-set-key (kbd "M-U") 'upcase-word)
+  ;; moving
+  (define-key paredit-mode-map (kbd "M-l") 'paredit-forward-down)
+  (define-key paredit-mode-map (kbd "M-u") 'paredit-backward-up)
+  (define-key paredit-mode-map (kbd "M-j") 'paredit-backward)
+  (define-key paredit-mode-map (kbd "M-k") 'paredit-forward))
+
 (requiring-package (eldoc)
   ;; if not already loaded
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
@@ -274,6 +288,10 @@ TODO broken, provided a diff cleanup function too! "
 ;; TODO: put into message box
 ;; TODO: navigate functions/defun
 (requiring-package (python)
+  ;; set up python keys
+  ;; TODO: figure this
+  ;; (define-key python-mode-map (kbd "M-[") 'python-indent-shift-left)
+  ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
   (defconst python-fulldoc-setup-code
     "def __PYDOC_get_fulldoc(obj):
     try:

@@ -1381,7 +1381,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (insert str)
     (forward-line -1)))
 
-(global-set-key (kbd "s-b") 'cic:current-build)
+(global-set-key (kbd "C-c C-b") 'cic:current-build)
 
 (defvar cic:current-build-filename
   nil
@@ -1442,10 +1442,13 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (select-frame (make-frame-command))
   (cic:x-force-maximized))
 
-(defun cic:disable-visuals ()
+(defun cic:line-mode-or-disable-visuals (&optional arg)
   "Turn off any visuals that other functions might have put on."
-  (interactive)
-  (set-cursor-color "#ffffff")
-  (blink-cursor-mode -1))
+  (interactive "P")
+  (if arg
+      (progn
+        (set-cursor-color "#ffffff")
+        (blink-cursor-mode -1))
+    (call-interactively 'hl-line-mode)))
 
 (provide 'emacs-stdlib-functions)
