@@ -115,24 +115,26 @@
             ;; are there cooler things than this?
             ;; time date stamp???
             ;; add control U?
-            (define-key map (kbd "H->")  'next-buffer)
-            (define-key map (kbd "H-<")  'previous-buffer)
-            (define-key map (kbd "H-)")  'cic:org-end-of-next-heading)
-            (define-key map (kbd "H-(")  'cic:org-end-of-prev-heading)
-            (define-key map (kbd "H-}")  'cic:next-file-dired)
-            (define-key map (kbd "H-{")  'cic:previous-file-dired)
-            (define-key map (kbd "H-$")  'cic:flyspell-here)
-            (define-key map (kbd "H-,")  'cic:wordlist-current-word)
-            (define-key map (kbd "H-\\") 'indent-sexp)
-            (define-key map (kbd "H-m")  'cic:term-toggle-modes)
+            (define-key map (kbd "H->")          'next-buffer)
+            (define-key map (kbd "H-<")          'previous-buffer)
+            (define-key map (kbd "H-)")          'cic:org-end-of-next-heading)
+            (define-key map (kbd "H-(")          'cic:org-end-of-prev-heading)
+            (define-key map (kbd "H-}")          'cic:next-file-dired)
+            (define-key map (kbd "H-{")          'cic:previous-file-dired)
+            (define-key map (kbd "H-$")          'cic:flyspell-here)
+            (define-key map (kbd "H-<return>")   'cic:flyspell-here)
+            (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
+            (define-key map (kbd "H-,")          'cic:wordlist-current-word)
+            (define-key map (kbd "H-\\")         'indent-sexp)
+            (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             ;; navigation of files
-            (define-key map (kbd "H-i")  'imenu)
-            (define-key map (kbd "H-l")  'cic:goto-previous-mark)
-            (define-key map (kbd "H-y")  'cic:copy-file-name-to-clipboard)
+            (define-key map (kbd "H-i")          'imenu)
+            (define-key map (kbd "H-l")          'cic:goto-previous-mark)
+            (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; todo commands
-            (define-key map (kbd "H-t")  'cic:org-mark-toggle-headline)
+            (define-key map (kbd "H-t")          'cic:org-mark-toggle-headline)
             ;; universal align
-            (define-key map (kbd "H-q")  'align-current)
+            (define-key map (kbd "H-q")          'align-current)
             map))
 
 ;; TODO: update so I can enter a date (and/or time) into
