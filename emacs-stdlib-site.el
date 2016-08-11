@@ -175,11 +175,15 @@ TODO broken, provided a diff cleanup function too! "
 (requiring-package (flycheck)
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (setq flycheck-check-syntax-automatically nil)
-  (defun cic:flycheck-buffer-or-list ()
-      (interactive)
-      (if (eq last-command 'cic:flycheck-buffer-or-list)
-          (flycheck-list-errors)
-        (flycheck-buffer)))
+  (defun cic:flycheck-buffer-or-list (&optional arg)
+    (interactive "P")
+    (if arg
+        (flycheck-clear)
+        (if (eq last-command 'cic:flycheck-buffer-or-list)
+            (if (get-buffer-window "*Flycheck errors*")
+                (delete-window (get-buffer-window "*Flycheck errors*"))
+              (flycheck-list-errors))
+          (flycheck-buffer))))
   (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
   ;; TODO: temporary until I figure out what next
   (global-set-key (kbd "M-,") 'flycheck-previous-error)
@@ -189,7 +193,8 @@ TODO broken, provided a diff cleanup function too! "
   (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
   (requiring-package (flycheck-pyflakes)
     (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
-  ;; I still install these, but most of my stuff is not good enough
+  ;; I still install these, but most of my stuff is not good enough to
+  ;; stick to rigid style
   (add-to-list 'flycheck-disabled-checkers 'python-flake8)
   (add-to-list 'flycheck-disabled-checkers 'python-pylint)
   ;; TODO: need to specify good defaults
@@ -433,7 +438,8 @@ TODO broken, provided a diff cleanup function too! "
     ;; Using sage-view to typeset output requires a working LaTeX
     ;; installation with the preview package.
     ;; Also consider running (customize-group 'sage) to see more options.
-    ))
+    )
+  (define-key python-mode-map (kbd "C-c C-v") nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rainbow
