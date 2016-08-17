@@ -522,7 +522,6 @@ TODO broken, provided a diff cleanup function too! "
                          cython-mode
                          dired-avfs
                          dired-rainbow
-                         dired-sort
                          eimp
                          eldoc
                          emms
