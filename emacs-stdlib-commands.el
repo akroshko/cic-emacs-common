@@ -405,6 +405,38 @@ visit it."
       (ansi-term (concat "-i -c \"" command ";bash\""))
     (ansi-term "/bin/bash" "localhost")))
 
+(defun cic:ansi-term-localhost-popup (&optional command)
+  "Start up an ansi-term on localhost."
+  (interactive)
+  ;; open new terminal here if last command not popup or window does not exist
+  (cond ((or
+          (equal (current-buffer) (get-buffer "*localhost*"))
+          (and (eq last-command 'cic:ansi-term-localhost-popup) (get-buffer-window "*localhost*")))
+         (delete-window (get-buffer-window "*localhost*")))
+        ((get-buffer-window "*localhost*")
+         ;; just change directories
+         (let ((thedir default-directory))
+           (with-current-buffer (get-buffer "*localhost*")
+             (unless (equal thedir default-directory)
+               (term-send-string "*localhost*" (concat "pushd . >/dev/null;cd " thedir "\n")))))
+         (select-window (get-buffer-window "*localhost*")))
+        ((get-buffer "*localhost*")
+         (split-window-below)
+         (windmove-down)
+         ;; just change directories
+         (let ((thedir default-directory))
+           (with-current-buffer (get-buffer "*localhost*")
+             (unless (equal thedir default-directory)
+               (term-send-string "*localhost*" (concat "pushd . >/dev/null;cd " thedir "\n")))))
+         (switch-to-buffer (get-buffer "*localhost*")))
+        ;; open window
+        (t
+         (split-window-below)
+         (windmove-down)
+         (if command
+             (ansi-term (concat "-i -c \"" command ";bash\""))
+           (ansi-term "/bin/bash" "localhost")))))
+
 ;; http://oremacs.com/2015/01/01/three-ansi-term-tips/
 ;; TODO: maybe burrying an old term buffer might be better?
 (defun cic:term-exec-hook ()

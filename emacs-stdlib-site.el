@@ -162,6 +162,11 @@ TODO broken, provided a diff cleanup function too! "
                           (when (string-match "conkeror" (buffer-file-name))
                             (conkeror-minor-mode 1))))
 
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; dired-sort
+;; (requiring-package (dired-sort)
+;;   )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emms
 (requiring-package (emms-setup)
@@ -517,6 +522,7 @@ TODO broken, provided a diff cleanup function too! "
                          cython-mode
                          dired-avfs
                          dired-rainbow
+                         dired-sort
                          eimp
                          eldoc
                          emms
