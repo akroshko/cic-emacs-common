@@ -126,6 +126,13 @@ TODO: determine which is more efficient"
       (setq str (replace-match "" t t str))))
   str)
 
+(defun cic:strip-trailing-slash (str)
+  "Strip trailing slash off of STR."
+  (when (stringp str)
+    (while (string-match "/$" str)
+      (setq str (replace-match "" t t str))))
+  str)
+
 (defun cic:strip-after-double-colon (str)
   "Strip everything after and including a double colon in STR."
   (when (stringp str)
