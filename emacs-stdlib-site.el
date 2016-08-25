@@ -191,8 +191,8 @@ TODO broken, provided a diff cleanup function too! "
           (flycheck-buffer))))
   (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
   ;; TODO: temporary until I figure out what next
-  (global-set-key (kbd "M-,") 'flycheck-previous-error)
-  (global-set-key (kbd "M-.") 'flycheck-next-error)
+  ;; (global-set-key (kbd "M-,") 'flycheck-previous-error)
+  ;; (global-set-key (kbd "M-.") 'flycheck-next-error)
   ;; hacks for my own stuff
   (put 'python-flake8    (intern "flycheck-modes") '(python-mode sage-mode))
   (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
@@ -475,9 +475,10 @@ TODO broken, provided a diff cleanup function too! "
 ;; TODO may replace with "evil" when appropriate
 ;; XXXX: must be done before
 (setq smartscan-map
-        (let ((map (make-sparse-keymap)))
-          (define-key map (kbd "H-s") 'smartscan-symbol-go-forward)
-          (define-key map (kbd "H-r") 'smartscan-symbol-go-backward)
+      (let ((map (make-sparse-keymap)))
+          (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
+          (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
+          ;; TODO: better replace
           (define-key map (kbd "H-%") 'smartscan-symbol-replace)
           map))
 (requiring-package (smartscan)
