@@ -191,8 +191,9 @@ TODO broken, provided a diff cleanup function too! "
           (flycheck-buffer))))
   (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
   ;; TODO: temporary until I figure out what next
-  ;; (global-set-key (kbd "M-,") 'flycheck-previous-error)
-  ;; (global-set-key (kbd "M-.") 'flycheck-next-error)
+  ;; TODO: generalize these to most appropriate function and context
+  (global-set-key (kbd "s-,") 'flycheck-previous-error)
+  (global-set-key (kbd "s-.") 'flycheck-next-error)
   ;; hacks for my own stuff
   (put 'python-flake8    (intern "flycheck-modes") '(python-mode sage-mode))
   (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
