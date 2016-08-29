@@ -1478,9 +1478,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     ;; TODO: possibly clear buffer (can I select)
     ;;       do I really want to add current one first
     (goto-char (point-min))
-    (x-clipboard-yank)
-    ;; TODO: key to grab modified and close simultaneously
-    )
+    (x-clipboard-yank))
   (cic:create-or-select-frame-displaying-buffer "*Collection*"))
 
 (provide 'emacs-stdlib-functions)
