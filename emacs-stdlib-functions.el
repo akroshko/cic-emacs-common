@@ -1458,4 +1458,29 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
         (blink-cursor-mode -1))
     (call-interactively 'hl-line-mode)))
 
+(defun cic:create-or-select-frame-displaying-buffer (my-buffer)
+  ;; https://emacs.stackexchange.com/questions/2959/how-to-know-my-buffers-visible-focused-status
+  ;; my-buffer is supposed to be the buffer you are looking for
+  ;; assume buffer has been created
+  (cond ((get-buffer-window my-buffer t)
+         ;; raise frame, then focus
+         (raise-frame (window-frame (get-buffer-window my-buffer t)))
+         (select-window (get-buffer-window my-buffer t))
+         (switch-to-buffer my-buffer))
+        (t
+         (create-frame-other-window-maximized)
+         (switch-to-buffer my-buffer))))
+
+;; this is generally hooked into a global key for popping open the clipboard as editable text
+(defun cic:create-open-collection-other-window ()
+  (interactive)
+  (with-current-buffer-create "*Collection*"
+    ;; TODO: possibly clear buffer (can I select)
+    ;;       do I really want to add current one first
+    (goto-char (point-min))
+    (x-clipboard-yank)
+    ;; TODO: key to grab modified and close simultaneously
+    )
+  (cic:create-or-select-frame-displaying-buffer "*Collection*"))
+
 (provide 'emacs-stdlib-functions)

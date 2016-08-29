@@ -80,6 +80,7 @@
             ;; TODO better name/key for this u neq v
             (define-key map (kbd "s-h u")   'apropos-value)
             (define-key map (kbd "s-h v")   'find-variable)
+            (define-key map (kbd "s-k")     'cic:delete-window)
             ;; m==system manager
             (define-key map (kbd "s-m p")   'cic:create-password-insert)
             (define-key map (kbd "s-m M-p") 'cic:create-password-insert-select)
@@ -133,6 +134,7 @@
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             ;; navigation of files
             (define-key map (kbd "H-i")          'imenu)
+            (define-key map (kbd "H-k")          'cic:delete-frame)
             (define-key map (kbd "H-l")          'cic:goto-previous-mark)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; todo commands

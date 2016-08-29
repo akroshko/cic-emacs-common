@@ -721,4 +721,34 @@ and date.  Behaviour based on org-insert-heading."
   (let ((case-fold-search nil))
     (call-interactively 'query-replace)))
 
+(defun cic:delete-window ()
+  "Like delete-window but has special functionality for me."
+  (interactive)
+  ;; TODO: do I want to
+  (when (equal "*Collection*" (buffer-name (current-buffer)))
+    ;; put into x11 buffer
+    ;; https://emacs.stackexchange.com/questions/14333/how-to-push-kill-ring-contents-onto-system-pasteboard-clipboard
+    ;; TODO: expunge extra-whitespace before doing this
+    (clipboard-kill-ring-save (point-min) (point-max))
+    (erase-buffer))
+  ;; XXXX: delete-frame interferes with clipboard
+  ;;       probably a bug in emacs
+  (delete-window))
+
+(defun cic:delete-frame ()
+  "Like delete-frame but has special functionality for me."
+  (interactive)
+  (when (equal "*Collection*" (buffer-name (current-buffer)))
+    ;; put into x11 buffer
+    ;; https://emacs.stackexchange.com/questions/14333/how-to-push-kill-ring-contents-onto-system-pasteboard-clipboard
+    ;; TODO: expunge extra-whitespace before doing this
+    (clipboard-kill-ring-save (point-min) (point-max))
+    (erase-buffer))
+  ;; XXXX: delete-frame interferes with clipboard
+  ;;       probably a bug in emacs
+  (let ((clipboard-contents (x-get-clipboard)))
+    (delete-frame)
+    (let ((x-select-enable-clipboard t))
+      (x-select-text clipboard-contents))))
+
 (provide 'emacs-stdlib-commands)
