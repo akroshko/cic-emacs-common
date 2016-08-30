@@ -90,8 +90,7 @@
             (define-key map (kbd "s-o f")   'cic:browse-url-at-point-firefox)
             (define-key map (kbd "s-o g")   'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-o w")   'cic:browse-url-at-point-w3m)
-            ;; TODO: finalize terminal stuff
-            (define-key map (kbd "s-l")     'cic:ansi-term-localhost-popup)
+            (define-key map (kbd "H-s")     'cic:ansi-term-localhost-popup)
             (define-key map (kbd "s-t t")   'cic:ansi-term-localhost)
             (define-key map (kbd "s-t s-t") 'cic:ansi-term-localhost)
             ;; view

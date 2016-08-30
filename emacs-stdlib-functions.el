@@ -727,7 +727,7 @@ TODO: this function needs work."
 ;;from http://ergoemacs.org/emacs/elisp_all_about_lines.html
 (defun cic:get-current-line ()
   "Get the current line."
-  (buffer-substring-no-properties(line-beginning-position) (line-end-position)))
+  (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
 
 ;; TODO: this is odd, can't seem to work
 (defun cic:check-convert-number-to-string (number)

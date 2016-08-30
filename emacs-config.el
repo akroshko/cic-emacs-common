@@ -132,7 +132,7 @@
 (setq temporary-file-directory "~/.emacs.d/tmp/")
 ;; clipboard
 (setq x-select-enable-primary t
-      x-select-enable-clipboard nil)
+      x-select-enable-clipboard t)
 
 (auto-compression-mode 1)
 ;; locale information, just a generic Canadian location as default
