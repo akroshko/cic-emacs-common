@@ -112,16 +112,21 @@ TODO broken, provided a diff cleanup function too! "
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
                          (output-html "HTML Viewer")))
+                 (defun cic:auctex-latex-init ()
+                   (add-to-list 'TeX-expand-list
+                                '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))
+                   (modify-syntax-entry ?: "w")
+                   (modify-syntax-entry ?: "_")
+                   ;; (font-lock-add-keywords nil
+                   ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
+                   ;; does not conflict with emacs-otlb
+                   ;; TODO: change this
+                   (local-set-key (kbd "s-l") 'cic:outline))
                  ;; (setq TeX-pr)
-                 (add-hook 'LaTeX-mode-hook (lambda () (add-to-list 'TeX-expand-list
-                                                                    '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))))
-                 ;; general syntax stuff
-                 (add-hook 'LaTeX-mode-hook (lambda ()
-                                              (modify-syntax-entry ?: "w")
-                                              (modify-syntax-entry ?: "_")
-                                              ;; (font-lock-add-keywords nil
-                                              ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
-                                              ))
+                 (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
+                 (defun cic:reftex-toc-init ()
+                   (local-set-key (kbd "s-l") 'cic:outline))
+                 (add-hook 'reftex-toc-mode-hook 'cic:reftex-toc-init)
                  (setq font-latex-match-reference-keywords
                        '(("citemp" "[{")
                          ("citem" "[{")))
@@ -151,7 +156,8 @@ TODO broken, provided a diff cleanup function too! "
   (global-company-mode)
   (company-quickhelp-mode 1)
   ;; (add-hook 'after-init-hook 'global-company-mode)
-  ;; (define-key company-quickhelp-mode-map (kbd "M-h")  nil)
+  ;; TODO: for now
+  ;; (define-key company-quickhelp-mode-map (kbd "s-q")  company-quickhelp-manual-begin)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -518,6 +524,8 @@ TODO broken, provided a diff cleanup function too! "
                          capture
                          company
                          ;; company-auctex
+                         company-arduino
+                         company-math
                          company-quickhelp
                          cl-lib
                          crontab-mode

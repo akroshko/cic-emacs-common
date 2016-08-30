@@ -751,4 +751,18 @@ and date.  Behaviour based on org-insert-heading."
     (let ((x-select-enable-clipboard t))
       (x-select-text clipboard-contents))))
 
+(defun cic:outline ()
+  "Show a mode-specific outline."
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (if (get-buffer-window "*toc*" t)
+             (save-excursion
+               (select-window (get-buffer-window "*toc*" t))
+               (delete-window))
+           (reftex-toc)))
+        ((eq major-mode 'reftex-toc-mode)
+         (delete-window))
+        (t
+         (imenu))))
+
 (provide 'emacs-stdlib-commands)

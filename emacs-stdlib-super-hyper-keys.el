@@ -130,9 +130,8 @@
             (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
+            (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
-            ;; navigation of files
-            (define-key map (kbd "H-i")          'imenu)
             (define-key map (kbd "H-k")          'cic:delete-frame)
             (define-key map (kbd "H-l")          'cic:goto-previous-mark)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
