@@ -105,7 +105,8 @@ TODO broken, provided a diff cleanup function too! "
                        '("TODO"))
                  (setq preview-auto-cache-preamble t)
                  (setq preview-scale-function 1.5)
-                 (setq reftex-plug-into-AUCTeX t)
+                 (setq reftex-plug-into-AUCTeX t
+                       reftex-cite-view-format "%3a %y, %t, %B, %j %v:%P, %s %<")
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-selection
@@ -121,7 +122,12 @@ TODO broken, provided a diff cleanup function too! "
                    ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
                    ;; does not conflict with emacs-otlb
                    ;; TODO: change this
-                   (local-set-key (kbd "s-l") 'cic:outline))
+                   (local-set-key (kbd "s-l") 'cic:outline)
+                   (local-set-key (kbd "H-x") 'reftex-view-crossref)
+                   ;; init crossref and such
+                   (reftex-parse-all)
+                   (dolist (file (reftex-get-bibfile-list))
+                     (reftex-get-file-buffer-force file)))
                  ;; (setq TeX-pr)
                  (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
                  (defun cic:reftex-toc-init ()
