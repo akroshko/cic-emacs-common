@@ -106,7 +106,12 @@ TODO broken, provided a diff cleanup function too! "
                  (setq preview-auto-cache-preamble t)
                  (setq preview-scale-function 1.5)
                  (setq reftex-plug-into-AUCTeX t
-                       reftex-cite-view-format "%3a %y, %t, %B, %j %v:%P, %s %<")
+                       reftex-cite-view-format "%3a %y, %t, %B, %j %v:%P, %s %<"
+                       reftex-toc-include-labels t
+                       reftex-index-include-context t
+                       reftex-label-alist (list '("section" 115 "%S" "~\\ref{%s}"
+                                                  t
+                                                  (regexp "parts?" "chapters?" "chap\\." "sections?" "sect?\\." "paragraphs?" "par\\." "\\\\S" "\247" "Teile?" "Kapitel" "Kap\\." "Abschnitte?" "appendi\\(x\\|ces\\)" "App\\." "Anh\"?ange?" "Anh\\."))))
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-selection
