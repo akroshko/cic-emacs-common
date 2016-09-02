@@ -1481,4 +1481,20 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (x-clipboard-yank))
   (cic:create-or-select-frame-displaying-buffer "*Collection*"))
 
+(defun cic:other-window-next ()
+  (interactive)
+  (let ((current-window (selected-window)))
+    (other-window 1)
+    ;; TODO: better way to detect end of buffer, eobp
+    (ignore-errors (scroll-up))
+    (select-window current-window)))
+
+(defun cic:other-window-previous ()
+  (interactive)
+  (let ((current-window (selected-window)))
+    (other-window 1)
+    ;; TODO: better way to detect end of buffer, eobp
+    (ignore-errors (scroll-down))
+    (select-window current-window)))
+
 (provide 'emacs-stdlib-functions)

@@ -78,6 +78,8 @@
             (define-key map (kbd "M-[")      'cic:decrease-indent)
             (define-key map (kbd "M-]")      'cic:increase-indent)
             (define-key map (kbd "C-\\")     'cic:whack-whitespace)
+            (define-key map (kbd "C-<")      'cic:other-window-previous)
+            (define-key map (kbd "C->")      'cic:other-window-next)
             (define-key map (kbd "C-c f")    'find-file-at-point)
             (define-key map (kbd "C-c o")    'occur)
             (define-key map (kbd "C-c w")    'compare-windows)
