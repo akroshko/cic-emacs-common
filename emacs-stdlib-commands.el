@@ -763,6 +763,6 @@ and date.  Behaviour based on org-insert-heading."
         ((eq major-mode 'reftex-toc-mode)
          (delete-window))
         (t
-         (imenu))))
+         (call-interactively 'imenu))))
 
 (provide 'emacs-stdlib-commands)
