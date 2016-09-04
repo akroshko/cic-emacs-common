@@ -171,7 +171,15 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
                  (defun cic:reftex-toc-init ()
                    (local-set-key (kbd "s-l") 'cic:outline))
-                 (add-hook 'reftex-toc-mode-hook 'cic:reftex-toc-init)
+                 (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
+                 (defun cic:reftex-select-label-init ()
+                   ;; sync with above?
+                   (local-set-key (kbd "H-r") 'reftex-select-quit)
+                   (local-set-key (kbd "H-f") 'reftex-select-quit)
+                   (local-set-key (kbd "H-e") 'reftex-select-quit)
+                   (local-set-key (kbd "H-s") 'reftex-select-quit)
+                   (local-set-key (kbd "H-t") 'reftex-select-quit))
+                 (add-hook 'reftex-select-label-mode-hook 'cic:reftex-select-label-init)
                  (setq font-latex-match-reference-keywords
                        '(("citemp" "[{")
                          ("citem" "[{")))

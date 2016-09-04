@@ -79,6 +79,14 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
+(define-minor-mode org-toggle-headline-mode
+  :global nil
+  :keymap nil
+  ;; (let ((map (make-sparse-keymap)))
+  ;;   (define-key map (kbd "H-t" ) 'cic:org-mark-toggle-headline)
+  ;;   map)
+  )
+
 ;; TODO: move somewhere else?
 (define-key org-mode-map (kbd "H-t")   'cic:org-mark-toggle-headline)
 
@@ -717,20 +725,44 @@ and date.  Behaviour based on org-insert-heading."
   (let ((case-fold-search nil))
     (call-interactively 'query-replace)))
 
-(defun cic:delete-window ()
-  "Like delete-window but has special functionality for me."
-  (interactive)
-  ;; TODO: do I want to
-  (when (equal "*Collection*" (buffer-name (current-buffer)))
-    ;; put into x11 buffer
-    ;; https://emacs.stackexchange.com/questions/14333/how-to-push-kill-ring-contents-onto-system-pasteboard-clipboard
-    ;; TODO: expunge extra-whitespace before doing this
-    (clipboard-kill-ring-save (point-min) (point-max))
-    (erase-buffer))
-  ;; XXXX: delete-frame interferes with clipboard
-  ;;       probably a bug in emacs
-  (delete-window))
+;; remember frame of last deleted window too
+(defvar cic:delete-window-undo
+  nil)
 
+;; TODO: do I want to do this stuff for C-x 0 too?
+(defun cic:delete-window (&optional arg)
+  "Like delete-window but has special functionality for me."
+  (interactive "P")
+  ;; TODO: do I want to
+  (if arg
+      (and cic:delete-window-undo (set-window-configuration cic:delete-window-undo))
+    (progn
+      (when (equal "*Collection*" (buffer-name (current-buffer)))
+        ;; put into x11 buffer
+        ;; https://emacs.stackexchange.com/questions/14333/how-to-push-kill-ring-contents-onto-system-pasteboard-clipboard
+        ;; TODO: expunge extra-whitespace before doing this
+        (clipboard-kill-ring-save (point-min) (point-max))
+        ;; TODO: this could be undone too
+        (erase-buffer))
+      ;; TODO: save frame too
+      (setq cic:delete-window-undo (current-window-configuration))
+      (delete-window))))
+
+(defun cic:delete-window-below (&optional arg)
+  "Like delete-window but has special functionality for me."
+  (interactive "P")
+  ;; is there a window below
+  (if arg
+      (and cic:delete-window-undo (set-window-configuration cic:delete-window-undo))
+    (unless (= (length (window-list)) 1)
+      (ignore-errors
+        (setq cic:delete-window-undo (current-window-configuration))
+        (progn
+          (windmove-down)
+          (delete-window))))))
+
+;; TODO: undo delete frame
+;;       see current-frame-configuration
 (defun cic:delete-frame ()
   "Like delete-frame but has special functionality for me."
   (interactive)
@@ -760,5 +792,20 @@ and date.  Behaviour based on org-insert-heading."
          (delete-window))
         (t
          (call-interactively 'imenu))))
+
+;; TODO: super-g too?
+;; TODO: undo kill transients (just in case)
+(global-set-key (kbd "H-g") 'cic:kill-transient-windows)
+(defun cic:kill-transient-windows ()
+  (interactive)
+  ;; loop over window
+  (dolist (window (window-list))
+    ;; get window name
+    (let ((buffer-name (buffer-name (window-buffer window))))
+      (when (and
+             (starts-with buffer-name "*")
+             (ends-with   buffer-name "*")
+             (not (string-match "scratch" buffer-name)))
+        (delete-window window)))))
 
 (provide 'emacs-stdlib-commands)

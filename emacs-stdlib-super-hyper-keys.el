@@ -80,7 +80,6 @@
             ;; TODO better name/key for this u neq v
             (define-key map (kbd "s-h u")   'apropos-value)
             (define-key map (kbd "s-h v")   'find-variable)
-            (define-key map (kbd "s-k")     'cic:delete-window)
             ;; m==system manager
             (define-key map (kbd "s-m p")   'cic:create-password-insert)
             (define-key map (kbd "s-m M-p") 'cic:create-password-insert-select)
@@ -134,8 +133,10 @@
             (define-key map (kbd "H-D")          'cic:insert-current-timestamp)
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
-            (define-key map (kbd "H-k")          'cic:delete-frame)
-            (define-key map (kbd "H-l")          'cic:goto-previous-mark)
+            (define-key map (kbd "H-k")          'cic:delete-window)
+            (define-key map (kbd "H-j")          'cic:delete-window-below)
+            (define-key map (kbd "H-K")          'cic:delete-frame)
+            ;; (define-key map (kbd "H-l")          'cic:goto-previous-mark)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)

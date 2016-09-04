@@ -75,6 +75,7 @@
             (define-key map (kbd "M-v")      'yank)
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
+            (define-key map (kbd "M-l")      'cic:goto-previous-mark)
             (define-key map (kbd "M-[")      'cic:decrease-indent)
             (define-key map (kbd "M-]")      'cic:increase-indent)
             (define-key map (kbd "C-\\")     'cic:whack-whitespace)
