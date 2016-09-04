@@ -83,8 +83,7 @@
             (define-key map (kbd "C-c f")    'find-file-at-point)
             (define-key map (kbd "C-c o")    'occur)
             (define-key map (kbd "C-c w")    'compare-windows)
-            (define-key map (kbd "C-;")      'cic:insert-current-time)
-            (define-key map (kbd "C-:")      'cic:insert-current-timestamp)
+            (define-key map (kbd "C-;")      'menu-bar-open)
             (define-key map (kbd "C-h a")    'apropos)
             ;; steve yegge suggestion
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)

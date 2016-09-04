@@ -79,12 +79,8 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
-;; create  minor mode
-(define-minor-mode org-toggle-headline-mode
-  :global nil
-  :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "H-t" ) 'cic:org-mark-toggle-headline)
-            map))
+;; TODO: move somewhere else?
+(define-key org-mode-map (kbd "H-t")   'cic:org-mark-toggle-headline)
 
 (defun cic:org-at-todo-p ()
   (let (matched

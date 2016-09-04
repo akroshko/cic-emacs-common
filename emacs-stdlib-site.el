@@ -125,6 +125,27 @@ TODO broken, provided a diff cleanup function too! "
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
                          (output-html "HTML Viewer")))
+                 (defun cic:reftex-reference ()
+                   (interactive)
+                   (let ((reftex-refstyle "\\ref"))
+                     (reftex-reference " ")))
+                 ;; TODO: would love to combine figure and table
+                 (defun cic:reftex-reference-figure ()
+                   (interactive)
+                   (let ((reftex-refstyle "\\ref"))
+                     (reftex-reference "f")))
+                 (defun cic:reftex-reference-section ()
+                   (interactive)
+                   (let ((reftex-refstyle "\\ref"))
+                     (reftex-reference "s")))
+                 (defun cic:reftex-reference-table ()
+                   (interactive)
+                   (let ((reftex-refstyle "\\ref"))
+                     (reftex-reference "t")))
+                 (defun cic:reftex-reference-equation ()
+                   (interactive)
+                   (let ((reftex-refstyle "\\ref"))
+                     (reftex-reference "e")))
                  (defun cic:auctex-latex-init ()
                    (add-to-list 'TeX-expand-list
                                 '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))
@@ -135,8 +156,13 @@ TODO broken, provided a diff cleanup function too! "
                    ;; does not conflict with emacs-otlb
                    ;; TODO: change this
                    (local-set-key (kbd "s-l") 'cic:outline)
+                   ;; TODO: want to close crossref if hit again, optionally keep it open
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
-                   (local-set-key (kbd "M-r") 'reftex-reference-equation)
+                   (local-set-key (kbd "H-r") 'cic:reftex-reference)
+                   (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
+                   (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
+                   (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
+                   (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
                    ;; init crossref and such
                    (reftex-parse-all)
                    (dolist (file (reftex-get-bibfile-list))
@@ -202,6 +228,10 @@ TODO broken, provided a diff cleanup function too! "
   (emms-all)
   (emms-default-players)
   (setq emms-info-function '(emms-info-libtag)))
+
+(requiring-package (flyspell)
+  ;; TODO: change this if I need it
+  (setq flyspell-auto-correct-binding nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; flycheck

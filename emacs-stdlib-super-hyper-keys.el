@@ -90,7 +90,7 @@
             (define-key map (kbd "s-o f")   'cic:browse-url-at-point-firefox)
             (define-key map (kbd "s-o g")   'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-o w")   'cic:browse-url-at-point-w3m)
-            (define-key map (kbd "H-s")     'cic:ansi-term-localhost-popup)
+            (define-key map (kbd "H-;")     'cic:ansi-term-localhost-popup)
             (define-key map (kbd "s-t t")   'cic:ansi-term-localhost)
             (define-key map (kbd "s-t s-t") 'cic:ansi-term-localhost)
             ;; view
@@ -130,13 +130,13 @@
             (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
+            (define-key map (kbd "H-d")          'cic:insert-current-time)
+            (define-key map (kbd "H-D")          'cic:insert-current-timestamp)
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-k")          'cic:delete-frame)
             (define-key map (kbd "H-l")          'cic:goto-previous-mark)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
-            ;; todo commands
-            (define-key map (kbd "H-t")          'cic:org-mark-toggle-headline)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)
             map))
@@ -152,13 +152,10 @@
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "H-]") 'cic:next-window-frame)
             (define-key map (kbd "H-[") 'cic:prev-window-frame)
-            (define-key map (kbd "H-;") 'menu-bar-open)
             ;; window management
             (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
-            ;; (define-key map (kbd "H-f") 'windowmove-right)
-            ;; (define-key map (kbd "H-b") 'windmove-left)
             ;; other cool keys
             (define-key map (kbd "H-0") 'cic:text-scale-neutral)
             (define-key map (kbd "H--") 'text-scale-decrease)
