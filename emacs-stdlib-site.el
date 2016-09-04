@@ -93,14 +93,21 @@ TODO broken, provided a diff cleanup function too! "
 ;; http://www.barik.net/archive/2012/07/18/154432/
 ;; put this as reverse search c:\emacs-24.2\bin\emacsclientw.exe +%l "%f"
 (requiring-catch ("auctex")
-                 ;; (unload-feature 'tex-site)
                  (require 'tex-site)
+                 (require 'tex)
                  (require 'texmathp)
+                 (require 'bib-cite)
+                 (require 'latex-extra)
                  (setq TeX-PDF-mode t)
                  (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
-                 (setq TeX-source-correlate-method 'synctex)
-                 (setq TeX-source-correlate-mode t)
-                 (setq TeX-source-correlate-start-server t)
+                 (setq TeX-source-correlate-method 'synctex
+                       TeX-source-correlate-mode t
+                       TeX-source-correlate-start-server t
+                       ;; https://emacs.stackexchange.com/questions/13426/auctex-doesnt-run-bibtex
+                       ;; Enable parse on load.
+                       TeX-parse-self t
+                       TeX-auto-save t
+                       TeX-clean-confirm nil)
                  (setq LaTeX-paragraph-commands
                        '("TODO"))
                  (setq preview-auto-cache-preamble t)
@@ -129,6 +136,7 @@ TODO broken, provided a diff cleanup function too! "
                    ;; TODO: change this
                    (local-set-key (kbd "s-l") 'cic:outline)
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
+                   (local-set-key (kbd "M-r") 'reftex-reference-equation)
                    ;; init crossref and such
                    (reftex-parse-all)
                    (dolist (file (reftex-get-bibfile-list))
@@ -150,11 +158,14 @@ TODO broken, provided a diff cleanup function too! "
                  ;; XXXX: specific to University of Saskatchewan thesis template
                  (eval-after-load "reftex"
                    '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
-                 (requiring-package (auctex-latexmk)
-                   (unless (assoc "LatexMk" TeX-command-list)
-                     (auctex-latexmk-setup)))
                  ;; I remap these to other things
-                 (define-key TeX-mode-map (kbd "C-c C-b")  nil))
+                 (define-key TeX-mode-map (kbd "C-c C-b")  nil)
+                 ;; advice is good
+                 ;; TODO: I want to report warnings and errors, but still do nothing
+                 (defun TeX-BibTeX-sentinel-bibtex-always-succesful (orig-fun &rest args)
+                   (apply orig-fun args)
+                   (setq TeX-command-next TeX-command-default))
+                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-succesful))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
@@ -524,7 +535,6 @@ TODO broken, provided a diff cleanup function too! "
                          apache-mode
                          arduino-mode
                          auctex
-                         auctex-latexmk
                          auto-overlays
                          conkeror-minor-mode
                          apropos-fn+var
@@ -568,6 +578,7 @@ TODO broken, provided a diff cleanup function too! "
                          idomenu
                          ;; TODO get rid of
                          lacarte
+                         latex-extra
                          ;; letcheck
                          ;; image-dired+
                          json-mode

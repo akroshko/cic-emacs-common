@@ -1389,33 +1389,50 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (forward-line -1)))
 
 (global-set-key (kbd "C-c C-b") 'cic:current-build)
+;; TODO: for now
+(global-set-key (kbd "H-b")     'cic:current-build)
+;; TODO: for now
+(global-set-key (kbd "H-c")     'cic:current-clean)
 
 (defvar cic:current-build-filename
   nil
   "Stores the current build filename for asyncronous processes and sentinels.")
 
 ;; build, just latex for now
+;; TODO: ditch the latexmk stuff, latex-extra is better
 (defun cic:current-build ()
   (interactive)
   (cond ((eq major-mode 'latex-mode)
-         (let ((full-filename (buffer-file-name)))
-           (TeX-command "LatexMk" 'TeX-master-file nil)
-           (let* ((current-filename (file-name-sans-extension (file-name-nondirectory full-filename)))
-                  (active-process (with-current-file full-filename
-                                    (TeX-active-process))))
-             (setq cic:current-build-filename current-filename)
-             ;; TODO: how to stop this from overriding default message, move to emacs-stdlib
-             (if active-process
-                 (set-process-sentinel active-process
-                                       (lambda (process event)
-                                         (when (equal event "finished\n")
-                                           (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))
-                                         (message "Finished compiling and reloading xpdf! Type `C-c C-l' to see results!")))
-               (progn
-                 (message "No active process! Reloading anyways!")
-                 (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))))))
+         ;; needs latex-extra package
+         ;; TODO: clean first
+         (call-interactively 'latex/compile-commands-until-done)
+         ;; (let ((full-filename (buffer-file-name)))
+         ;;   (TeX-command "LatexMk" 'TeX-master-file nil)
+         ;;   (let* ((current-filename (file-name-sans-extension (file-name-nondirectory full-filename)))
+         ;;          (active-process (with-current-file full-filename
+         ;;                            (TeX-active-process))))
+         ;;     (setq cic:current-build-filename current-filename)
+         ;;     ;; TODO: how to stop this from overriding default message, move to emacs-stdlib
+         ;;     (if active-process
+         ;;         (set-process-sentinel active-process
+         ;;                               (lambda (process event)
+         ;;                                 ;; reload liberally, event when failed
+         ;;                                 (when (or (equal event "finished\n") (string-match "exited abnormally" event))
+         ;;                                   (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))
+         ;;                                 (message "Finished compiling and reloading xpdf! Type `C-c C-l' to see results!")))
+         ;;       (progn
+         ;;         (message "No active process! Reloading anyways!")
+         ;;         (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))))))
+         )
         ((eq major-mode 'markdown-mode)
          (gh-md-export-buffer))))
+
+(defun cic:current-clean ()
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (TeX-command "Clean All" 'TeX-master-file nil)
+         (sit-for 0.5)
+         (message "Cleaned!!!"))))
 
 ;; see https://www.emacswiki.org/emacs/HalfScrolling
 ;; TODO: might have some issues with cursor-preserve-positio
