@@ -154,8 +154,7 @@ TODO broken, provided a diff cleanup function too! "
                    ;; (font-lock-add-keywords nil
                    ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
                    ;; does not conflict with emacs-otlb
-                   ;; TODO: change this
-                   (local-set-key (kbd "s-l") 'cic:outline)
+                   (local-set-key (kbd "H-l") 'cic:outline)
                    ;; TODO: want to close crossref if hit again, optionally keep it open
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
                    (local-set-key (kbd "H-r") 'cic:reftex-reference)
@@ -170,7 +169,7 @@ TODO broken, provided a diff cleanup function too! "
                  ;; (setq TeX-pr)
                  (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
                  (defun cic:reftex-toc-init ()
-                   (local-set-key (kbd "s-l") 'cic:outline))
+                   (local-set-key (kbd "H-l") 'cic:outline))
                  (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
                  (defun cic:reftex-select-label-init ()
                    ;; sync with above?
