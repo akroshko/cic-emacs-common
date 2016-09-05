@@ -696,22 +696,26 @@ alphanumeric."
       ;; reset word list
       (message (concat "Successfully added " word " to list!")))))
 
+;; TODO: decide whether to call timestamp and/or date???
 (defun cic:insert-current-time (&optional arg)
   "Insert the current time and date written out.  ARG only
 inserts date. Create an org-mode heading with the current time
 and date.  Behaviour based on org-insert-heading."
   (interactive "P")
+  ;; TODO: decide if I want this
   (when (eq major-mode 'org-mode)
     (org-insert-heading))
   (if arg
       (insert (format-time-string "%a %b %d, %Y"))
     (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))))
 
+;; TODO: decide whether to call timestamp and/or date???
 (defun cic:insert-current-timestamp (&optional arg)
   "Insert the current time and date written out.  ARG only
 inserts date. Create an org-mode heading with the current time
 and date.  Behaviour based on org-insert-heading."
   (interactive "P")
+  ;; TODO: decide if I want this
   (when (eq major-mode 'org-mode)
     (org-insert-heading))
   (let ((time (current-time)))
@@ -793,19 +797,31 @@ and date.  Behaviour based on org-insert-heading."
         (t
          (call-interactively 'imenu))))
 
-;; TODO: super-g too?
-;; TODO: undo kill transients (just in case)
-(global-set-key (kbd "H-g") 'cic:kill-transient-windows)
-(defun cic:kill-transient-windows ()
-  (interactive)
-  ;; loop over window
-  (dolist (window (window-list))
-    ;; get window name
-    (let ((buffer-name (buffer-name (window-buffer window))))
-      (when (and
-             (starts-with buffer-name "*")
-             (ends-with   buffer-name "*")
-             (not (string-match "scratch" buffer-name)))
-        (delete-window window)))))
+(defvar cic:kill-transient-windows-undo
+  nil)
+
+(defun cic:kill-transient-windows (&optional arg)
+  "Kill all transient windows."
+  (interactive "P")
+  (if arg
+      (and cic:kill-transient-windows-undo (set-window-configuration cic:kill-transient-windows-undo))
+    ;; loop over window
+    (let ((undo-info (current-window-configuration))
+          window-deleted)
+      (dolist (window (window-list))
+        ;; get window name
+        (let ((buffer-name (buffer-name (window-buffer window))))
+          (when (and
+                 (starts-with buffer-name "*")
+                 (ends-with   buffer-name "*")
+                 (not (string-match "scratch" buffer-name)))
+            (delete-window window)
+            (setq window-deleted t))))
+      (when window-deleted
+        (setq cic:kill-transient-windows-undo undo-info)))))
+
+(defun cic:what-cursor-position ()
+  "Give a lot of really cool info on cursor position."
+  (what-cursor-position t))
 
 (provide 'emacs-stdlib-commands)
