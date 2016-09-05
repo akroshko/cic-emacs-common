@@ -71,8 +71,11 @@
             (define-key map (kbd "s-S-x")    'scroll-down-command)
             (define-key map (kbd "s-x")      'scroll-up-command)
             (define-key map (kbd "M-b")      'cic:backward-symbol)
-            (define-key map (kbd "M-c")      'kill-ring-save)
+            ;; copy/yank
+            (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
             (define-key map (kbd "M-v")      'yank)
+            (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
+            ;; move
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
             (define-key map (kbd "M-l")      'cic:goto-previous-mark)

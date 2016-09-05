@@ -824,4 +824,21 @@ and date.  Behaviour based on org-insert-heading."
   "Give a lot of really cool info on cursor position."
   (what-cursor-position t))
 
+;; TODO: maybe use for m-c
+;;       or use c-w for this and change m-x
+(defun kill-ring-save-whole-word-or-region ()
+  "Save a whole word to kill ring, useful for things like searching."
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save (region-beginning) (region-end))
+    ;; check if at beginning of word
+    (let ((previous-character-space (save-excursion
+                                      (backward-char)
+                                      ;; puncuation too
+                                      (looking-at-p " "))))
+      (unless previous-character-space
+        (backward-word))
+      (mark-word)
+      (kill-ring-save (region-beginning) (region-end)))))
+
 (provide 'emacs-stdlib-commands)
