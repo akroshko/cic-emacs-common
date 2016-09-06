@@ -137,9 +137,8 @@
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-k")          'cic:delete-window)
-            (define-key map (kbd "H-j")          'cic:delete-window-below)
+            (define-key map (kbd "H-l")          'cic:delete-window-below)
             (define-key map (kbd "H-K")          'cic:delete-frame)
-            ;; (define-key map (kbd "H-l")          'cic:goto-previous-mark)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)

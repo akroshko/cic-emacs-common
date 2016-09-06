@@ -154,7 +154,7 @@ TODO broken, provided a diff cleanup function too! "
                    ;; (font-lock-add-keywords nil
                    ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
                    ;; does not conflict with emacs-otlb
-                   (local-set-key (kbd "H-l") 'cic:outline)
+                   (local-set-key (kbd "H-i") 'cic:outline)
                    ;; TODO: want to close crossref if hit again, optionally keep it open
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
                    (local-set-key (kbd "H-r") 'cic:reftex-reference)
@@ -169,7 +169,7 @@ TODO broken, provided a diff cleanup function too! "
                  ;; (setq TeX-pr)
                  (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
                  (defun cic:reftex-toc-init ()
-                   (local-set-key (kbd "H-l") 'cic:outline))
+                   (local-set-key (kbd "H-i") 'cic:outline))
                  (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
                  (defun cic:reftex-select-label-init ()
                    ;; sync with above?
@@ -319,12 +319,7 @@ TODO broken, provided a diff cleanup function too! "
   ;; XXXX: change capitalization keys
   (global-set-key (kbd "M-C") 'capitalize-word)
   (global-set-key (kbd "M-L") 'downcase-word)
-  (global-set-key (kbd "M-U") 'upcase-word)
-  ;; moving
-  (define-key paredit-mode-map (kbd "M-l") 'paredit-forward-down)
-  (define-key paredit-mode-map (kbd "M-u") 'paredit-backward-up)
-  (define-key paredit-mode-map (kbd "M-j") 'paredit-backward)
-  (define-key paredit-mode-map (kbd "M-k") 'paredit-forward))
+  (global-set-key (kbd "M-U") 'upcase-word))
 
 (requiring-package (eldoc)
   ;; if not already loaded
@@ -542,11 +537,12 @@ TODO broken, provided a diff cleanup function too! "
 ;; XXXX: must be done before
 (setq smartscan-map
       (let ((map (make-sparse-keymap)))
-          (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
-          (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
-          ;; TODO: better replace
-          (define-key map (kbd "H-%") 'smartscan-symbol-replace)
-          map))
+        ;; TODO: change to something good soon
+        (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
+        (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
+        ;; TODO: better replace
+        (define-key map (kbd "H-%") 'smartscan-symbol-replace)
+        map))
 (requiring-package (smartscan)
   (setq smartscan-use-extended-syntax t)
   (global-smartscan-mode 1))

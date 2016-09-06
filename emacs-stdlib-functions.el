@@ -1422,7 +1422,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;;                                 (message "Finished compiling and reloading xpdf! Type `C-c C-l' to see results!")))
          ;;       (progn
          ;;         (message "No active process! Reloading anyways!")
-         ;;         (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))))))
+
          )
         ((eq major-mode 'markdown-mode)
          (gh-md-export-buffer))))

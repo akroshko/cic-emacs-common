@@ -46,20 +46,15 @@
   ;; :lighter "Some standard keys."
   :keymap (let ((map (make-sparse-keymap)))
             ;; these make working on a laptop or tablet type computer great
-            (define-key map (kbd "<up>") 'previous-line)
-            (define-key map (kbd "<down>") 'next-line)
+            (define-key map (kbd "<up>")    'previous-line)
+            (define-key map (kbd "<down>")  'next-line)
+            ;; TODO: decide on these
             (define-key map (kbd "C-<up>") (lambda ()
                                              (interactive)
                                              (scroll-down)))
             (define-key map (kbd "C-<down>") (lambda ()
                                                (interactive)
                                                (scroll-up)))
-            (define-key map (kbd "S-<up>") (lambda ()
-                                             (interactive)
-                                             (scroll-down 5)))
-            (define-key map (kbd "S-<down>") (lambda ()
-                                               (interactive)
-                                               (scroll-up 5)))
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
             (define-key map [f12]            'cic:toggle-menubar)
@@ -78,6 +73,7 @@
             ;; move
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
+            ;; TODO: replace
             (define-key map (kbd "M-l")      'cic:goto-previous-mark)
             (define-key map (kbd "M-[")      'cic:decrease-indent)
             (define-key map (kbd "M-]")      'cic:increase-indent)
@@ -97,7 +93,8 @@
             (define-key map (kbd "C-x r i")  'string-insert-rectangle)
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
             ;; (define-key map (kbd "C-v")      'hl-line-mode)
-            (define-key map (kbd "C-v")  'cic:line-mode-or-disable-visuals)
+            (define-key map (kbd "C-v")      'cic:line-mode-or-disable-visuals)
+            ;; disable normal movement keys will eventually remap
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))
   ;; (global-unset-key (kbd "C-v"))
