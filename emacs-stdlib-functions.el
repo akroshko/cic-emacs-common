@@ -1394,12 +1394,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: for now
 (global-set-key (kbd "H-c")     'cic:current-clean)
 
-(defvar cic:current-build-filename
-  nil
-  "Stores the current build filename for asyncronous processes and sentinels.")
-
 ;; build, just latex for now
-;; TODO: ditch the latexmk stuff, latex-extra is better
 (defun cic:current-build ()
   (interactive)
   (cond ((eq major-mode 'latex-mode)

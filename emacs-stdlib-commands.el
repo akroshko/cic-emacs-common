@@ -791,7 +791,11 @@ and date.  Behaviour based on org-insert-heading."
              (save-excursion
                (select-window (get-buffer-window "*toc*" t))
                (delete-window))
-           (reftex-toc)))
+           (progn
+             (reftex-toc)
+             ;; make something brief and easy for navigation
+             (setq reftex-toc-include-labels nil)
+             (reftex-toc-max-level 3))))
         ((eq major-mode 'reftex-toc-mode)
          (delete-window))
         (t
