@@ -1484,14 +1484,24 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (switch-to-buffer my-buffer))))
 
 ;; this is generally hooked into a global key for popping open the clipboard as editable text
-(defun cic:create-open-collection-other-window ()
+;; TODO: needs a better name
+(defun cic:create-open-paste-collection ()
   (interactive)
   (with-current-buffer-create "*Collection*"
     ;; TODO: possibly clear buffer (can I select)
     ;;       do I really want to add current one first
     (goto-char (point-min))
     (x-clipboard-yank))
-  (cic:create-or-select-frame-displaying-buffer "*Collection*"))
+  (cic:create-or-select-frame-displaying-buffer "*Collection*")
+  ;; TODO: decide on whether I want to grab focus or not when pasting
+  ;;       way of disabling?
+  (select-frame-set-input-focus (window-frame (get-buffer-window "*Collection*" t))))
+
+(defun cic:create-open-collection-frame ()
+  (interactive)
+  (cic:create-or-select-frame-displaying-buffer "*Collection*")
+  ;; can probably be reduced number of commands
+  (select-frame-set-input-focus (window-frame (get-buffer-window "*Collection*" t))))
 
 (defun cic:other-window-next ()
   (interactive)

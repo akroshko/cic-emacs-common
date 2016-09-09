@@ -155,8 +155,10 @@ TODO broken, provided a diff cleanup function too! "
                    ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
                    ;; does not conflict with emacs-otlb
                    (local-set-key (kbd "H-i") 'cic:outline)
-                   ;; TODO: want to close crossref if hit again, optionally keep it open
+                   ;; think of "view"
+                   ;; TODO: make this something for all modes, should this be hyper-v or ???
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
+                   ;; set up references
                    (local-set-key (kbd "H-r") 'cic:reftex-reference)
                    (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
                    (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
@@ -255,10 +257,9 @@ TODO broken, provided a diff cleanup function too! "
               (flycheck-list-errors))
           (flycheck-buffer))))
   (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
-  ;; TODO: temporary until I figure out what next
-  ;; TODO: generalize these to most appropriate function and context
-  (global-set-key (kbd "s-,") 'flycheck-previous-error)
-  (global-set-key (kbd "s-.") 'flycheck-next-error)
+  ;; I use these for other stuff
+  ;; (global-set-key (kbd "s-,") 'flycheck-previous-error)
+  ;; (global-set-key (kbd "s-.") 'flycheck-next-error)
   ;; hacks for my own stuff
   (put 'python-flake8    (intern "flycheck-modes") '(python-mode sage-mode))
   (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
@@ -374,7 +375,8 @@ TODO broken, provided a diff cleanup function too! "
 (requiring-package (popwin)
   (setq popwin:popup-window-height 30)
   (popwin-mode 1)
-  (global-set-key (kbd "H-w") popwin:keymap)
+  ;; TODO: never use it
+  ;; (global-set-key (kbd "H-w") popwin:keymap)
   (assq-delete-all 'grep-mode popwin:special-display-config)
   (assq-delete-all 'occur-mode popwin:special-display-config)
   ;; (grep-mode :noselect t)
@@ -573,6 +575,7 @@ TODO broken, provided a diff cleanup function too! "
                          apropos-fn+var
                          bash-completion
                          benchmark-init
+                         biblio
                          bbdb
                          bbdb-ext
                          capture
