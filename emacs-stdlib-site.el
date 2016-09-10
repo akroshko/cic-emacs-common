@@ -121,6 +121,8 @@ TODO broken, provided a diff cleanup function too! "
                                                   (regexp "parts?" "chapters?" "chap\\." "sections?" "sect?\\." "paragraphs?" "par\\." "\\\\S" "\247" "Teile?" "Kapitel" "Kap\\." "Abschnitte?" "appendi\\(x\\|ces\\)" "App\\." "Anh\"?ange?" "Anh\\."))))
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
+                 (setq TeX-view-program-list
+                       '(("xpdf" ("nohup xpdf -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
@@ -184,9 +186,9 @@ TODO broken, provided a diff cleanup function too! "
                  (setq font-latex-match-reference-keywords
                        '(("citemp" "[{")
                          ("citem" "[{")))
-                 (setq TeX-view-program-list
-                       '(("DVI Viewer" "")
-                         ("HTML Viewer" "")))
+                 ;; (setq TeX-view-program-list
+                 ;;       '(("DVI Viewer" "")
+                 ;;         ("HTML Viewer" "")))
                  ;; RefTeX
                  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
                  (setq reftex-plug-into-AUCTeX t)
