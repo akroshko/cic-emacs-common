@@ -374,15 +374,16 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; popwin
-(requiring-package (popwin)
-  (setq popwin:popup-window-height 30)
-  (popwin-mode 1)
-  ;; TODO: never use it
-  ;; (global-set-key (kbd "H-w") popwin:keymap)
-  (assq-delete-all 'grep-mode popwin:special-display-config)
-  (assq-delete-all 'occur-mode popwin:special-display-config)
-  ;; (grep-mode :noselect t)
-  )
+;; TODO: replaced with my own keys
+;; (requiring-package (popwin)
+;;   (setq popwin:popup-window-height 30)
+;;   (popwin-mode 1)
+;;   ;; TODO: never use it
+;;   ;; (global-set-key (kbd "H-w") popwin:keymap)
+;;   (assq-delete-all 'grep-mode popwin:special-display-config)
+;;   (assq-delete-all 'occur-mode popwin:special-display-config)
+;;   ;; (grep-mode :noselect t)
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python and sage
@@ -627,7 +628,6 @@ TODO broken, provided a diff cleanup function too! "
                          org
                          paredit
                          paredit-menu
-                         popwin
                          prolog
                          ;; pylint
                          ;; py-import-check
