@@ -186,15 +186,21 @@
         dired-keep-marker-rename nil
         dired-dwim-target t
         dired-omit-files "^\\.+\\|^\\.$\\|^\\.\\.$"
-        ;; TODO: would like ".out" but only for latex
+        ;; TODO: would like ".out" but only for latex directories
         dired-omit-extensions '("_flymake.aux" "_flymake.log" "_flymake.pdf" "_flymake.pdfsync" "_flymake.py"
                                 "_.log" "_.pdf" "_.pdfsync"  "_.prv" "_.tex"
                                 ".aux" ".bbl" ".blg" ".bst" ".fdb_latexmk" ".fls" ".lof" ".lot" ".pdfsync" ".snm" ".synctex.gz" ".toc"
                                 ".pyd" ".pyc" ".sage.py"))
   (setq dired-listing-switches "--group-directories-first -alh")
+  (defun cic:dired-mode-minor-modes ()
+    ;; I have symlinked directories that I don't like to be a mess
+    (when (string-match "symlinked-documents" default-directory)
+      ;; this is the way to do buffer local
+      (setq-local dired-actual-switches "--group-directories-first -alLh"))
+    (dired-omit-mode 1)
+    (hl-line-mode 1))
   ;; set omit by default
-  (add-hook 'dired-mode-hook '(lambda ()  (dired-omit-mode 1)))
-  (add-hook 'dired-mode-hook '(lambda ()  (hl-line-mode 1))))
+  (add-hook 'dired-mode-hook 'cic:dired-mode-minor-modes))
 (add-hook 'package-menu-mode-hook '(lambda ()  (hl-line-mode 1)))
 (add-hook 'occur-mode-hook '(lambda ()  (hl-line-mode 1)))
 (requiring-package (ispell)
