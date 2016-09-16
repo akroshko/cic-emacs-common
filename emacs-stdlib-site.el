@@ -122,7 +122,7 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
-                       '(("xpdf" ("nohup xpdf -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf")))
+                       '(("xpdf" ("xpdf-local.sh -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
@@ -200,8 +200,11 @@ TODO broken, provided a diff cleanup function too! "
                  ;; advice is good
                  ;; TODO: I want to report warnings and errors, but still do nothing
                  (defun TeX-BibTeX-sentinel-bibtex-always-succesful (orig-fun &rest args)
-                   (apply orig-fun args)
-                   (setq TeX-command-next TeX-command-default))
+                   (let ((ret nil))
+                     (setq ret (apply orig-fun args))
+                     (setq TeX-command-next TeX-command-default)
+                     ;; not sure return value is needed, but OK
+                     ret))
                  (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-succesful))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
