@@ -1388,18 +1388,26 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (insert str)
     (forward-line -1)))
 
-(global-set-key (kbd "C-c C-b") 'cic:current-build)
+(global-set-key (kbd "C-c C-b") 'cic:current-compile)
 ;; TODO: for now
 (global-set-key (kbd "H-b")     'cic:current-build)
 ;; TODO: for now
 (global-set-key (kbd "H-c")     'cic:current-clean)
+
+(defun cic:current-compile ()
+  "Just see how my document is doing."
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 ;; build, just latex for now
 (defun cic:current-build ()
   (interactive)
   (cond ((eq major-mode 'latex-mode)
          ;; needs latex-extra package
-         ;; TODO: clean first
+         ;; TODO: clean first?
+         ;; TODO: does not get set by appropriate advice
+         (setq cic:current-build-filename (buffer-file-name))
          (call-interactively 'latex/compile-commands-until-done)
          ;; (let ((full-filename (buffer-file-name)))
          ;;   (TeX-command "LatexMk" 'TeX-master-file nil)

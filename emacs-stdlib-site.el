@@ -86,6 +86,12 @@ TODO broken, provided a diff cleanup function too! "
   ;; TODO: maybe do super space for this
   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
 
+;; advice for tex-command-master
+(defvar cic:current-build-filename
+  nil
+  "Stores the current build filename for asyncronous processes and sentinels.")
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; AucTeX
 ;; https://www.gnu.org/software/auctex/manual/auctex/Advice-for-non_002dprivileged-users.html#Advice-for-non_002dprivileged-users
@@ -93,11 +99,11 @@ TODO broken, provided a diff cleanup function too! "
 ;; http://www.barik.net/archive/2012/07/18/154432/
 ;; put this as reverse search c:\emacs-24.2\bin\emacsclientw.exe +%l "%f"
 (requiring-catch ("auctex")
+                 (require 'bib-cite)
+                 (require 'latex-extra)
                  (require 'tex-site)
                  (require 'tex)
                  (require 'texmathp)
-                 (require 'bib-cite)
-                 (require 'latex-extra)
                  (setq TeX-PDF-mode t)
                  (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
                  (setq TeX-source-correlate-method 'synctex
@@ -122,7 +128,10 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
-                       '(("xpdf" ("xpdf-local.sh -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf")))
+                       ;; TODO: putting raise in xpdf-local for now
+                       ;; '(("xpdf" ("xpdf-local.sh -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf"))
+                       ;; TODO: is this enough to stop stuff from having issues
+                       '(("xpdf" ("nohup xpdf-local.sh -remote %s %o" (mode-io-correlate " %(outpage)")) "xpdf")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
@@ -200,12 +209,25 @@ TODO broken, provided a diff cleanup function too! "
                  ;; advice is good
                  ;; TODO: I want to report warnings and errors, but still do nothing
                  (defun TeX-BibTeX-sentinel-bibtex-always-succesful (orig-fun &rest args)
-                   (let ((ret nil))
-                     (setq ret (apply orig-fun args))
+                   (let ((ret (apply orig-fun args)))
                      (setq TeX-command-next TeX-command-default)
                      ;; not sure return value is needed, but OK
                      ret))
-                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-succesful))
+                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-succesful)
+                 (defun TeX-LaTeX-current-build-filename (orig-fun &rest args)
+                   (setq cic:current-build-filename (buffer-file-name))
+                   (apply orig-fun args))
+                 (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
+                 (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
+                   (let ((ret (apply orig-fun args))
+                         (shell-ret (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")))
+                     ;; xpdf reload causes issues in continuous mode, sync with cursor position
+                     (with-current-buffer (find-file-noselect cic:current-build-filename)
+                       ;; TODO: only tex-view if xpdf opened
+                       (when (equal shell-ret 0)
+                         (TeX-view)))
+                     ret))
+                 (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
