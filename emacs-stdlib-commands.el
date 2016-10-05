@@ -668,12 +668,13 @@ alphanumeric."
   (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
   (ispell-kill-ispell t)
   ;; detect prog mode first
-  (cond ((not (eq last-command 'cic:flyspell-here))
-         (ispell-word))
+  (cond ;; ((not (eq last-command 'cic:flyspell-here))
+        ;;  (ispell-word))
         ((cic:prog-mode-p)
           (cic:flyspell-init-prog))
         ((cic:text-mode-p)
-         (cic:flyspell-init-text))))
+         (cic:flyspell-init-text)))
+  (flyspell-buffer))
 
 ;; TODO: move to somewhere more appropriate
 (setq flyspell-issue-message-flag nil)
@@ -783,19 +784,26 @@ and date.  Behaviour based on org-insert-heading."
     (let ((x-select-enable-clipboard t))
       (x-select-text clipboard-contents))))
 
-(defun cic:outline ()
+;; TODO: preserve outline, but also reset
+;; TODO: do better to get 1,2,3
+(defun cic:outline (&optional arg)
   "Show a mode-specific outline."
-  (interactive)
+  (interactive "P")
   (cond ((eq major-mode 'latex-mode)
          (if (get-buffer-window "*toc*" t)
              (save-excursion
                (select-window (get-buffer-window "*toc*" t))
+               (if arg
+                   (reftex-toc-max-level 1)
+                 (reftex-toc-max-level 2))
                (delete-window))
            (progn
              (reftex-toc)
              ;; make something brief and easy for navigation
              (setq reftex-toc-include-labels nil)
-             (reftex-toc-max-level 3))))
+             (if arg
+                 (reftex-toc-max-level 1)
+               (reftex-toc-max-level 2)))))
         ((eq major-mode 'reftex-toc-mode)
          (delete-window))
         (t

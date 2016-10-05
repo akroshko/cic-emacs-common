@@ -160,8 +160,6 @@ TODO broken, provided a diff cleanup function too! "
                  (defun cic:auctex-latex-init ()
                    (add-to-list 'TeX-expand-list
                                 '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))
-                   (modify-syntax-entry ?: "w")
-                   (modify-syntax-entry ?: "_")
                    ;; (font-lock-add-keywords nil
                    ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
                    ;; does not conflict with emacs-otlb
@@ -175,12 +173,20 @@ TODO broken, provided a diff cleanup function too! "
                    (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
                    (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
                    (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
+                   ;; jump to process buffer
+                   (local-set-key (kbd "H-o") 'cic:switch-to-process-buffer)
                    ;; init crossref and such
                    (reftex-parse-all)
                    (dolist (file (reftex-get-bibfile-list))
-                     (reftex-get-file-buffer-force file)))
+                     (reftex-get-file-buffer-force file))
+                   ;; XXXX: adds colon as symbol constituent too
+                   (modify-syntax-entry ?: "w"))
                  ;; (setq TeX-pr)
                  (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
+                 (defun cic:TeX-output-mode-init ()
+                   ;; jump to latex buffer
+                   (local-set-key (kbd "H-o") 'cic:switch-to-latex-buffer))
+                 (add-hook 'TeX-output-mode-hook 'cic:TeX-output-mode-init)
                  (defun cic:reftex-toc-init ()
                    (local-set-key (kbd "H-i") 'cic:outline))
                  (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
@@ -191,6 +197,41 @@ TODO broken, provided a diff cleanup function too! "
                    (local-set-key (kbd "H-e") 'reftex-select-quit)
                    (local-set-key (kbd "H-s") 'reftex-select-quit)
                    (local-set-key (kbd "H-t") 'reftex-select-quit))
+                 ;; TODO: eventually unify these functions
+                 (defun cic:switch-to-process-buffer ()
+                   (interactive)
+                   (let ((latex-buffer (current-buffer))
+                         (process-buffer (TeX-process-buffer-name (file-name-sans-extension (buffer-file-name))))
+                         (tex-help-window nil))
+                     ;; if a window called tex-help is open, just go to next
+                     (walk-windows (lambda (w)
+                                     (when (equal (buffer-name (window-buffer w)) "*TeX Help*")
+                                       (setq tex-help-window w))))
+                     (if tex-help-window
+                         (next-error)
+                       (if (get-buffer process-buffer)
+                           (progn
+                             (switch-to-buffer process-buffer)
+                             (setq-local cic:latex-buffer latex-buffer)
+                             ;; reparse and goto first error
+                             (goto-char (point-min))
+                             (if (cic:any-errors-in-process-buffer (current-buffer))
+                                 (TeX-next-error '(4))
+                               (goto-char (point-max))))
+                         (message "Process buffer doesn't exist!!!")))))
+                 (defun cic:any-errors-in-process-buffer (process-buffer)
+                   (with-current-buffer process-buffer
+                     (save-excursion
+                       (goto-char (point-min))
+                       (> (length (delq nil (mapcar (lambda (e)
+                                                      (when (eq (car e) 'error)
+                                                        t))
+                                                    TeX-error-list))) 0))))
+                 (defun cic:switch-to-latex-buffer ()
+                   (interactive)
+                   (if cic:latex-buffer
+                       (switch-to-buffer cic:latex-buffer)
+                     (message "No default latex buffer!!!")))
                  (add-hook 'reftex-select-label-mode-hook 'cic:reftex-select-label-init)
                  (setq font-latex-match-reference-keywords
                        '(("citemp" "[{")
@@ -396,6 +437,12 @@ TODO broken, provided a diff cleanup function too! "
         ido-vertical-show-count t
         ido-max-prospects 50
         ido-vertical-pad-list nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; jumplist
+(requiring-package (jumplist)
+  (global-set-key (kbd "s-<") 'jumplist-previous)
+  (global-set-key (kbd "s->") 'jumplist-next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; popwin
@@ -646,6 +693,7 @@ TODO broken, provided a diff cleanup function too! "
                          ;; letcheck
                          ;; image-dired+
                          json-mode
+                         jumplist
                          magit
                          markdown-mode
                          matlab-mode
