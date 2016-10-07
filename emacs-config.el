@@ -276,7 +276,7 @@
         org-todo-keyword-faces '(("TODO" . "firebrick")
                                  ("NEXT" . "orange red")
                                  ("WAITING" . "magenta")
-                                 ("DONE" . "green")
+                                 ("DONE" . (:foreground "green" :background "blue" :weight bold))
                                  ("INVALID" . (:foreground "black" :background "yellow" :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t
@@ -285,7 +285,8 @@
         org-agenda-todo-list-sublevels nil
         org-agenda-todo-ignore-scheduled t
         org-agenda-todo-ignore-deadlines t
-        org-ctrl-k-protect-subtree nil)
+        org-ctrl-k-protect-subtree nil
+        org-cycle-global-at-bob t)
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
     (when (display-graphic-p)
@@ -293,18 +294,18 @@
             ;; XXXX: want images look reasonable on most systems
             ;; TODO: set differently for different screens
             org-image-actual-width '(400))))
-  ;; TODO: clean this up!!!!
-  (defun org-list-highlight-setup ()
-    (font-lock-add-keywords 'org-mode
-                            '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
-                               ;; font-lock-warning-face
-                               font-lock-keyword-face))))
+  ;; TODO: change to something good
+  ;; (defun org-list-highlight-setup ()
+  ;;   (font-lock-add-keywords 'org-mode
+  ;;                           '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
+  ;;                              ;; font-lock-warning-face
+  ;;                              font-lock-keyword-face))))
   ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
     (org-remove-from-invisibility-spec '(org-link))
     (org-restart-font-lock))
   (add-hook 'org-mode-hook 'org-image-setup)
-  (add-hook 'org-mode-hook 'org-list-highlight-setup)
+  ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
   (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   ;; (setq org-log-done 'time)
   ;; (setq org-log-done 'note)

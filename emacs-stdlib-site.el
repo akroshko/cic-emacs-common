@@ -445,17 +445,9 @@ TODO broken, provided a diff cleanup function too! "
   (global-set-key (kbd "s->") 'jumplist-next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; popwin
-;; TODO: replaced with my own keys
-;; (requiring-package (popwin)
-;;   (setq popwin:popup-window-height 30)
-;;   (popwin-mode 1)
-;;   ;; TODO: never use it
-;;   ;; (global-set-key (kbd "H-w") popwin:keymap)
-;;   (assq-delete-all 'grep-mode popwin:special-display-config)
-;;   (assq-delete-all 'occur-mode popwin:special-display-config)
-;;   ;; (grep-mode :noselect t)
-;;   )
+;; org-bullets
+(requiring-package (org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python and sage
@@ -699,6 +691,7 @@ TODO broken, provided a diff cleanup function too! "
                          matlab-mode
                          mew
                          org
+                         org-bullets
                          paredit
                          paredit-menu
                          prolog

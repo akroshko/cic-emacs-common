@@ -99,6 +99,7 @@ TODO: incomplete but still useful right now"
         (setq matched t)))
     matched))
 
+;; TODO: change
 (defun cic:org-mark-toggle-headline (arg)
   "Change to DONE or TODO, + or -, or another custom state.
 
@@ -110,7 +111,7 @@ types of headings.  Does nothing if already in desired state."
   (cond ((eq major-mode 'org-agenda-mode)
          (when (cic:org-at-todo-p)
            (org-agenda-todo)))
-        ((and (org-at-heading-p) (cic:org-at-todo-p))
+        ((org-at-heading-p)
          (if arg
              (org-todo 'todo)
            (org-todo 'done)))
@@ -852,5 +853,72 @@ and date.  Behaviour based on org-insert-heading."
         (backward-word))
       (mark-word)
       (kill-ring-save (region-beginning) (region-end)))))
+
+(defvar cic:org-meta-level
+  "What level when org-meta"
+  nil)
+
+(defvar cic:org-meta-moving-up
+  "Indicates direction that cycling moves things."
+  t)
+
+(defun cic:org-meta-content-cycle ()
+  "Better org-meta to insert item, with cycling type."
+  (interactive)
+  (cond ((not (eq last-command 'cic:org-meta-content-cycle))
+         ;; insert content normally
+         (end-of-line)
+         (org-meta-return)
+         ;; record headline level meta-return inserted
+         (setq cic:org-meta-level (org-current-level))
+         ;; record parent headline level
+         (setq cic:org-meta-moving-up t))
+        ((cic:org-list-p (cic:get-current-line))
+         (org-toggle-heading cic:org-meta-level)
+         (setq cic:org-meta-moving-up t))
+        ;; promote if equal
+        ((and (org-on-heading-p) (= (org-outline-level) cic:org-meta-level))
+         (if cic:org-meta-moving-up
+             (org-promote)
+           (progn
+             (org-toggle-item nil))))
+        ;; demote if unequal
+        ((and (org-on-heading-p) (< (org-outline-level) cic:org-meta-level))
+         (org-demote)
+         (setq cic:org-meta-moving-up nil)))
+  (end-of-line))
+
+;; TODO: move somewhere better
+(define-key org-mode-map (kbd "H-h") 'cic:org-meta-content-cycle)
+;; TODO: make better once I decide? show all children
+;; TODO: functions too
+(define-key org-mode-map (kbd "H-s") 'cic:org-cycle-in-level-1-tree)
+
+(defun cic:org-cycle-in-level-1-tree ()
+  "Cycle open everything in current level 1 subtree."
+  (interactive)
+  (save-excursion
+    (ignore-errors (outline-up-heading 5))
+    (org-show-subtree)))
+;; go to end of last heading
+
+(define-key org-mode-map (kbd "H-o") 'cic:org-open-last-tree)
+
+(defun cic:org-open-last-tree ()
+  "Open at end of last tree, then cycle between beginning and end of it."
+  (interactive)
+  (if (and (eq last-command 'cic:org-open-last-tree) (not (org-at-heading-p)))
+      ;; assume already opened for now
+      (progn
+        (ignore-errors (outline-up-heading 5)))
+    (progn
+      (goto-char (point-max))
+      (org-back-to-heading)
+      ;; make sure we get to proper
+      ;; heading TODO: do not like
+      ;; ignore-errors
+      (ignore-errors (outline-up-heading 5))
+      (org-show-subtree)
+      (goto-char (point-max)))))
 
 (provide 'emacs-stdlib-commands)

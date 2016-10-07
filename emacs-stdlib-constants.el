@@ -48,18 +48,18 @@
   "^\\*+ \\(.*\\)")
 
 (defconst cic:emacs-stdlib-list-regexp
-  "^ *\\([-+*]\\) \\(\\[.\\]\\)?\\(.*\\)")
+  "^ +\\([-+*]\\) \\(\\[.\\]\\)?\\(.*\\)")
 
 (defconst cic:emacs-stdlib-checkbox-regexp
-  "^ *\\([-+*]\\) \\(\\[.\\]\\)\\(.*\\)")
+  "^ +\\([-+*]\\) \\(\\[.\\]\\)\\(.*\\)")
 
 (defconst cic:emacs-stdlib-checkbox-checked-regexp
-  "^ *\\([-+*]\\) \\(\\[[X-]\\]\\)\\(.*\\)")
+  "^ +\\([-+*]\\) \\(\\[[X-]\\]\\)\\(.*\\)")
 
 (defconst cic:emacs-stdlib-checkbox-unchecked-regexp
-  "^ *\\([-+*]\\) \\(\\[ \\]\\)\\(.*\\)")
+  "^ +\\([-+*]\\) \\(\\[ \\]\\)\\(.*\\)")
 
 (defconst cic:emacs-stdlib-list-exact-regexp
-  "^ *\\([-+*]\\) \\(\\[.\\]\\)? *")
+  "^ +\\([-+*]\\) \\(\\[.\\]\\)? *")
 
 (provide 'emacs-stdlib-constants)
