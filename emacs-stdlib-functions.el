@@ -280,12 +280,18 @@ TODO: Currently actually prefix search, do I want an exact search?"
 in FILENAME given COLUMN number."
   (unless column
     (setq column 1))
-  (let (found)
-    (do-org-table-rows filename table-name row
-                       (org-table-goto-column column)
-                       (when (string= key-value (strip-full (org-table-get nil column)))
-                         (setq found (list filename (point)))))
-    found))
+  (when (not (listp filename))
+    (setq filename (list filename)))
+  (let (found-list)
+    (dolist (the-filename filename)
+      (list (do-org-table-rows the-filename table-name row
+                               (org-table-goto-column column)
+                               (when (string= key-value (strip-full (org-table-get nil column)))
+                                 (setq found-list (append found-list (list (list the-filename (point)))))))))
+    (setq found-list (delq nil found-list))
+    (when (> (length found-list) 1)
+      (error "Found too many locations!!!"))
+    (car found-list)))
 
 (defun cic:org-table-lookup-row (filename table-name key-value  &optional column)
   "Lookup the row (in elisp) of KEY-VALUE from TABLE-NAME in FILENAME given COLUMN.
