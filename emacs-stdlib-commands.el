@@ -665,16 +665,22 @@ alphanumeric."
   ""
   (interactive)
   ;; reload word list by killing ispell
-  (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
-  (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
-  (ispell-kill-ispell t)
+  ;; TODO: do not restart if nothing has changed
+  ;; (ispell-kill-ispell t)
   ;; detect prog mode first
+  ;; TODO: detect if flyspell started
   (cond ;; ((not (eq last-command 'cic:flyspell-here))
-        ;;  (ispell-word))
-        ((cic:prog-mode-p)
-          (cic:flyspell-init-prog))
-        ((cic:text-mode-p)
-         (cic:flyspell-init-text)))
+   ;;  (ispell-word))
+   ((and (not flyspell-mode) (cic:prog-mode-p))
+    (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+    (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+    (cic:flyspell-init-prog))
+   ((and (not flyspell-mode) (cic:text-mode-p))
+    (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+    (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+    (cic:flyspell-init-text)))
+  (ispell-word)
+  ;; TODO: run async?
   (flyspell-buffer))
 
 ;; TODO: move to somewhere more appropriate
