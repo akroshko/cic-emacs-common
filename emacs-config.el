@@ -133,8 +133,9 @@
 ;; clipboard
 (setq x-select-enable-primary t
       x-select-enable-clipboard t)
-
 (auto-compression-mode 1)
+;; case
+(setq sort-fold-case t)
 ;; locale information, just a generic Canadian location as default
 (unless (and (boundp 'calendar-latitude) calendar-latitude)
   (setq calendar-latitude 45.4214))
