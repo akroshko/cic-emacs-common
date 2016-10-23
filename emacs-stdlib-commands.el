@@ -801,7 +801,7 @@ and date.  Behaviour based on org-insert-heading."
              (save-excursion
                (select-window (get-buffer-window "*toc*" t))
                (if arg
-                   (reftex-toc-max-level 1)
+                   (reftex-toc-max-level 3)
                  (reftex-toc-max-level 2))
                (delete-window))
            (progn
@@ -809,7 +809,7 @@ and date.  Behaviour based on org-insert-heading."
              ;; make something brief and easy for navigation
              (setq reftex-toc-include-labels nil)
              (if arg
-                 (reftex-toc-max-level 1)
+                 (reftex-toc-max-level 3)
                (reftex-toc-max-level 2)))))
         ((eq major-mode 'reftex-toc-mode)
          (delete-window))
