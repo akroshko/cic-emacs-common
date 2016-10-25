@@ -131,8 +131,6 @@
             (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
-            (define-key map (kbd "H-d")          'cic:insert-current-time)
-            (define-key map (kbd "H-D")          'cic:insert-current-timestamp)
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
@@ -143,6 +141,21 @@
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)
             map))
+
+;; ensure that I can override some keys in dired
+(define-minor-mode emacs-stdlib-hyper-keys-non-dired-mode ()
+  :global nil
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "H-d") 'cic:insert-current-time)
+            (define-key map (kbd "H-D") 'cic:insert-current-timestamp)
+            map))
+
+;; TODO: not sure why I have to do it this way here but not for minibuffer setup
+(add-hook 'after-change-major-mode-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
+
+(defun cic:enable-emacs-stdlib-hyper-keys-non-dired-mode ()
+  (when (not (eq major-mode 'dired-mode))
+            (emacs-stdlib-hyper-keys-non-dired-mode t)))
 
 ;; TODO: update so I can enter a date (and/or time) into
 ;;       comments anywhere
