@@ -60,6 +60,17 @@
                   (throw 'requiring-package-fail nil))))))))
     (put 'requiring-package 'lisp-indent-function 1))
 
+;; TODO: is this the best place
+(defun cic:init-crypt ()
+  (interactive)
+  ;; XXXX: can only use built-in here
+  (setenv "GPG_AGENT_INFO" (with-temp-buffer (insert-file-contents (cic:join-paths (getenv "GNUPGHOME") (concat "gpg-agent-info-" (system-name))))
+                                             (strip-full (elt (split-string (buffer-substring-no-properties (point-min) (point-max)) "=") 1))))
+  (with-temp-buffer (insert-file-contents (concat "~/.keychain/" (system-name) "-sh"))
+                    (let ((ssh-output (split-string (buffer-substring-no-properties (point-min) (point-max)) "=")))
+                      (setenv "SSH_AUTH_SOCK" (car (split-string (elt ssh-output 1) ";")))
+                      (setenv "SSH_AGENT_PID" (car (split-string (elt ssh-output 2) ";"))))))
+
 ;; set proper fonts, characters, and colors
 (global-font-lock-mode t)
 (setq initial-frame-alist nil
