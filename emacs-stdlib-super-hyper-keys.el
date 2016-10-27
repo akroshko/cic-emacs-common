@@ -153,9 +153,17 @@
 ;; TODO: not sure why I have to do it this way here but not for minibuffer setup
 (add-hook 'after-change-major-mode-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
 
+(defun wdired-change-to-dired-mode--disable-hyper (orig-fun &rest args)
+  (let ((ret (apply orig-fun args)))
+    (emacs-stdlib-hyper-keys-non-dired-mode 0)
+    ret))
+(advice-add 'wdired-change-to-dired-mode :around #'wdired-change-to-dired-mode--disable-hyper)
+
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-mode ()
-  (when (not (eq major-mode 'dired-mode))
-            (emacs-stdlib-hyper-keys-non-dired-mode t)))
+  (cond ((eq major-mode 'dired-mode)
+         (emacs-stdlib-hyper-keys-non-dired-mode 0))
+        (t
+         (emacs-stdlib-hyper-keys-non-dired-mode t))))
 
 ;; TODO: update so I can enter a date (and/or time) into
 ;;       comments anywhere
