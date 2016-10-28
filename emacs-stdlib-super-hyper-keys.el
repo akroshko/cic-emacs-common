@@ -53,7 +53,8 @@
             (define-key map (kbd "s-}")        'cic:next-file-dired-pagedown)
             (define-key map (kbd "s-{")        'cic:previous-file-dired-pageup)
             ;; org keys
-            (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
+            ;; TODO: using for something else now
+            ;; (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
             (define-key map (kbd "s-%")        'cic:query-replace-case-sensitive)
             (define-key map (kbd "s-*")        'cic:recalculate)
             (define-key map (kbd "s-=")        (lambda () (interactive) (what-cursor-position t)))
