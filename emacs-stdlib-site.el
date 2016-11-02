@@ -128,10 +128,9 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
-                       ;; TODO: putting raise in xpdf-local for now
-                       ;; '(("xpdf" ("xpdf-local.sh -remote %s -raise %o" (mode-io-correlate " %(outpage)")) "xpdf"))
-                       ;; TODO: is this enough to stop stuff from having issues
-                       '(("xpdf" ("nohup xpdf-local.sh -remote %s %o" (mode-io-correlate " %(outpage)")) "xpdf")))
+                       ;; TODO: how to maximize by default
+                       '(("xpdf"    ("nohup xpdf-local.sh -remote %s %o" (mode-io-correlate " %(outpage)")) "xpdf")
+                         ("zathura" ("zathura %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "xpdf")
@@ -246,7 +245,8 @@ TODO broken, provided a diff cleanup function too! "
                  (eval-after-load "reftex"
                    '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
                  ;; I remap these to other things
-                 (define-key TeX-mode-map (kbd "C-c C-b")  nil)
+                 ;; (define-key TeX-mode-map (kbd "C-c C-b")  nil)
+                 ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
                  ;; advice is good
                  ;; TODO: I want to report warnings and errors, but still do nothing
                  (defun TeX-BibTeX-sentinel-bibtex-always-succesful (orig-fun &rest args)
@@ -259,6 +259,7 @@ TODO broken, provided a diff cleanup function too! "
                    (setq cic:current-build-filename (buffer-file-name))
                    (apply orig-fun args))
                  (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
+                 (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
                  (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
                    (let ((ret (apply orig-fun args))
                          (shell-ret (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")))
@@ -268,7 +269,13 @@ TODO broken, provided a diff cleanup function too! "
                        (when (equal shell-ret 0)
                          (TeX-view)))
                      ret))
-                 (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload))
+                 (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload)
+                 ;; TODO: need new key for tex command
+                 (define-key TeX-mode-map (kbd "C-c C-c")  'cic:current-compile)
+                 ;; TODO: want symbol for this
+                 (define-key TeX-mode-map (kbd "C-c C-b")  (lambda ()
+                                                             (interactive)
+                                                             (TeX-command "BibTeX" 'TeX-master-file nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion

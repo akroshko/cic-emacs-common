@@ -1393,8 +1393,6 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (end-of-line)
     (insert str)
     (forward-line -1)))
-
-(global-set-key (kbd "C-c C-b") 'cic:current-compile)
 ;; TODO: for now
 (global-set-key (kbd "H-b")     'cic:current-build)
 ;; TODO: for now
