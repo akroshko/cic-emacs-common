@@ -130,10 +130,10 @@ TODO broken, provided a diff cleanup function too! "
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
                        '(("xpdf"    ("nohup xpdf-local.sh -remote %s %o" (mode-io-correlate " %(outpage)")) "xpdf")
-                         ("zathura" ("zathura %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
+                         ("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
-                         (output-pdf "xpdf")
+                         (output-pdf "zathura")
                          (output-html "HTML Viewer")))
                  (defun cic:reftex-reference ()
                    (interactive)
@@ -262,7 +262,9 @@ TODO broken, provided a diff cleanup function too! "
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
                  (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
                    (let ((ret (apply orig-fun args))
-                         (shell-ret (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")))
+                         ;; TODO trying stuff out
+                         (shell-ret 1 ;; (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")
+                                    ))
                      ;; xpdf reload causes issues in continuous mode, sync with cursor position
                      (with-current-buffer (find-file-noselect cic:current-build-filename)
                        ;; TODO: only tex-view if xpdf opened
