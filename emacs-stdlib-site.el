@@ -727,8 +727,13 @@ TODO broken, provided a diff cleanup function too! "
 (defun cic:install-packages ()
   (interactive)
   (dolist (package cic:package-list)
-    (unless (package-installed-p package)
-      ;; TODO: had issue installing 'org on laptop, not sure what
+    ;; package-built-in-p something else to check?
+    (unless (cic:package-installed-manager-p package)
       (package-install package))))
+
+(defun cic:package-installed-manager-p (package)
+  ""
+  ;; TODO: not completely tested, deals with stuff I fixed manually
+  (cdr (assq package package-alist)))
 
 (provide 'emacs-stdlib-site)
