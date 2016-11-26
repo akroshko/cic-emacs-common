@@ -172,7 +172,8 @@
 (put 'overwrite-mode 'disabled t)
 ;; tabs
 (setq-default indent-tabs-mode nil
-              tab-width 4)
+              ;; only use tabs in external code, and makes viewing included .el code much easier
+              tab-width 8)
 (setq indent-line-function 'insert-tab)
 (show-paren-mode t)
 ;; making scrolling and moving nice
