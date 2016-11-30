@@ -259,20 +259,6 @@ TODO broken, provided a diff cleanup function too! "
                    (apply orig-fun args))
                  (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
-                 ;; TODO: do I still want this
-                 ;; (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
-                 ;;   (let ((ret (apply orig-fun args))
-                 ;;         ;; TODO trying stuff out
-                 ;;         (shell-ret 1 ;; (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")
-                 ;;                    ))
-                 ;;     ;; xpdf reload causes issues in continuous mode, sync with cursor position
-                 ;;     (with-current-buffer (find-file-noselect cic:current-build-filename)
-                 ;;       ;; TODO: only tex-view if xpdf opened
-                 ;;       (when (equal shell-ret 0)
-                 ;;         (TeX-view)))
-                 ;;     ret))
-                 ;; (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload)
-                 ;; TODO: need new key for tex command
                  (define-key TeX-mode-map (kbd "C-c C-c")  'cic:current-compile)
                  ;; TODO: want symbol for this
                  (define-key TeX-mode-map (kbd "C-c C-b")  (lambda ()
