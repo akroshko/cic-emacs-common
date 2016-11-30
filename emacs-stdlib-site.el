@@ -129,8 +129,7 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
-                       '(("xpdf"    ("nohup xpdf-local.sh -remote %s %o" (mode-io-correlate " %(outpage)")) "xpdf")
-                         ("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
+                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "zathura")
@@ -260,18 +259,19 @@ TODO broken, provided a diff cleanup function too! "
                    (apply orig-fun args))
                  (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
-                 (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
-                   (let ((ret (apply orig-fun args))
-                         ;; TODO trying stuff out
-                         (shell-ret 1 ;; (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")
-                                    ))
-                     ;; xpdf reload causes issues in continuous mode, sync with cursor position
-                     (with-current-buffer (find-file-noselect cic:current-build-filename)
-                       ;; TODO: only tex-view if xpdf opened
-                       (when (equal shell-ret 0)
-                         (TeX-view)))
-                     ret))
-                 (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload)
+                 ;; TODO: do I still want this
+                 ;; (defun TeX-LaTeX-sentinel-reload (orig-fun &rest args)
+                 ;;   (let ((ret (apply orig-fun args))
+                 ;;         ;; TODO trying stuff out
+                 ;;         (shell-ret 1 ;; (call-process "xpdf-local-reload.sh" nil nil nil "-remote" (file-name-sans-extension (file-name-nondirectory cic:current-build-filename)) "-reload")
+                 ;;                    ))
+                 ;;     ;; xpdf reload causes issues in continuous mode, sync with cursor position
+                 ;;     (with-current-buffer (find-file-noselect cic:current-build-filename)
+                 ;;       ;; TODO: only tex-view if xpdf opened
+                 ;;       (when (equal shell-ret 0)
+                 ;;         (TeX-view)))
+                 ;;     ret))
+                 ;; (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-reload)
                  ;; TODO: need new key for tex command
                  (define-key TeX-mode-map (kbd "C-c C-c")  'cic:current-compile)
                  ;; TODO: want symbol for this

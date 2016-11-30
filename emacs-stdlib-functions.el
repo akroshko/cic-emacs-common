@@ -1405,6 +1405,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 ;; build, just latex for now
+;; TODO: clean this out
 (defun cic:current-build ()
   (interactive)
   (cond ((eq major-mode 'latex-mode)
