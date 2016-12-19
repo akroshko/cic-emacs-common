@@ -615,6 +615,13 @@ TODO broken, provided a diff cleanup function too! "
   (global-smartscan-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; spice-mode
+(requiring-package (spice-mode)
+  ;; TODO: add more as required
+  ;; TODO: configure for ngspice
+  (add-to-list 'auto-mode-alist '("\\.cir$" . spice-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; w3m
 (setq w3m-default-display-inline-images t)
 (setq w3m-use-cookies t)
@@ -702,6 +709,7 @@ TODO broken, provided a diff cleanup function too! "
                          slime
                          slime-company
                          smartscan
+                         spice-mode
                          ssh-config-mode
                          ssh-tunnels
                          tracwiki-mode
