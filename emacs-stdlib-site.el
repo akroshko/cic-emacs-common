@@ -271,6 +271,14 @@ TODO broken, provided a diff cleanup function too! "
   (bash-completion-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; crontab-mode
+(requiring-package (crontab-mode)
+  (add-to-list 'auto-mode-alist '("\\.cron\\(tab\\)?\\'" . crontab-mode))
+  (add-to-list 'auto-mode-alist '("cron\\(tab\\)?\\."    . crontab-mode))
+  ;; TODO: do I want anything else?
+  (add-to-list 'auto-mode-alist '("crontab"              . crontab-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company mode
 (requiring-package (company)
   (global-company-mode)
