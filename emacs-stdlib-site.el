@@ -259,7 +259,9 @@ TODO broken, provided a diff cleanup function too! "
                    (apply orig-fun args))
                  (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
-                 (define-key TeX-mode-map (kbd "C-c C-c")  'cic:current-compile)
+                 ;; TODO: make this act more like org mode
+                 (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
+                 (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                  ;; TODO: want symbol for this
                  (define-key TeX-mode-map (kbd "C-c C-b")  (lambda ()
                                                              (interactive)

@@ -1393,11 +1393,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (end-of-line)
     (insert str)
     (forward-line -1)))
-;; TODO: for now
-(global-set-key (kbd "H-b")     'cic:current-build)
+;; TODO: for now, how does this affect other things
+(global-set-key (kbd "H-b")     'cic:current-compile)
 ;; TODO: for now
 (global-set-key (kbd "H-c")     'cic:current-clean)
 
+;; TODO: make this work with other things
 (defun cic:current-compile ()
   "Just see how my document is doing."
   (interactive)

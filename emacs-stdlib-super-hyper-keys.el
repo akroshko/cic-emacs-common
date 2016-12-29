@@ -58,8 +58,8 @@
             (define-key map (kbd "s-%")        'cic:query-replace-case-sensitive)
             (define-key map (kbd "s-*")        'cic:recalculate)
             (define-key map (kbd "s-=")        (lambda () (interactive) (what-cursor-position t)))
-
-            (define-key map (kbd "s-c w")      'wdired-change-to-wdired-mode)
+            ;; TODO: e for edit for now, e=emacs a lot for me
+            (define-key map (kbd "s-c e")      'wdired-change-to-wdired-mode)
             ;; generic emacs development
             (define-key map (kbd "s-e b")      'cic:elisp-eval-buffer)
             (define-key map (kbd "s-e d")      'cic:elisp-eval-call-defun)
