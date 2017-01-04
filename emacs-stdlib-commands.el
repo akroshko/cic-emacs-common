@@ -442,6 +442,65 @@ visit it."
              (ansi-term (concat "-i -c \"" command ";bash\""))
            (ansi-term "/bin/bash" "localhost")))))
 
+;; (convert-whole-numbers-to-decimal "27/89 ")
+;; (convert-whole-numbers-to-decimal "27/89")
+;; (convert-whole-numbers-to-decimal "7/89 ")
+;; (convert-whole-numbers-to-decimal "a7/89 ")
+;; (convert-whole-numbers-to-decimal "a7/89b ")
+(defun convert-whole-numbers-to-decimal (thestring)
+  ;; find all numbers no adjacent to letters that are not decimals
+  (replace-regexp-in-string "\\(^\\|[^\.A-Za-z]\\)\\([0-9]\+\\)\\($\\|[^\.A-Za-z0-9]\\)" "\\2\." thestring nil nil 2))
+
+(defun convert-newlines-to-spaces (thestring)
+  (replace-regexp-in-string "\n" " " (strip-full thestring)))
+
+;; TODO: combine these terminal/paste commands into common function
+;; TODO: save output in case of emacs crash and/or run in screen
+(defun cic:ansi-term-ipython (&optional use-clipboard-text)
+  "Start up an ipython buffer on localhost."
+  (interactive)
+  (let (region-text)
+    (cond (use-clipboard-text
+           (setq region-text (x-get-selection)))
+          ((region-active-p)
+           (setq region-text (buffer-substring (region-beginning) (region-end)))))
+    (cond ((get-buffer "*ipython*")
+           ;; TODO: double get buffer call is inefficient
+           (pop-to-buffer (get-buffer "*ipython*"))
+           (when region-text
+             ;; TODO: select better
+             (term-line-mode)
+             (insert (concat (convert-whole-numbers-to-decimal (convert-newlines-to-spaces region-text)) " "))
+             (term-char-mode)))
+          (t
+           ;; create new buffer if does not exist
+           (ansi-term "ipython" "ipython")
+           ;; how to wait for startup
+           ))))
+
+;; TODO: save output in case of emacs crash and/or run in screen
+(defun cic:ansi-term-sage (&optional command)
+  "Start up an sage buffer on localhost."
+  (interactive)
+  (let (region-text)
+    (when (region-active-p)
+      (setq region-text (buffer-substring (region-beginning) (region-end))))
+    (cond ((get-buffer "*sage*")
+           ;; TODO: double get buffer call is inefficient
+           (pop-to-buffer (get-buffer "*sage*"))
+           (when region-text
+             ;; TODO: select better
+             (term-line-mode)
+             (insert (convert-newlines-to-spaces region-text))
+             (term-char-mode)))
+          (t
+           ;; create new buffer if does not exist
+           (ansi-term "sage" "sage")
+           ;; how to wait for startup
+           ))))
+
+;; TODO: sql too
+
 ;; http://oremacs.com/2015/01/01/three-ansi-term-tips/
 ;; TODO: maybe burrying an old term buffer might be better?
 (defun cic:term-exec-hook ()

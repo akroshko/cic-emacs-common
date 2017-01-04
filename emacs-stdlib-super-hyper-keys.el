@@ -93,8 +93,9 @@
             (define-key map (kbd "s-o g")      'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-o w")      'cic:browse-url-at-point-w3m)
             (define-key map (kbd "H-;")        'cic:ansi-term-localhost-popup)
-            (define-key map (kbd "s-t t")      'cic:ansi-term-localhost)
-            (define-key map (kbd "s-t s-t")    'cic:ansi-term-localhost)
+            (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
+            (define-key map (kbd "M-1")        'cic:ansi-term-ipython)
+            (define-key map (kbd "M-2")        'cic:ansi-term-sage)
             ;; view
             ;; requires??? changing becaus s-v used for other things
             ;; (define-key map (kbd "s-v l") 'hl-line-mode)

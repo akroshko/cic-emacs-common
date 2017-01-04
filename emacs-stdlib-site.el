@@ -615,8 +615,9 @@ TODO broken, provided a diff cleanup function too! "
 (setq smartscan-map
       (let ((map (make-sparse-keymap)))
         ;; TODO: change to something good soon
-        (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
-        (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
+        ;;       replaced with mousewheel emulation
+        ;; (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
+        ;; (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
         ;; TODO: better replace
         (define-key map (kbd "H-%") 'smartscan-symbol-replace)
         map))
@@ -667,6 +668,7 @@ TODO broken, provided a diff cleanup function too! "
                          company-math
                          company-quickhelp
                          cl-lib
+                         csv-mode
                          crontab-mode
                          cython-mode
                          dired-avfs
