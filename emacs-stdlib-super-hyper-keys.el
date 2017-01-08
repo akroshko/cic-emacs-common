@@ -134,6 +134,7 @@
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
+            (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-k")          'cic:delete-window)

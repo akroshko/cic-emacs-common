@@ -986,4 +986,8 @@ and date.  Behaviour based on org-insert-heading."
       (org-show-subtree)
       (goto-char (point-max)))))
 
+(defun cic:cycle-with-last-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer)))
+
 (provide 'emacs-stdlib-commands)
