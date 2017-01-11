@@ -46,7 +46,7 @@
 time-stamp in the message.
 XXXX: not adding cic: prefix before this function is called so often in adhoc code
 TODO: flag to not use timestamp"
-  (let ((message-string (concat (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
+  (let ((message-string (concat "-- " (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
     (save-excursion (with-current-buffer (get-buffer-create buffer)
