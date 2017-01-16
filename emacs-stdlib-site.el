@@ -735,7 +735,10 @@ TODO broken, provided a diff cleanup function too! "
   (dolist (package cic:package-list)
     ;; package-built-in-p something else to check?
     (unless (cic:package-installed-manager-p package)
-      (package-install package))))
+      ;; there are sometimes errors, catch them
+      (condition-case error-string
+          (package-install package)
+        (error (message (concat "Failed to install package: " (symbol-name package))))))))
 
 (defun cic:package-installed-manager-p (package)
   ""
