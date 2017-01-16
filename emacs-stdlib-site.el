@@ -738,7 +738,30 @@ TODO broken, provided a diff cleanup function too! "
       ;; there are sometimes errors, catch them
       (condition-case error-string
           (package-install package)
-        (error (message (concat "Failed to install package: " (symbol-name package))))))))
+        (error (message (concat "Failed to install package: " (symbol-name package) " " error-string)))))))
+
+(defun cic:update-packages ()
+  (with-current-buffer "*Packages*"
+    (package-menu-mark-upgrades)
+    ;; copied from package.el.gz
+    (let (install-list)
+      (save-excursion
+        (goto-char (point-min))
+        (while (not (eobp))
+          (setq cmd (char-after))
+          (unless (eq cmd ?\s)
+            (setq pkg-desc (tabulated-list-get-id))
+            (when (eq cmd ?I)
+              (push pkg-desc install-list)))
+          (forward-line)))
+      (when install-list
+        (dolist (package install-list)
+          (condition-case error-string
+              (progn
+                (package-install package)
+                (message (concat "Successfully upgraded package: " (symbol-name (elt package 1)))))
+            (error (message (concat "Failed to upgrade package: " (symbol-name (elt package 1)) " " error-string)))))))
+    (revert-buffer)))
 
 (defun cic:package-installed-manager-p (package)
   ""
