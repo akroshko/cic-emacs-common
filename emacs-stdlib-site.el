@@ -748,6 +748,7 @@ TODO broken, provided a diff cleanup function too! "
         (error (message (concat "Failed to install package: " (symbol-name package) " " error-string)))))))
 
 (defun cic:update-packages ()
+  (package-list-packages)
   (with-current-buffer "*Packages*"
     (package-menu-mark-upgrades)
     ;; copied from package.el.gz
