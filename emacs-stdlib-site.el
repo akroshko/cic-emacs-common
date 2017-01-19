@@ -38,6 +38,13 @@
 ;; site specific settings
 (requiring-package (cl-lib))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; things that don't require a require
+(requiring-package (man)
+  (define-key Man-mode-map (kbd ".") 'scroll-up)
+  (define-key Man-mode-map (kbd ",") 'scroll-down)
+  (define-key Man-mode-map (kbd "b") 'scroll-down))
+
 (setq browse-url-browser-function 'browse-url-conkeror
       browse-url-generic-program "conkeror")
 (add-to-list 'command-switch-alist '("diff" . command-line-diff))
