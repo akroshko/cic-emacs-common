@@ -398,4 +398,9 @@
   ;; it would be ideal to force the first parent directory to be included
   (setq uniquify-buffer-name-style 'forward))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; printing
+;; https://www.emacswiki.org/emacs/CupsInEmacs
+(setq lpr-command "xpp")
+
 (provide 'emacs-config)
