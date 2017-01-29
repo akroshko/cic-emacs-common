@@ -450,6 +450,9 @@ TODO broken, provided a diff cleanup function too! "
         ido-max-prospects 50
         ido-vertical-pad-list nil))
 
+(requiring-package (image+)
+  (eval-after-load 'image '(require 'image+)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jumplist
 (requiring-package (jumplist)
@@ -703,6 +706,7 @@ TODO broken, provided a diff cleanup function too! "
                          ido-ubiquitous
                          ido-vertical-mode
                          idomenu
+                         image+
                          ;; TODO get rid of
                          lacarte
                          latex-extra
