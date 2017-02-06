@@ -93,7 +93,8 @@
             (define-key map (kbd "s-o g")      'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-o w")      'cic:browse-url-at-point-w3m)
             (define-key map (kbd "H-;")        'cic:ansi-term-localhost-popup)
-            (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
+            ;; decide alternate key for this....
+            ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
             (define-key map (kbd "M-1")        'cic:ansi-term-ipython)
             (define-key map (kbd "M-2")        'cic:ansi-term-sage)
             ;; view
@@ -180,7 +181,8 @@
             (define-key map (kbd "H-]") 'cic:next-window-frame)
             (define-key map (kbd "H-[") 'cic:prev-window-frame)
             ;; window management
-            (define-key map (kbd "H-a") 'other-window)
+            ;; TODO: replace
+            ;; (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
             ;; other cool keys
