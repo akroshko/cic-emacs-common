@@ -375,6 +375,11 @@ TODO broken, provided a diff cleanup function too! "
   (global-set-key (kbd "C-x l") 'magit-log-buffer-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; nxml
+(requiring-package (nxml-mode)
+  (add-to-list 'auto-mode-alist '("\\.xml\\'" . nxml-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; site-specific lisp hooks
 ;; paredit and eldoc
 (defun lisp-mode-site ()
