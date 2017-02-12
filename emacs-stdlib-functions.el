@@ -1403,7 +1403,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   "Just see how my document is doing."
   (interactive)
   (cond ((eq major-mode 'latex-mode)
-         (TeX-command "LaTeX" 'TeX-master-file nil))))
+         (save-some-buffers t)
+         (let ((auto-revert-verbose nil))
+           (TeX-command "LaTeX" 'TeX-master-file nil)))))
 
 ;; build, just latex for now
 ;; TODO: clean this out

@@ -255,12 +255,16 @@ TODO broken, provided a diff cleanup function too! "
                  ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
                  ;; advice is good
                  ;; TODO: I want to report warnings and errors, but still do nothing
-                 (defun TeX-BibTeX-sentinel-bibtex-always-succesful (orig-fun &rest args)
+                 (defun TeX-LaTeX-sentinel-revert-buffer-non-verbose (orig-fun &rest args)
+                   (let ((auto-revert-verbose nil))
+                     (apply orig-fun args)))
+                 (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-revert-buffer-non-verbose)
+                 (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
                    (let ((ret (apply orig-fun args)))
                      (setq TeX-command-next TeX-command-default)
                      ;; not sure return value is needed, but OK
                      ret))
-                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-succesful)
+                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-successful)
                  (defun TeX-LaTeX-current-build-filename (orig-fun &rest args)
                    (setq cic:current-build-filename (buffer-file-name))
                    (apply orig-fun args))
