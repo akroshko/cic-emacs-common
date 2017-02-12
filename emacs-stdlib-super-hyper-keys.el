@@ -95,8 +95,8 @@
             (define-key map (kbd "H-;")        'cic:ansi-term-localhost-popup)
             ;; decide alternate key for this....
             ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
-            (define-key map (kbd "M-1")        'cic:ansi-term-ipython)
-            (define-key map (kbd "M-2")        'cic:ansi-term-sage)
+            (define-key map (kbd "s-c 1")      'cic:ansi-term-ipython)
+            (define-key map (kbd "s-c 2")      'cic:ansi-term-sage)
             ;; view
             ;; requires??? changing becaus s-v used for other things
             ;; (define-key map (kbd "s-v l") 'hl-line-mode)
