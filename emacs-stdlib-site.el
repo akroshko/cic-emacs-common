@@ -255,9 +255,16 @@ TODO broken, provided a diff cleanup function too! "
                  ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
                  ;; advice is good
                  ;; TODO: I want to report warnings and errors, but still do nothing
+                 (defvar auto-revert-verbose-old nil
+                   "Old value of auto-revert-verbose.")
+                 (setq auto-revert-verbose-old auto-revert-verbose)
                  (defun TeX-LaTeX-sentinel-revert-buffer-non-verbose (orig-fun &rest args)
-                   (let ((auto-revert-verbose nil))
-                     (apply orig-fun args)))
+                   (let (ret)
+                     (setq ret (apply orig-fun args))
+                     ;; TODO: this is probably not the right way to do this, what happens if multiple sentinels or things try to do this?
+                     ;; TODO: decide best way to do this, only works with (cic:current-build) right now
+                     (setq auto-revert-verbose auto-revert-verbose-old)
+                     ret))
                  (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-revert-buffer-non-verbose)
                  (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
                    (let ((ret (apply orig-fun args)))

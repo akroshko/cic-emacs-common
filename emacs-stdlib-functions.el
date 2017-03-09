@@ -1404,8 +1404,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (interactive)
   (cond ((eq major-mode 'latex-mode)
          (save-some-buffers t)
-         (let ((auto-revert-verbose nil))
-           (TeX-command "LaTeX" 'TeX-master-file nil)))))
+         (setq auto-revert-verbose-old auto-revert-verbose)
+         (setq auto-revert-verbose nil)
+         (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 ;; build, just latex for now
 ;; TODO: clean this out
