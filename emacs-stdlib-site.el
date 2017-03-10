@@ -98,7 +98,6 @@ TODO broken, provided a diff cleanup function too! "
   nil
   "Stores the current build filename for asyncronous processes and sentinels.")
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; AucTeX
 ;; https://www.gnu.org/software/auctex/manual/auctex/Advice-for-non_002dprivileged-users.html#Advice-for-non_002dprivileged-users
@@ -136,11 +135,20 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
-                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")))
+                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
+                         ;; ???
+                         ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
                  (setq TeX-view-program-selection
                        '((output-dvi "DVI Viewer")
                          (output-pdf "zathura")
                          (output-html "HTML Viewer")))
+                 (defun cic:view-alternate ()
+                     (interactive)
+                     (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
+                                                         (output-pdf "Evince")
+                                                         (output-html "HTML Viewer"))))
+                       (TeX-view)))
+                 (define-key TeX-mode-map (kbd "C-c M-v") 'cic:view-alternate)
                  (defun cic:reftex-reference ()
                    (interactive)
                    (let ((reftex-refstyle "\\ref"))
@@ -241,9 +249,6 @@ TODO broken, provided a diff cleanup function too! "
                  (setq font-latex-match-reference-keywords
                        '(("citemp" "[{")
                          ("citem" "[{")))
-                 ;; (setq TeX-view-program-list
-                 ;;       '(("DVI Viewer" "")
-                 ;;         ("HTML Viewer" "")))
                  ;; RefTeX
                  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
                  (setq reftex-plug-into-AUCTeX t)
@@ -280,10 +285,13 @@ TODO broken, provided a diff cleanup function too! "
                  ;; TODO: make this act more like org mode
                  (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                  (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
-                 ;; TODO: want symbol for this
-                 (define-key TeX-mode-map (kbd "C-c C-b")  (lambda ()
+                 ;; TODO: want symbol instead of lambda for this
+                 (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                              (interactive)
-                                                             (TeX-command "BibTeX" 'TeX-master-file nil))))
+                                                             (TeX-command "BibTeX" 'TeX-master-file nil)))
+                 ;; TODO: do I ever want this back, should I replace something else?
+                 ;; (define-key TeX-mode-map (kbd "C-c C-b")  )
+                 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
