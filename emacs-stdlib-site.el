@@ -38,6 +38,14 @@
 ;; site specific settings
 (requiring-package (cl-lib))
 
+;; TODO: prevent dbus loading if already loaded, maybe?
+;; TODO: fix this
+;; (requiring-package (dbus)
+;;   (dbus-get-unique-name :system)
+;;   (dbus-get-unique-name :session)
+;;   (dbus-init-bus :system)
+;;   (dbus-init-bus :session))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; things that don't require a require
 (requiring-package (man)
@@ -143,11 +151,11 @@ TODO broken, provided a diff cleanup function too! "
                          (output-pdf "zathura")
                          (output-html "HTML Viewer")))
                  (defun cic:view-alternate ()
-                     (interactive)
-                     (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
-                                                         (output-pdf "Evince")
-                                                         (output-html "HTML Viewer"))))
-                       (TeX-view)))
+                   (interactive)
+                   (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
+                                                       (output-pdf "Evince")
+                                                       (output-html "HTML Viewer"))))
+                     (TeX-view)))
                  (define-key TeX-mode-map (kbd "C-c M-v") 'cic:view-alternate)
                  (defun cic:reftex-reference ()
                    (interactive)
@@ -283,8 +291,12 @@ TODO broken, provided a diff cleanup function too! "
                  (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
                  ;; TODO: make this act more like org mode
+                 ;; TODO: make sure several runs of this file doesn't bugger variable
+                 (cic:add-to-alist 'TeX-command-list "LaTeXdraft" '("%`%l%(mode) -draftmode %' %t"
+                                                                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX in draft mode."))
                  (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                  (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
+                 (define-key TeX-mode-map (kbd "C-s-b")   'cic:current-full-compile)
                  ;; TODO: want symbol instead of lambda for this
                  (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                              (interactive)

@@ -1406,6 +1406,16 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (save-some-buffers t)
          (setq auto-revert-verbose-old auto-revert-verbose)
          (setq auto-revert-verbose nil)
+         (let ((Tex-master (buffer-file-name)))
+           (TeX-command "LaTeXdraft" 'TeX-master-file nil)))))
+
+(defun cic:current-full-compile ()
+  "Just see how my document is doing."
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (save-some-buffers t)
+         (setq auto-revert-verbose-old auto-revert-verbose)
+         (setq auto-revert-verbose nil)
          (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 ;; build, just latex for now
@@ -1535,5 +1545,14 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     ;; TODO: better way to detect end of buffer, eobp
     (ignore-errors (scroll-down))
     (select-window current-window)))
+
+(defun cic:add-to-alist (the-alist the-key the-value)
+  (if (assoc the-key (symbol-value the-alist))
+      ;; replace
+      (progn
+        ;; https://emacs.stackexchange.com/questions/3397/how-to-replace-an-element-of-an-alist
+        (setf (cdr (assoc the-key (symbol-value the-alist))) the-value))
+    ;; otherwise add anew
+    (add-to-list the-alist (list the-key the-value))))
 
 (provide 'emacs-stdlib-functions)
