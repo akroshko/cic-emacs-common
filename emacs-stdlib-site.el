@@ -106,6 +106,10 @@ TODO broken, provided a diff cleanup function too! "
   nil
   "Stores the current build filename for asyncronous processes and sentinels.")
 
+(defvar cic:current-source-filename
+  nil
+  "Stores the current source filename for things such as includeonly.")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; AucTeX
 ;; https://www.gnu.org/software/auctex/manual/auctex/Advice-for-non_002dprivileged-users.html#Advice-for-non_002dprivileged-users

@@ -1401,13 +1401,15 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: make this work with other things
 (defun cic:current-compile ()
   "Just see how my document is doing."
+  ;; TODO: maybe enable disabling images
   (interactive)
   (cond ((eq major-mode 'latex-mode)
          (save-some-buffers t)
          (setq auto-revert-verbose-old auto-revert-verbose)
          (setq auto-revert-verbose nil)
-         (let ((Tex-master (buffer-file-name)))
-           (TeX-command "LaTeXdraft" 'TeX-master-file nil)))))
+         ;; get includeonly working
+         (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
+         (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 (defun cic:current-full-compile ()
   "Just see how my document is doing."
@@ -1416,6 +1418,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (save-some-buffers t)
          (setq auto-revert-verbose-old auto-revert-verbose)
          (setq auto-revert-verbose nil)
+         (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
          (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 ;; build, just latex for now
