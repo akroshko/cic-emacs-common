@@ -280,6 +280,8 @@ TODO broken, provided a diff cleanup function too! "
                      (setq ret (apply orig-fun args))
                      ;; TODO: this is probably not the right way to do this, what happens if multiple sentinels or things try to do this?
                      ;; TODO: decide best way to do this, only works with (cic:current-build) right now
+                     (auto-revert-set-timer)
+                     (sleep-for 0.2)
                      (setq auto-revert-verbose auto-revert-verbose-old)
                      ret))
                  (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-revert-buffer-non-verbose)
