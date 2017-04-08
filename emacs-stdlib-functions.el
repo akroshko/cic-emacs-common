@@ -803,7 +803,7 @@ strings. Leave alone if already a string or list of strings"
         (t
          (char-to-string (1+ (string-to-char ch))))))
 ;; (cic:select-list-item (list "hello" "jaws"))
-(defun cic:select-list-item (lst &optional string-key)
+(defun cic:select-list-item (lst &optional string-key header-message)
   "Select a string from a list of strings LST using alphabet then number keys.
 TODO: use string-key to select a string"
   (let* ((count "a")
@@ -820,8 +820,9 @@ TODO: use string-key to select a string"
                                lst)))
     (setq select-alist (append select-alist (list (list "-" "cancel" 'cancel))))
     (cic:select-nested-alist (lambda (e)
-                           (setq selected e))
-                         select-alist)))
+                               (setq selected e))
+                             select-alist
+                             header-message)))
 
 (defun cic:select-list-item-default-index (lst &optional string-key default-value)
   "Select a list item from LST.
@@ -1075,7 +1076,7 @@ think openssl is find for this purpose."
                    (setq new-password (concat new-password (substring char-set new-password-char (1+ new-password-char)))))))
              new-password)))))
 
-(defun cic:select-nested-alist (&optional command filter-alists) ;;  filter-alist-first)
+(defun cic:select-nested-alist (&optional command filter-alists header-message) ;;  filter-alist-first)
   "Allows user to select from an alist.
 TODO: I don't actually use the nested function and I think this
 can be greatly simplified."
@@ -1097,7 +1098,9 @@ can be greatly simplified."
     (while continue
       ;; read input
       ;; initialise variables
-      (setq minibuffer-prompt "")
+      (if header-message
+          (setq minibuffer-prompt (concat header-message "\n") )
+        (setq minibuffer-prompt ""))
       ;; TODO do I want this?
       (setq escape-action nil)
       (dolist (search-key current-alist)
