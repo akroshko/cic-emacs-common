@@ -122,6 +122,8 @@ TODO broken, provided a diff cleanup function too! "
                  (require 'tex-site)
                  (require 'tex)
                  (require 'texmathp)
+                 ;; TODO: needed on my laptop, not sure why
+                 (require 'font-latex)
                  (setq TeX-PDF-mode t)
                  (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
                  (setq TeX-source-correlate-method 'synctex
@@ -147,7 +149,7 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
-                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
+                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\\\"launch-emacsclient\\ noframe\\ +%{line}\\ %{input}\\\"")) "zathura")
                          ;; ???
                          ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
                  (setq TeX-view-program-selection
