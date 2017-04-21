@@ -1415,6 +1415,18 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (TeX-command "LaTeX" 'TeX-master-file nil))))
 
 (defun cic:current-full-compile ()
+  "Compile the whole thing and then ."
+  (interactive)
+  (cond ((eq major-mode 'latex-mode)
+         (save-some-buffers t)
+         (setq auto-revert-verbose-old auto-revert-verbose)
+         (setq auto-revert-verbose nil)
+         (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
+         (TeX-command "LaTeX" 'TeX-master-file nil)
+
+         )))
+
+(defun cic:current-full-compile-bibtex ()
   "Just see how my document is doing."
   (interactive)
   (cond ((eq major-mode 'latex-mode)
@@ -1422,7 +1434,28 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (setq auto-revert-verbose-old auto-revert-verbose)
          (setq auto-revert-verbose nil)
          (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
-         (TeX-command "LaTeX" 'TeX-master-file nil))))
+         ;; https://www.emacswiki.org/emacs/TN#toc8
+         ;; TODO: check succcess
+         (TeX-command "LaTeX"  'TeX-master-file nil)
+         (sleep-for 1.0)
+         ;; if current buffer is latex document
+         ;; (get-buffer-process (TeX-process-buffer-name (TeX-active-master)))
+         (while (get-buffer-process (current-buffer))
+           (sleep-for 1.0))
+         (sleep-for 1.0)
+         (TeX-command "BibTeX" 'TeX-master-file nil)
+         (while (get-buffer-process (current-buffer))
+           (sleep-for 1.0))
+         ;; assume bibtex takes less than 5 seconds
+         (TeX-command "LaTeX"  'TeX-master-file nil)
+         (sleep-for 1.0)
+         (while (get-buffer-process (current-buffer))
+           (sleep-for 1.0))
+         (TeX-command "LaTeX"  'TeX-master-file nil)
+         (sleep-for 1.0)
+         (while (get-buffer-process (current-buffer))
+           (sleep-for 1.0))
+         (message "Done LaTeX multi-compile!"))))
 
 ;; build, just latex for now
 ;; TODO: clean this out

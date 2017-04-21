@@ -149,7 +149,7 @@ TODO broken, provided a diff cleanup function too! "
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
-                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\\\"launch-emacsclient\\ noframe\\ +%{line}\\ %{input}\\\"")) "zathura")
+                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
                          ;; ???
                          ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
                  (setq TeX-view-program-selection
@@ -305,6 +305,8 @@ TODO broken, provided a diff cleanup function too! "
                  (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                  (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                  (define-key TeX-mode-map (kbd "C-s-b")   'cic:current-full-compile)
+                 ;; DO EVERYTHING BY HOLDING DOWN NEARLY ALL KEYS
+                 (define-key TeX-mode-map (kbd "C-s-S-b") 'cic:current-full-compile-bibtex)
                  ;; TODO: want symbol instead of lambda for this
                  (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                              (interactive)
