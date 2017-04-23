@@ -201,6 +201,7 @@ into the last row."
             (rep-duration (tblel-time-string-to-seconds (elt lisp-row 4))))
         ;; TODO: document this better, other things?
         ;; TODO: match only "rest", guard against exercises that might have substring "rest"
+        ;; TODO: want total reps too, really only useful for pullups...
         (if (string-match "rest" (downcase (elt lisp-row 0)))
             (progn
               (setq total-column (nconc total-column (list (tblel-time-string-to-seconds (elt lisp-row 5))))))
