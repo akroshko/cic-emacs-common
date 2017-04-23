@@ -200,18 +200,30 @@ into the last row."
             (set-rest (tblel-time-string-to-seconds (elt lisp-row 2)))
             (rep-duration (tblel-time-string-to-seconds (elt lisp-row 4))))
         ;; TODO: document this better, other things?
-        (unless (string-match "rest" (downcase (elt lisp-row 0)))
-          (setq total-work-column (nconc total-work-column (list (* sets (* reps rep-duration))))))
-        (setq total-column (nconc total-column (list (+ (* (- sets 1) set-rest) (* sets (* reps rep-duration))))))))
+        ;; TODO: match only "rest", guard against exercises that might have substring "rest"
+        (if (string-match "rest" (downcase (elt lisp-row 0)))
+            (progn
+              (setq total-column (nconc total-column (list (tblel-time-string-to-seconds (elt lisp-row 5))))))
+          (progn
+            (setq total-work-column (nconc total-work-column (list (* sets (* reps rep-duration)))))
+            (setq total-column (nconc total-column (list (+ (* (- sets 1) set-rest) (* sets (* reps rep-duration))))))))))
     (setq total-total (apply '+ total-column))
-    (setq total-work (apply '+ total-work-column))
+    (setq total-work  (apply '+ total-work-column))
     (dolist (current-lisp-row (cdr (butlast lisp-table)))
-      (setq new-lisp-table
-            (nconc
-             new-lisp-table
-             (list (nconc
-                    (subseq current-lisp-row 0 5)
-                    (list (format-seconds "%m:%.2s" (pop total-column))))))))
+      (if (string-match "rest" (downcase (elt current-lisp-row 0)))
+          (setq new-lisp-table
+                (nconc
+                 new-lisp-table
+                 (list (nconc
+                        (subseq current-lisp-row 0 1)
+                        (nconc (list "" "" "" ""))
+                        (list (format-seconds "%m:%.2s" (pop total-column)))))))
+        (setq new-lisp-table
+              (nconc
+               new-lisp-table
+               (list (nconc
+                      (subseq current-lisp-row 0 5)
+                      (list (format-seconds "%m:%.2s" (pop total-column)))))))))
     (setq new-lisp-table (nconc
                           new-lisp-table
                           (list
