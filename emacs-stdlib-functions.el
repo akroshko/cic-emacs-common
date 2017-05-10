@@ -1411,7 +1411,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (setq auto-revert-verbose-old auto-revert-verbose)
          (setq auto-revert-verbose nil)
          ;; get includeonly working
-         (when (string-match "thesis" (buffer-name))
+         (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
            (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex")))
          (TeX-command "LaTeX" 'TeX-master-file nil))))
 
