@@ -66,8 +66,9 @@ TODO broken, provided a diff cleanup function too! "
 
 ;; TODO: see if I can pattern bash* to automode alist
 (add-to-list 'auto-mode-alist '("bash_profile_agents" . sh-mode))
-(add-to-list 'auto-mode-alist '("bashrc_functions" . sh-mode))
-(add-to-list 'auto-mode-alist '("bash_library" . sh-mode))
+(add-to-list 'auto-mode-alist '("bashrc_functions"    . sh-mode))
+(add-to-list 'auto-mode-alist '("bash_library"        . sh-mode))
+(add-to-list 'auto-mode-alist '("bash_logout"         . sh-mode))
 (requiring-package (sh-script)
 ;; TODO: find another thing to run executable-interpret
   (define-key sh-mode-map (kbd "C-c C-x") nil))
