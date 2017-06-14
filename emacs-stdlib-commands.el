@@ -763,18 +763,42 @@ alphanumeric."
       ;; reset word list
       (message (concat "Successfully added " word " to list!")))))
 
+(defvar cic:insert-current-time-last-bounds
+  nil
+  "The bounds of the last insert of current time.")
+
+(defvar cic:insert-current-time-last-type
+  nil)
+
 ;; TODO: decide whether to call timestamp and/or date???
 (defun cic:insert-current-time (&optional arg)
   "Insert the current time and date written out.  ARG only
 inserts date. Create an org-mode heading with the current time
 and date.  Behaviour based on org-insert-heading."
   (interactive "P")
-  ;; TODO: decide if I want this
-  (when (eq major-mode 'org-mode)
-    (org-insert-heading))
-  (if arg
-      (insert (format-time-string "%a %b %d, %Y"))
-    (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))))
+  (let (the-beg
+        the-end)
+    (cond ((eq last-command 'cic:insert-current-time)
+           (delete-region (car cic:insert-current-time-last-bounds) (cadr cic:insert-current-time-last-bounds))
+           (goto-char (car cic:insert-current-time-last-bounds))
+           (setq the-beg (point))
+           (cond ((equal cic:insert-current-time-last-type 0)
+                  (insert (format-time-string "%a %b %d, %Y"))
+                  (setq cic:insert-current-time-last-type 1))
+                 ((equal cic:insert-current-time-last-type 1)
+                  (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
+                  (setq cic:insert-current-time-last-type 0)))
+           (setq the-end (point))
+           (setq cic:insert-current-time-last-bounds (list the-beg the-end)))
+          (t
+           (when (eq major-mode 'org-mode)
+             (org-insert-heading))
+           (setq the-beg (point))
+           (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
+           (setq the-end (point))
+           (setq cic:insert-current-time-last-bounds (list the-beg the-end))
+           (setq cic:insert-current-time-last-type 0)
+           ))))
 
 ;; TODO: decide whether to call timestamp and/or date???
 (defun cic:insert-current-timestamp (&optional arg)
