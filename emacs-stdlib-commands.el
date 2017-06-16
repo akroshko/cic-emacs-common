@@ -79,71 +79,39 @@ TODO: incomplete but still useful right now"
       (org-back-to-heading)
       (beginning-of-line))))
 
-(define-minor-mode org-toggle-headline-mode
-  :global nil
-  :keymap nil
-  ;; (let ((map (make-sparse-keymap)))
-  ;;   (define-key map (kbd "H-t" ) 'cic:org-mark-toggle-headline)
-  ;;   map)
-  )
-
 ;; TODO: move somewhere else?
-(define-key org-mode-map (kbd "H-t")   'cic:org-mark-toggle-headline)
+(define-key org-mode-map (kbd "H-t") 'cic:org-todo)
+(define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
+(define-key org-mode-map (kbd "H-T") 'cic:org-todo-clear)
+
 
 (defun cic:org-at-todo-p ()
+  ;; TODO: there are much much better ways to do this!
   (let (matched
         ;; TODO: this should be changed to read org-todo-keywords
-        (todo-keyword-strings '("TODO" "NEXT" "WAITING" "DONE" "INVALID")))
+        (todo-keyword-strings '("TODO" "NEXT" "INPROGRESS" "CANT" "WAITING" "DONE" "INVALID")))
     (dolist (tks todo-keyword-strings)
       (when (string-match tks (cic:get-current-line))
         (setq matched t)))
     matched))
 
-;; TODO: change
-(defun cic:org-mark-toggle-headline (arg)
-  "Change to DONE or TODO, + or -, or another custom state.
-
-Changes a tree of bullet points to have + bullet marker or to -
-or TODO with prefix ARG.  These can be highlighted a different
-color to easily indicate doneness.  Also has a hook for custom
-types of headings.  Does nothing if already in desired state."
+(defun cic:org-todo (arg)
   (interactive "P")
   (cond ((eq major-mode 'org-agenda-mode)
          (when (cic:org-at-todo-p)
-           (org-agenda-todo)))
-        ((org-at-heading-p)
-         (if arg
-             (org-todo 'todo)
-           (org-todo 'done)))
-        ((org-at-item-p)
-         (save-excursion
-           (beginning-of-line)
-           (let* ((current-line (cic:get-current-line))
-                  (current-indentation (count-indentation current-line))
-                  replace-regexp
-                  regplace-item)
-             (when (and (not arg) (string-match "\\s-*- " current-line))
-               (setq replace-regexp "^\\s-*\\(-\\) .*$")
-               (setq replace-item "+"))
-             (when (and arg (string-match "\\s-*\\+ " current-line))
-               (setq replace-regexp "^\\s-*\\(\\+\\) .*$")
-               (setq replace-item "-"))
-             (when replace-regexp
-               ;; replace
-               (beginning-of-line)
-               (when (re-search-forward replace-regexp nil t)
-                 (replace-match replace-item nil nil nil 1))
-               (forward-line)
-               (while (> (count-indentation (cic:get-current-line)) current-indentation)
-                 ;; replace again
-                 (beginning-of-line)
-                 (when (re-search-forward replace-regexp nil t)
-                   (replace-match replace-item nil nil nil 1))
-                 (forward-line))))))
+           (org-agenda-todo arg)))
         (t
-         (error "Not at an item or valid TODO!"))))
+         (org-todo arg))))
 
-(add-hook 'org-mode-hook (lambda () (org-toggle-headline-mode 1)))
+(defun cic:org-todo-set (arg)
+  (interactive "P")
+  (if arg
+      (org-todo 'todo)
+    (org-todo 'done)))
+
+(defun cic:org-todo-clear (arg)
+  (interactive "P")
+  (org-todo 'none))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands

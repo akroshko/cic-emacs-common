@@ -291,12 +291,14 @@
       )
   (setq org-archive-location "%s.archive::"
         org-todo-keywords
-        '((sequence "TODO(!@)" "NEXT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
-        org-todo-keyword-faces '(("TODO" . "firebrick")
-                                 ("NEXT" . "orange red")
-                                 ("WAITING" . "magenta")
-                                 ("DONE" . (:foreground "green" :background "blue" :weight bold))
-                                 ("INVALID" . (:foreground "black" :background "yellow" :weight bold)))
+        '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
+        org-todo-keyword-faces '(("TODO"             . "firebrick")
+                                 ("NEXT"             . "orange red")
+                                 ("INPROGRESS"       . "magenta")
+                                 ("CANT"             . (:foreground "black" :background "yellow" :weight bold))
+                                 ("WAITING"          . "magenta")
+                                 ("DONE"             . (:foreground "green" :background "blue" :weight bold))
+                                 ("INVALID"          . (:foreground "black" :background "yellow" :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t
         org-use-property-inheritance t
