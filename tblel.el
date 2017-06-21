@@ -116,13 +116,13 @@ along with a #+TBLEL line."
 
 ;; a nice generic sum function, sum all sumable solumns
 ;; TODO: get a table with seperators!!!!
-(defun tblel-generic-sum (lisp-table)
+(defun tblel-generic-sum (lisp-table  lisp-table-no-seperators)
   "Sum any column that is summable to the line at the end, and
 excluding a header."
-  (let ((sums (make-list (length (car lisp-table)) nil))
+  (let ((sums (make-list (length (car lisp-table-no-seperators)) nil))
         (count 0)
         tmp-lisp-table)
-    (dolist (row (cdr (butlast lisp-table)))
+    (dolist (row (cdr (butlast lisp-table-no-seperators)))
       (setq count 0)
       (dolist (e row)
         (when (or (cic:string-float-p (elt row count))
@@ -132,20 +132,20 @@ excluding a header."
           (setcar (nthcdr count sums) (+ (elt sums count) (string-to-number (elt row count)))))
         (setq count (+ count 1))))
     ;; now just insert it in last thing
-    (setq tmp-lisp-table (butlast lisp-table))
+    (setq tmp-lisp-table (butlast lisp-table-no-seperators))
     (append tmp-lisp-table (list (mapcar (lambda (e) (ignore-errors (number-to-string e))) sums)))))
 
-(defun tblel-generic-sum-cumulative-two-three (lisp-table)
+(defun tblel-generic-sum-cumulative-two-three (lisp-table lisp-table-no-seperators)
   "Sum column one and record cumulative sums in column two and
 three."
   (let ((sum1 0)
-        (sums2 (make-list (length lisp-table) 0))
-        (sums3 (make-list (length lisp-table) 0))
+        (sums2 (make-list (length lisp-table-no-seperators) 0))
+        (sums3 (make-list (length lisp-table-no-seperators) 0))
         (count 0)
-        (tmp-lisp-table (butlast lisp-table))
-        (sums (make-list (length (car lisp-table)) nil)))
+        (tmp-lisp-table (butlast lisp-table-no-seperators))
+        (sums (make-list (length (car lisp-table-no-seperators)) nil)))
     (setq count 0)
-    (dolist (row (butlast lisp-table))
+    (dolist (row (butlast lisp-table-no-seperators))
       (when (and (not (equal count 0))
                  (or (cic:string-float-p (elt row 1))
                      (cic:string-integer-p (elt row 1)))
@@ -168,13 +168,13 @@ three."
     (setcar (nthcdr 3 sums) sums3)
     (append tmp-lisp-table (list sums))))
 
-(defun tblel-generic-sum-quantity (lisp-table)
+(defun tblel-generic-sum-quantity (lisp-table lisp-table-no-seperators)
   "Sums a quantity in second column with value in third column,
 into the last row."
   (let ((sum nil)
         tmp-lisp-table
         last-row)
-    (dolist (row (cdr (butlast lisp-table)))
+    (dolist (row (cdr (butlast lisp-table-no-seperators)))
       (when (and (or (cic:string-float-p (elt row 1))
                     (cic:string-integer-p (elt row 1)))
                  (or (cic:string-float-p (elt row 2))
@@ -182,8 +182,8 @@ into the last row."
         (unless sum
           (setq sum 0))
         (setq sum (+ sum (* (string-to-number (elt row 1)) (string-to-number (elt row 2)))))))
-    (setq tmp-lisp-table (butlast lisp-table))
-    (setq last-row (car (last lisp-table)))
+    (setq tmp-lisp-table (butlast lisp-table-no-seperators))
+    (setq last-row (car (last lisp-table-no-seperators)))
     (setcar (nthcdr 2 last-row) (ignore-errors (number-to-string sum)))
     (append tmp-lisp-table (list last-row))))
 
