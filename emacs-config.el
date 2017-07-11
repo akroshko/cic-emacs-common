@@ -404,5 +404,8 @@
 ;; printing
 ;; https://www.emacswiki.org/emacs/CupsInEmacs
 (setq lpr-command "xpp")
+(setq ps-font-size (cons 6 6))
+(setq ps-landscape-mode nil)
+;; (setq ps-landscape-mode t)
 
 (provide 'emacs-config)
