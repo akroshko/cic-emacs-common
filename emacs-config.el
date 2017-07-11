@@ -408,4 +408,16 @@
 (setq ps-landscape-mode nil)
 ;; (setq ps-landscape-mode t)
 
+;; TODO: move command later, add to key
+;; TODO: h==hardcopy for now, reevaluate later
+(global-set-key (kbd "s-c h") 'print-landscape-region)
+(defun print-landscape ()
+  (interactive)
+  (let ((ps-font-size (cons 6 6))
+        (ps-landscape-mode t)
+        (ps-paper-type 'letter))
+    (if (region-active-p)
+        (ps-print-region (region-beginning) (region-end))
+      (ps-print-region (point-min) (point-max)))))
+
 (provide 'emacs-config)
