@@ -468,10 +468,13 @@ TODO broken, provided a diff cleanup function too! "
 (setq ido-everywhere t)
 (requiring-package (ido)
   (require 'ido-hacks)
-  (requiring-package (ido-ubiquitous)
+  (requiring-package (ido-completing-read+)
     ;; TODO: add any others
-    (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture"))))
+    ;; TODO: change to ido-completing-read+
+    ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
+    (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
   (ido-mode t)
+   ;; TODO: change to ido-completing-read+
   (ido-ubiquitous-mode 1)
   (ido-hacks-mode 1)
   (require 'ido-vertical-mode)
@@ -750,7 +753,9 @@ TODO broken, provided a diff cleanup function too! "
                          ;; hexrgb
                          ido-grid-mode
                          ido-hacks
-                         ido-ubiquitous
+                         ;; TODO: change to ido-completing-read+
+                         ido-completing-read+
+                         ;; ido-ubiquitous
                          ido-vertical-mode
                          idomenu
                          image+
