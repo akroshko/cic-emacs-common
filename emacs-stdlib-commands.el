@@ -131,6 +131,14 @@ TODO: incomplete but still useful right now"
     ;; (browse-url-firefox (cic:url-at-point-or-line 'url))
     (browse-url-generic (cic:url-at-point-or-line 'url))))
 
+(defun cic:browse-url-at-point-chromium ()
+  "Find the URL at point and browse in the Chromium web browser."
+  (interactive)
+  ;; XXXX: may not be best way, but prevents based on prevening firefox from closing when I restart emacs
+  ;; TODO: find better way
+  (let ((browse-url-generic-program "chromium"))
+    (browse-url-generic (cic:url-at-point-or-line 'url))))
+
 (defun cic:browse-url-at-point-gnome-web ()
   "Find the URL at point and browse in the Firefox web browser."
   (interactive)
