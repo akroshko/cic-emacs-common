@@ -570,7 +570,7 @@ similar languages."
     (if arg
         (setq filename (buffer-file-name))
       (setq filename (if (equal major-mode 'dired-mode)
-                         (file-name-nondirectory default-directory)
+                         (expand-file-name default-directory)
                        (file-name-nondirectory (buffer-file-name))))
       )
     (when filename
