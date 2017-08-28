@@ -290,8 +290,7 @@
     ;; this one may only be necessary if exists
       )
   (setq org-archive-location "%s.archive::"
-        org-todo-keywords
-        '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
+        org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
                                  ("INPROGRESS"       . "magenta")

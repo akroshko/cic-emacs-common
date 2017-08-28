@@ -83,6 +83,7 @@ TODO: incomplete but still useful right now"
 (define-key org-mode-map (kbd "H-t") 'cic:org-todo)
 (define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
 (define-key org-mode-map (kbd "H-T") 'cic:org-todo-clear)
+(define-key org-mode-map (kbd "s-;") 'cic:org-todo-inprogress-done)
 
 
 (defun cic:org-at-todo-p ()
@@ -102,6 +103,18 @@ TODO: incomplete but still useful right now"
            (org-agenda-todo arg)))
         (t
          (org-todo arg))))
+
+;; clear with prefix
+(defun cic:org-todo-inprogress-done (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-todo 'none)
+    (cond ((string-match "INPROGRESS" (cic:get-current-line))
+           (org-todo "CANT"))
+          ((string-match "CANT" (cic:get-current-line))
+           (org-todo "DONE"))
+          (t
+           (org-todo "INPROGRESS")))))
 
 (defun cic:org-todo-set (arg)
   (interactive "P")
