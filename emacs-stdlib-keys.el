@@ -65,9 +65,16 @@
             (define-key map (kbd "C-.")      'scroll-up-command)
             ;; (define-key map (kbd "s-S-x")    'scroll-down-command)
             ;; (define-key map (kbd "s-x")      'scroll-up-command)
+            ;; XXXX: lived for such a short time
+            ;; TODO: delete
+            ;; (define-key map (kbd "M-s")      'isearch-forward)
+            ;; (define-key map (kbd "M-a")      'isearch-backward)
             (define-key map (kbd "M-b")      'cic:backward-symbol)
             ;; copy/yank
             (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
+            ;;;
+            (define-key map (kbd "M-e")      'other-frame)
+            (define-key map (kbd "M-K")      'delete-frame)
             (define-key map (kbd "M-v")      'yank)
             (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
             ;; move
@@ -77,6 +84,9 @@
             (define-key map (kbd "M-l")      'cic:goto-previous-mark)
             (define-key map (kbd "M-[")      'cic:decrease-indent)
             (define-key map (kbd "M-]")      'cic:increase-indent)
+            (define-key map (kbd "M-'")      'dabbrev-expand)
+            (define-key map (kbd "M-/")      'isearch-forward)
+            (define-key map (kbd "M-?")      'isearch-backward)
             (define-key map (kbd "C-\\")     'cic:whack-whitespace)
             (define-key map (kbd "C-<")      'cic:other-window-previous)
             (define-key map (kbd "C->")      'cic:other-window-next)
@@ -100,6 +110,10 @@
   ;; (global-unset-key (kbd "C-v"))
   (requiring-package (dired-x)
     (define-key dired-mode-map (kbd "M-o") 'dired-omit-mode)))
+;; (define-key isearch-mode-map (kbd "M-s") 'isearch-repeat-forward)
+;; (define-key isearch-mode-map (kbd "M-a") 'isearch-repeat-backward)
+(define-key isearch-mode-map (kbd "M-/") 'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "M-?") 'isearch-repeat-backward)
 
 (define-minor-mode emacs-stdlib-keys-non-term-mode
   :global t

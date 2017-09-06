@@ -107,6 +107,8 @@
 ;; truncate lines
 (setq truncate-lines t
       line-move-visual nil)
+;; limit display lines
+(setq line-number-display-limit 262144)
 ;; don't need prefix for popping mark
 (setq set-mark-command-repeat-pop t)
 ;; this is essential for viewing images
@@ -241,9 +243,9 @@
  'emacs-lisp-mode
  '(("(\\s-*\\(\\_<\\(?:\\sw\\|\\s_\\)+\\)\\_>"
     1 'font-lock-func-face)))
-;; TODO: use paredit
-(define-key emacs-lisp-mode-map (kbd "M-a") 'beginning-of-defun)
-(define-key emacs-lisp-mode-map (kbd "M-e") 'end-of-defun)
+;; TODO: these are not needed anymore
+;; (define-key emacs-lisp-mode-map (kbd "M-a") 'beginning-of-defun)
+;; (define-key emacs-lisp-mode-map (kbd "M-e") 'end-of-defun)
 ;; marking
 ;; should override company mode quickhelp, done elsewhere
 ;; TODO: make both work
@@ -288,7 +290,26 @@
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
-      )
+    )
+  (setq org-src-lang-modes '(("elisp"     . emacs-lisp)
+                             ("sql"       . sql)
+                             ("python"    . python-mode)
+                             ("sage"      . sage-shell:sage-mode)
+                             ("screen"    . shell-script)
+                             ("bash"      . sh)
+                             ("shell"     . sh)
+                             ("C"         . c)
+                             ("cpp"       . c++)
+                             ("C++"       . c++)
+                             ("java-mode" . java-mode)
+                             ("sqlite"    . sql)
+                             ("calc"      . fundamental)
+                             ("asymptote" . asy)
+                             ("dot"       . fundamental)))
+  (setq org-fontify-quote-and-verse-blocks t)
+  (set-face-foreground 'org-block "#483d8b") ;; not too bad
+  (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
+  ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
         org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
@@ -306,7 +327,8 @@
         org-agenda-todo-ignore-scheduled t
         org-agenda-todo-ignore-deadlines t
         org-ctrl-k-protect-subtree nil
-        org-cycle-global-at-bob t)
+        org-cycle-global-at-bob t
+        org-fontify-whole-heading-line t)
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
     (when (display-graphic-p)
