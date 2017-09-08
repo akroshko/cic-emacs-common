@@ -45,9 +45,11 @@
   :global t
   ;; :lighter "Some standard keys."
   :keymap (let ((map (make-sparse-keymap)))
+            ;; TODO: not in use for now
+            ;; (define-key map (kbd "S-SPC") (lambda () (interactive) (switch-to-buffer (other-buffer))))
             ;; these make working on a laptop or tablet type computer great
-            (define-key map (kbd "<up>")    'previous-line)
-            (define-key map (kbd "<down>")  'next-line)
+            (define-key map (kbd "<up>")      'previous-line)
+            (define-key map (kbd "<down>")    'next-line)
             ;; TODO: decide on these
             (define-key map (kbd "C-<up>") (lambda ()
                                              (interactive)
@@ -74,9 +76,12 @@
             (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
             ;;;
             (define-key map (kbd "M-e")      'other-frame)
-            (define-key map (kbd "M-K")      'delete-frame)
+            ;; TODO: might interfere with things?
+            ;; (define-key map (kbd "M-K")      'delete-frame)
             (define-key map (kbd "M-v")      'yank)
             (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
+            ;; this is good, right? not destructive if I miss shift
+            (define-key map (kbd "M-W")      'delete-window)
             ;; move
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
@@ -99,7 +104,8 @@
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)
             ;; (global-set-key (kbd "C-x C-k") 'kill-region)
             (define-key map (kbd "C-x M-c")  'cic:save-buffers-kill-emacs)
-            (define-key map (kbd "C-x C-b")  'buffer-menu)
+            ;; (define-key map (kbd "C-x C-b")  'buffer-menu)
+            (define-key map (kbd "C-x C-b")  'cic:switch-buffer-new-window-below)
             (define-key map (kbd "C-x r i")  'string-insert-rectangle)
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
             ;; (define-key map (kbd "C-v")      'hl-line-mode)

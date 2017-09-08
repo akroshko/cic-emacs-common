@@ -1596,4 +1596,11 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     ;; otherwise add anew
     (add-to-list the-alist (list the-key the-value))))
 
+(defun cic:switch-buffer-new-window-below ()
+  ;; TODO: unwind if not successful or if I cancel ido-switch-buffer
+  (interactive)
+  (split-window-vertically)
+  (windmove-down)
+  (ido-switch-buffer))
+
 (provide 'emacs-stdlib-functions)

@@ -90,17 +90,17 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; acejump
-;; TODO: update key
-(requiring-package (ace-jump-mode)
-  ;; TODO: not sure which one I want
-  (global-set-key (kbd "H-SPC") 'ace-jump-mode)
-  ;; TODO: this is fun for now
-  (global-set-key (kbd "<menu>") 'ace-jump-mode)
-  ;; (global-set-key (kbd "S-SPC") 'ace-jump-mode)
-  (eval-after-load "ace-jump-mode"
-    '(ace-jump-mode-enable-mark-sync))
-  ;; TODO: maybe do super space for this
-  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
+;; TODO: don't use it anymore, but might at some point
+;; (requiring-package (ace-jump-mode)
+;;   ;; TODO: not sure which one I want
+;;   ;; (global-set-key (kbd "H-SPC") 'ace-jump-mode)
+;;   ;; TODO: this is fun for now
+;;   ;; (global-set-key (kbd "<menu>") 'ace-jump-mode)
+;;   ;; (global-set-key (kbd "S-SPC") 'ace-jump-mode)
+;;   (eval-after-load "ace-jump-mode"
+;;     '(ace-jump-mode-enable-mark-sync))
+;;   ;; TODO: maybe do super space for this
+;;   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
 
 ;; advice for tex-command-master
 (defvar cic:current-build-filename
@@ -196,6 +196,7 @@ TODO broken, provided a diff cleanup function too! "
                    ;; TODO: make this something for all modes, should this be hyper-v or ???
                    (local-set-key (kbd "H-x") 'reftex-view-crossref)
                    ;; set up references
+                   ;; TODO: try these again, do I use them?
                    (local-set-key (kbd "H-r") 'cic:reftex-reference)
                    (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
                    (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
@@ -464,8 +465,10 @@ TODO broken, provided a diff cleanup function too! "
 ;; TODO m-n/p is very good
 ;; TODO ffap
 ;; TODO good completion for org-mode
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
+;; XXXX: keeping things fast for now
+(setq ido-enable-flex-matching nil)
+;; XXXX: if t many things like describe-function is slow
+(setq ido-everywhere nil)
 (requiring-package (ido)
   (require 'ido-hacks)
   (requiring-package (ido-completing-read+)
@@ -667,6 +670,12 @@ TODO broken, provided a diff cleanup function too! "
   (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
   ;; Optionally, specify the lisp program you are using. Default is "lisp"
   (setq inferior-lisp-program "sbcl"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; sql
+(requiring-package (sql)
+  ;; TODO: change this to recognize something once I use more sql variations
+  (add-hook 'sql-mode-hook (lambda () (sql-highlight-postgres-keywords))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smartscan

@@ -977,6 +977,7 @@ and date.  Behaviour based on org-insert-heading."
 (define-key org-mode-map (kbd "H-j") 'cic:org-meta-content-cycle)
 ;; TODO: make better once I decide? show all children
 ;; TODO: functions too
+;; don't use this?
 (define-key org-mode-map (kbd "H-s") 'cic:org-cycle-in-level-1-tree)
 
 (defun cic:org-cycle-in-level-1-tree ()

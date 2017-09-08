@@ -134,6 +134,10 @@
             (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
+            (define-key map (kbd "H-b")          'ido-switch-buffer)
+            (define-key map (kbd "H-B")          'cic:switch-buffer-new-window-below)
+            (define-key map (kbd "H-SPC")        'ido-switch-buffer)
+            (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-i")          'cic:outline)
@@ -145,6 +149,7 @@
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)
             map))
+(define-key ido-buffer-completion-map (kbd "H-SPC") 'ido-next-match)
 
 ;; ensure that I can override some keys in dired
 (define-minor-mode emacs-stdlib-hyper-keys-non-dired-mode ()

@@ -288,6 +288,8 @@
   ;; http://newartisans.com/2007/08/using-org-mode-as-a-day-planner/
   ;; prompt for notes with each change state
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
+  ;; remap some standard org-mode
+  (define-key org-mode-map (kbd "M-S-<return>") 'org-insert-subheading)
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )
