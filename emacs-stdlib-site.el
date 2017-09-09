@@ -671,11 +671,15 @@ TODO broken, provided a diff cleanup function too! "
   ;; Optionally, specify the lisp program you are using. Default is "lisp"
   (setq inferior-lisp-program "sbcl"))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sql
 (requiring-package (sql)
+  (defun cic:sql-setup ()
+    (sql-highlight-postgres-keywords)
+    (setq-local tab-width 4))
   ;; TODO: change this to recognize something once I use more sql variations
-  (add-hook 'sql-mode-hook (lambda () (sql-highlight-postgres-keywords))))
+  (add-hook 'sql-mode-hook 'cic:sql-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smartscan

@@ -176,7 +176,8 @@
 (setq-default indent-tabs-mode nil
               ;; only use tabs in external code, and makes viewing included .el code much easier
               tab-width 8)
-(setq indent-line-function 'insert-tab)
+;; XXXXX: where did this come from!?!?!?!? no wonder things in some programming modes are so screwed up
+;; (setq indent-line-function 'insert-tab)
 (show-paren-mode t)
 ;; making scrolling and moving nice
 (setq scroll-margin 3
