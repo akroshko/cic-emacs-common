@@ -291,6 +291,7 @@
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
   ;; remap some standard org-mode
   (define-key org-mode-map (kbd "M-S-<return>") 'org-insert-subheading)
+  ;; (define-key org-mode-map (kbd "C-j")          ')
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )
@@ -320,7 +321,9 @@
                                  ("INPROGRESS"       . "magenta")
                                  ("CANT"             . (:foreground "black" :background "yellow" :weight bold))
                                  ("WAITING"          . "magenta")
-                                 ("DONE"             . (:foreground "green" :background "blue" :weight bold))
+                                 ("DONE"             . (:foreground "dark orange"   :background "blue" :weight bold))
+                                 ;; XXXX: does not work well with green highlighting
+                                 ;; ("DONE"             . (:foreground "green" :background "blue" :weight bold))
                                  ("INVALID"          . (:foreground "black" :background "yellow" :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t

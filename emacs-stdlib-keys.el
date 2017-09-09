@@ -65,6 +65,7 @@
             ;; (define-key map (kbd "M-.")      'scroll-up-command)
             (define-key map (kbd "C-,")      'scroll-down-command)
             (define-key map (kbd "C-.")      'scroll-up-command)
+            (define-key map (kbd "C-j")      'indent-new-comment-line)
             ;; (define-key map (kbd "s-S-x")    'scroll-down-command)
             ;; (define-key map (kbd "s-x")      'scroll-up-command)
             ;; XXXX: lived for such a short time
