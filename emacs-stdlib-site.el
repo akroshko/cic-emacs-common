@@ -92,14 +92,12 @@ TODO broken, provided a diff cleanup function too! "
 ;; acejump
 ;; TODO: don't use it anymore, but might at some point
 ;; (requiring-package (ace-jump-mode)
-;;   ;; TODO: not sure which one I want
-;;   ;; (global-set-key (kbd "H-SPC") 'ace-jump-mode)
-;;   ;; TODO: this is fun for now
 ;;   ;; (global-set-key (kbd "<menu>") 'ace-jump-mode)
-;;   ;; (global-set-key (kbd "S-SPC") 'ace-jump-mode)
+;;   (global-set-key (kbd "S-SPC") 'ace-jump-mode)
 ;;   (eval-after-load "ace-jump-mode"
 ;;     '(ace-jump-mode-enable-mark-sync))
 ;;   ;; TODO: maybe do super space for this
+;;   ;; TODO: maybe do easy
 ;;   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
 
 ;; advice for tex-command-master

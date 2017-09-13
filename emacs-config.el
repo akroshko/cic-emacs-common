@@ -292,6 +292,8 @@
   ;; remap some standard org-mode
   (define-key org-mode-map (kbd "M-S-<return>") 'org-insert-subheading)
   ;; (define-key org-mode-map (kbd "C-j")          ')
+  ;; TOOD: probably want something a bit different
+  (define-key org-mode-map (kbd "M-o M-o") (lambda (&optional arg) (interactive "P") (org-cycle '(64))))
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )

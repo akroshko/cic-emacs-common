@@ -77,6 +77,8 @@
             (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
             ;;;
             (define-key map (kbd "M-e")      'other-frame)
+            (define-key map (kbd "M-g w")    'toggle-truncate-lines)
+            (define-key map (kbd "M-g M-w")  'toggle-truncate-lines)
             ;; TODO: might interfere with things?
             ;; (define-key map (kbd "M-K")      'delete-frame)
             (define-key map (kbd "M-v")      'yank)
