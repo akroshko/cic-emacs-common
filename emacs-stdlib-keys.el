@@ -79,6 +79,10 @@
             (define-key map (kbd "M-e")      'other-frame)
             (define-key map (kbd "M-g w")    'toggle-truncate-lines)
             (define-key map (kbd "M-g M-w")  'toggle-truncate-lines)
+            (define-key map (kbd "M-g k")    'cic:window-kill-above)
+            (define-key map (kbd "M-g K")    'cic:window-kill-below)
+            (define-key map (kbd "M-g j")    'split-window)
+            (define-key map (kbd "M-g J")    'split-window-below)
             ;; TODO: might interfere with things?
             ;; (define-key map (kbd "M-K")      'delete-frame)
             (define-key map (kbd "M-v")      'yank)
@@ -112,7 +116,10 @@
             (define-key map (kbd "C-x r i")  'string-insert-rectangle)
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
             ;; (define-key map (kbd "C-v")      'hl-line-mode)
-            (define-key map (kbd "C-v")      'cic:line-mode-or-disable-visuals)
+            ;; (define-key map (kbd "C-v")      'cic:line-mode-or-disable-visuals)
+            ;; TODO: can probably use a more complex key
+            (define-key map (kbd "M-h")      'cic:line-mode-or-disable-visuals)
+            (define-key map (kbd "M-g h")    'cic:line-mode-or-disable-visuals)
             ;; disable normal movement keys will eventually remap
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))

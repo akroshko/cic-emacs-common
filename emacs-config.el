@@ -320,8 +320,8 @@
         org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
-                                 ("INPROGRESS"       . "magenta")
-                                 ("CANT"             . (:foreground "black" :background "yellow" :weight bold))
+                                 ("INPROGRESS"       . (:foreground "magenta" :background "gold" :weight bold))
+                                 ("CANT"             . (:foreground "black"  :background "yellow" :weight bold))
                                  ("WAITING"          . "magenta")
                                  ("DONE"             . (:foreground "dark orange"   :background "blue" :weight bold))
                                  ;; XXXX: does not work well with green highlighting

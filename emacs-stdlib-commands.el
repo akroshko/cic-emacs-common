@@ -1011,4 +1011,16 @@ and date.  Behaviour based on org-insert-heading."
   (interactive)
   (switch-to-buffer (other-buffer)))
 
+(defun cic:window-kill-above ()
+  (interactive)
+  (let ((window (windmove-find-other-window 'up)))
+    (when window
+      (delete-window window))))
+
+(defun cic:window-kill-below ()
+  (interactive)
+  (let ((window (windmove-find-other-window 'down)))
+    (when window
+      (delete-window window))))
+
 (provide 'emacs-stdlib-commands)
