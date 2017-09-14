@@ -81,7 +81,7 @@
             (define-key map (kbd "M-g M-w")  'toggle-truncate-lines)
             (define-key map (kbd "M-g k")    'cic:window-kill-above)
             (define-key map (kbd "M-g K")    'cic:window-kill-below)
-            (define-key map (kbd "M-g j")    'split-window)
+            (define-key map (kbd "M-g j")    'cic:split-window-above)
             (define-key map (kbd "M-g J")    'split-window-below)
             ;; TODO: might interfere with things?
             ;; (define-key map (kbd "M-K")      'delete-frame)

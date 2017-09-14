@@ -1023,4 +1023,9 @@ and date.  Behaviour based on org-insert-heading."
     (when window
       (delete-window window))))
 
+(defun cic:split-window-above ()
+  (interactive)
+  (split-window-below)
+  (windmove-down))
+
 (provide 'emacs-stdlib-commands)

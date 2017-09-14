@@ -223,6 +223,13 @@
     (hl-line-mode 1))
   ;; set omit by default
   (add-hook 'dired-mode-hook 'cic:dired-mode-minor-modes))
+
+(requiring-package (wdired)
+  (setq wdired-use-dired-vertical-movement t)
+  (setq wdired-confirm-overwrite t)
+  ;; XXXX: I do not want link targets editable
+  (setq wdired-allow-to-redirect-links nil))
+
 (add-hook 'package-menu-mode-hook '(lambda ()  (hl-line-mode 1)))
 (add-hook 'occur-mode-hook '(lambda ()  (hl-line-mode 1)))
 (requiring-package (ispell)
