@@ -756,6 +756,29 @@ alphanumeric."
       ;; reset word list
       (message (concat "Successfully added " word " to list!")))))
 
+;; TODO: also insert just time
+(defun cic:insert-date-time-stamp (&optional arg)
+  (interactive "P")
+  (let* ((the-current-time (current-time))
+         (the-time-string (cic:select-list-item (list (format-time-string "%a %b %d, %Y %H:%M:%S" the-current-time)
+                                                      (format-time-string "%a %b %d, %Y" the-current-time)
+                                                      (format-time-string "%Y%m%d%H%M%S" the-current-time)
+                                                      (format-time-string "%Y%m%d" the-current-time)
+                                                      (format-time-string "%Y%m%dT%H%M%S" the-current-time)
+                                                      (concat (format-time-string "%a %b %d, %Y" the-current-time) " HH:MM:SS")
+                                                      "DAY MON DD, YYYY XX:XX:XX"
+                                                      "DAY MON DD, YYYY"
+                                                      (concat (format-time-string "%Y%m%d" the-current-time)  "HHMMSS")
+                                                      (concat (format-time-string "%Y%m%dT" the-current-time) "HHMMSS")
+                                                      "YYYYMMDDHHMMSS"
+                                                      "YYYYMMDDTHHMMSS"
+                                                      "YYYYMMDD"))))
+    ;; TODO: handle comments
+    (when (eq major-mode 'org-mode)
+      ;; TODO: insert appropriate heading
+      (org-insert-heading))
+    (insert the-time-string)))
+
 (defvar cic:insert-current-time-last-bounds
   nil
   "The bounds of the last insert of current time.")
@@ -779,9 +802,12 @@ and date.  Behaviour based on org-insert-heading."
                   (insert (format-time-string "%a %b %d, %Y"))
                   (setq cic:insert-current-time-last-type 1))
                  ((equal cic:insert-current-time-last-type 1)
-                  (insert (format-time-string "%Y%m%dT%H%M%S"))
+                  (insert (format-time-string "%Y%m%d%H%M%S"))
                   (setq cic:insert-current-time-last-type 2))
                  ((equal cic:insert-current-time-last-type 2)
+                  (insert (format-time-string "%Y%m%dT%H%M%S"))
+                  (setq cic:insert-current-time-last-type 3))
+                 ((equal cic:insert-current-time-last-type 3)
                   (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
                   (setq cic:insert-current-time-last-type 0)))
            (setq the-end (point))
@@ -793,8 +819,7 @@ and date.  Behaviour based on org-insert-heading."
            (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
            (setq the-end (point))
            (setq cic:insert-current-time-last-bounds (list the-beg the-end))
-           (setq cic:insert-current-time-last-type 0)
-           ))))
+           (setq cic:insert-current-time-last-type 0)))))
 
 ;; TODO: decide whether to call timestamp and/or date???
 (defun cic:insert-current-timestamp (&optional arg)

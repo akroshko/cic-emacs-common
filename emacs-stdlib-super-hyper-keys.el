@@ -155,12 +155,15 @@
 (define-minor-mode emacs-stdlib-hyper-keys-non-dired-mode ()
   :global nil
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "H-d") 'cic:insert-current-time)
-            (define-key map (kbd "H-D") 'cic:insert-current-timestamp)
+            (define-key map (kbd "H-d") 'cic:insert-date-time-stamp)
+            (define-key map (kbd "H-D") 'cic:insert-date-time-stamp)
+            ;; (define-key map (kbd "H-d") 'cic:insert-current-time)
+            ;; (define-key map (kbd "H-D") 'cic:insert-current-timestamp)
             map))
 
-;; TODO: not sure why I have to do it this way here but not for minibuffer setup
 (add-hook 'after-change-major-mode-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
+;; XXXX: for auctex latex mode, apparently does not run above hook
+(add-hook 'find-file-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
 
 (defun wdired-change-to-dired-mode--disable-hyper (orig-fun &rest args)
   (let ((ret (apply orig-fun args)))

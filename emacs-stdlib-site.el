@@ -464,6 +464,7 @@ TODO broken, provided a diff cleanup function too! "
 ;; TODO ffap
 ;; TODO good completion for org-mode
 ;; XXXX: keeping things fast for now
+;; (setq ido-enable-flex-matching t)
 (setq ido-enable-flex-matching nil)
 ;; XXXX: if t many things like describe-function is slow
 (setq ido-everywhere nil)

@@ -225,7 +225,7 @@
   (add-hook 'dired-mode-hook 'cic:dired-mode-minor-modes))
 
 (requiring-package (wdired)
-  (setq wdired-use-dired-vertical-movement t)
+  (setq wdired-use-dired-vertical-movement 'sometimes)
   (setq wdired-confirm-overwrite t)
   ;; XXXX: I do not want link targets editable
   (setq wdired-allow-to-redirect-links nil))
@@ -297,7 +297,7 @@
   ;; prompt for notes with each change state
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
   ;; remap some standard org-mode
-  (define-key org-mode-map (kbd "M-S-<return>") 'org-insert-subheading)
+  (define-key org-mode-map (kbd "C-S-<return>") 'org-insert-subheading)
   ;; (define-key org-mode-map (kbd "C-j")          ')
   ;; TOOD: probably want something a bit different
   (define-key org-mode-map (kbd "M-o M-o") (lambda (&optional arg) (interactive "P") (org-cycle '(64))))

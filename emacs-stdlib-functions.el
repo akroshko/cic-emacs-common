@@ -1137,16 +1137,30 @@ can be greatly simplified."
    ;; (listp (cdr (car (cdr maybe-nested))))))
 
 (defun cic:org-insert-indent-list-item ()
-  "XXXX: A helper function that may not be required."
+  "Insert a list item, open and indent properly.
+TODO: used for checklists, do I need this?
+"
   (if (cic:org-headline-p (cic:get-current-line))
       (progn
         (move-end-of-line 1)
         (insert "\n")
         (org-cycle)
-        (insert " - "))
+        (insert "- "))
     (progn
       (move-end-of-line 1)
       (org-meta-return))))
+
+;; code for testing
+;; (remove-hook 'org-metareturn-hook 'cic:org-insert-new-list)
+(defun cic:org-insert-new-list ()
+  "Insert a list item, open and indent properly.."
+  (when (cic:org-headline-p (cic:get-current-line))
+      (move-end-of-line 1)
+      (insert "\n")
+      (org-cycle)
+      (insert "- ")
+      t))
+(add-hook 'org-metareturn-hook 'cic:org-insert-new-list)
 
 (defun cic:uid-64 ()
   "Create an 11 character (>64bit) unique ID."
