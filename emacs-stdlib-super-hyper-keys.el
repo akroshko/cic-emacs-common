@@ -139,12 +139,18 @@
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
-            (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
+            ;; TODO: disabled while I get new muscle memory
+            ;; (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
-            (define-key map (kbd "H-k")          'cic:delete-window)
+            ;; (define-key map (kbd "H-k")          'cic:delete-window)
+            ;; TODO: temporary while I build new muscle memory
+            ;; (define-key map (kbd "H-0")          'cic:delete-window)
+            ;; TODO: keep these but maybe temporary while I build new muscle memory
             (define-key map (kbd "H-l")          'cic:delete-window-below)
             (define-key map (kbd "H-K")          'cic:delete-frame)
+            ;; TODO: temporary while I build new muscle memory
+            (define-key map (kbd "H-x")          'save-buffer)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)

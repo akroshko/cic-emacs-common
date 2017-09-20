@@ -192,7 +192,8 @@ TODO broken, provided a diff cleanup function too! "
                    (local-set-key (kbd "H-i") 'cic:outline)
                    ;; think of "view"
                    ;; TODO: make this something for all modes, should this be hyper-v or ???
-                   (local-set-key (kbd "H-x") 'reftex-view-crossref)
+                   ;; TODO: used for other things right now...
+                   ;; (local-set-key (kbd "H-x") 'reftex-view-crossref)
                    ;; set up references
                    ;; TODO: try these again, do I use them?
                    (local-set-key (kbd "H-r") 'cic:reftex-reference)
