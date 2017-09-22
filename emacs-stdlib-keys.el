@@ -63,9 +63,9 @@
             ;; M- most convienient for laptop, control most convienient for touch typing
             ;; (define-key map (kbd "M-,")      'scroll-down-command)
             ;; (define-key map (kbd "M-.")      'scroll-up-command)
-            (define-key map (kbd "C-,")      'scroll-down-command)
-            (define-key map (kbd "C-.")      'scroll-up-command)
-            (define-key map (kbd "C-j")      'indent-new-comment-line)
+            (define-key map (kbd "C-,")        'scroll-down-command)
+            (define-key map (kbd "C-.")        'scroll-up-command)
+            (define-key map (kbd "C-j")        'indent-new-comment-line)
             ;; (define-key map (kbd "s-S-x")    'scroll-down-command)
             ;; (define-key map (kbd "s-x")      'scroll-up-command)
             ;; XXXX: lived for such a short time
@@ -137,14 +137,15 @@
             (define-key map (kbd "M-n") 'next-error)
             (define-key map (kbd "M-p") 'previous-error)
             map))
+;; (define-key map (kbd "C-<return>") 'org-insert-heading-respect-content)
 
 (requiring-package (org)
   (define-minor-mode emacs-stdlib-keys-org-mode
     :global t
     ;; :lighter "Some standard keys for org-mode."
     :keymap (let ((map (make-sparse-keymap)))
-              (define-key map (kbd "C-c a") 'org-agenda)
-              (define-key map (kbd "C-c c") 'org-capture)
+              (define-key map (kbd "C-c a")      'org-agenda)
+              (define-key map (kbd "C-c c")      'org-capture)
               ;; want key to be the same everywhere
               (define-key map (kbd "C-c C-o") 'org-open-at-point-global)
               map)
@@ -156,7 +157,17 @@
     (define-key org-read-date-minibuffer-local-map (kbd "N") 'cic:org-calendar-forward-week)
     (define-key org-read-date-minibuffer-local-map (kbd "M-F") 'cic:org-calendar-forward-month)
     (define-key org-read-date-minibuffer-local-map (kbd "M-B") 'cic:org-calendar-backward-month))
-  (emacs-stdlib-keys-org-mode t))
+  (emacs-stdlib-keys-org-mode t)
+
+  (define-minor-mode emacs-stdlib-keys-non-org-mode
+    :global t
+    :keymap (let ((map (make-sparse-keymap)))
+              (define-key map (kbd "C-<return>") 'indent-new-comment-line)
+              map))
+  (emacs-stdlib-keys-non-org-mode t)
+  (defun cic:disable-emacs-stdlib-keys-non-org-mode ()
+    (emacs-stdlib-keys-non-org-mode 0))
+  (add-hook 'org-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode))
 
 (defun cic:stdlib-keys-term-setup-hook ()
   (emacs-stdlib-keys-non-term-mode 0))
