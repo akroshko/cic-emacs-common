@@ -514,8 +514,14 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-bullets
+;; TODO: really slows stuff down
 (requiring-package (org-bullets)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (add-hook 'org-mode-hook (lambda ()
+                             ;; for my emacs-otlb package, want to put this somewhere else maybe?
+                             ;; cuts an n=1 test from 55s to 4-7s
+                             ;; TODO: where else do I want to kill org-bullets?
+                             (unless  (string-match "pedestrian-log.*\\.org" (buffer-file-name))
+                               (org-bullets-mode 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python and sage
