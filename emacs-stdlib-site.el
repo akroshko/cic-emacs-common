@@ -520,7 +520,7 @@ TODO broken, provided a diff cleanup function too! "
                              ;; for my emacs-otlb package, want to put this somewhere else maybe?
                              ;; cuts an n=1 test from 55s to 4-7s
                              ;; TODO: where else do I want to kill org-bullets?
-                             (unless  (string-match "pedestrian-log.*\\.org" (buffer-file-name))
+                             (unless  (and (buffer-file-name) (string-match "pedestrian-log.*\\.org" (buffer-file-name)))
                                (org-bullets-mode 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
