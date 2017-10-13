@@ -141,7 +141,6 @@
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             ;; TODO: disabled while I get new muscle memory
             ;; (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
-            (define-key map (kbd "H-i")          'cic:outline)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             ;; (define-key map (kbd "H-k")          'cic:delete-window)
             ;; TODO: temporary while I build new muscle memory
@@ -163,6 +162,7 @@
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "H-d") 'cic:insert-date-time-stamp)
             (define-key map (kbd "H-D") 'cic:insert-date-time-stamp)
+            (define-key map (kbd "H-i") 'cic:outline)
             ;; (define-key map (kbd "H-d") 'cic:insert-current-time)
             ;; (define-key map (kbd "H-D") 'cic:insert-current-timestamp)
             map))
@@ -178,7 +178,8 @@
 (advice-add 'wdired-change-to-dired-mode :around #'wdired-change-to-dired-mode--disable-hyper)
 
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-mode ()
-  (cond ((eq major-mode 'dired-mode)
+  ;; TODO: make a list for these eventually
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode))
          (emacs-stdlib-hyper-keys-non-dired-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-mode t))))
