@@ -132,7 +132,9 @@ TODO broken, provided a diff cleanup function too! "
                        ;; Enable parse on load.
                        TeX-parse-self t
                        TeX-auto-save t
-                       TeX-clean-confirm nil)
+                       TeX-clean-confirm nil
+                       ;; the default reindents before newline
+                       )
                  (setq LaTeX-paragraph-commands
                        '("TODO"))
                  (setq preview-auto-cache-preamble t)
@@ -146,6 +148,12 @@ TODO broken, provided a diff cleanup function too! "
                                                   (regexp "parts?" "chapters?" "chap\\." "sections?" "sect?\\." "paragraphs?" "par\\." "\\\\S" "\247" "Teile?" "Kapitel" "Kap\\." "Abschnitte?" "appendi\\(x\\|ces\\)" "App\\." "Anh\"?ange?" "Anh\\."))))
                  (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
                  (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
+                 ;; disable electric-indent-mode, I like paste things like tables verbatim and electric-indent screws it up
+                 (defun cic:latex-disable-electic-indent ()
+                   ;; TODO: electric-indent-just-newline would be nice
+                   (electric-indent-mode 0))
+                 (add-hook 'LaTeX-mode-hook 'cic:latex-disable-electic-indent)
+                 (add-hook 'TeX-mode-hook 'cic:latex-disable-electic-indent)
                  (setq TeX-view-program-list
                        ;; TODO: how to maximize by default
                        '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
