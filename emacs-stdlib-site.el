@@ -151,7 +151,7 @@ TODO broken, provided a diff cleanup function too! "
                  ;; disable electric-indent-mode, I like paste things like tables verbatim and electric-indent screws it up
                  (defun cic:latex-disable-electic-indent ()
                    ;; TODO: electric-indent-just-newline would be nice
-                   (electric-indent-mode 0))
+                   (electric-indent-local-mode 0))
                  (add-hook 'LaTeX-mode-hook 'cic:latex-disable-electic-indent)
                  (add-hook 'TeX-mode-hook 'cic:latex-disable-electic-indent)
                  (setq TeX-view-program-list
