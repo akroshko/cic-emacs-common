@@ -1617,4 +1617,10 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (windmove-down)
   (ido-switch-buffer))
 
+(defun cic:yank-primary ()
+  (interactive)
+  (let ((x-select-enable-primary t)
+        (x-select-enable-clipboard nil))
+    (call-interactively 'yank)))
+
 (provide 'emacs-stdlib-functions)
