@@ -81,6 +81,7 @@ TODO: incomplete but still useful right now"
 
 ;; TODO: move somewhere else?
 (define-key org-mode-map (kbd "H-t") 'cic:org-todo)
+(define-key org-mode-map (kbd "s-:") 'cic:org-todo)
 (define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
 (define-key org-mode-map (kbd "H-T") 'cic:org-todo-clear)
 (define-key org-mode-map (kbd "s-;") 'cic:org-todo-inprogress-done)

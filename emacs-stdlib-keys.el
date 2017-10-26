@@ -48,8 +48,9 @@
             ;; TODO: not in use for now
             ;; (define-key map (kbd "S-SPC") (lambda () (interactive) (switch-to-buffer (other-buffer))))
             ;; these make working on a laptop or tablet type computer great
-            (define-key map (kbd "<up>")      'previous-line)
-            (define-key map (kbd "<down>")    'next-line)
+            ;; TODO: no.... screws some things up
+            ;; (define-key map (kbd "<up>")      'previous-line)
+            ;; (define-key map (kbd "<down>")    'next-line)
             ;; TODO: decide on these
             (define-key map (kbd "C-<up>") (lambda ()
                                              (interactive)
