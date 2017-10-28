@@ -1623,4 +1623,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
         (x-select-enable-clipboard nil))
     (call-interactively 'yank)))
 
+(defun cic:org-paste-new-heading ()
+  (interactive)
+  (end-of-line)
+  (org-insert-heading-respect-content)
+  (yank))
+;; TODO: move this somewhere proper
+(define-key org-mode-map (kbd "<C-mouse-1>") 'cic:org-paste-new-heading)
+
 (provide 'emacs-stdlib-functions)

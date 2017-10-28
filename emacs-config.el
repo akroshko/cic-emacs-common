@@ -343,7 +343,8 @@
         org-agenda-todo-ignore-deadlines t
         org-ctrl-k-protect-subtree nil
         org-cycle-global-at-bob t
-        org-fontify-whole-heading-line t)
+        org-fontify-whole-heading-line t
+        org-cycle-level-after-item/entry-creation nil)
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
     (when (display-graphic-p)
