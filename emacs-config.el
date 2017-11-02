@@ -324,16 +324,17 @@
   (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
-        org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
+        org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "DUPLICATE(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
-                                 ("INPROGRESS"       . (:foreground "magenta" :background "gold" :weight bold))
-                                 ("CANT"             . (:foreground "black"  :background "yellow" :weight bold))
+                                 ("INPROGRESS"       . (:foreground "magenta"       :background "gold"   :weight bold))
+                                 ("DUPLICATE"        . (:foreground "black"         :background "orange" :weight bold))
+                                 ("CANT"             . (:foreground "black"         :background "yellow" :weight bold))
                                  ("WAITING"          . "magenta")
-                                 ("DONE"             . (:foreground "dark orange"   :background "blue" :weight bold))
+                                 ("DONE"             . (:foreground "dark orange"   :background "blue"   :weight bold))
                                  ;; XXXX: does not work well with green highlighting
                                  ;; ("DONE"             . (:foreground "green" :background "blue" :weight bold))
-                                 ("INVALID"          . (:foreground "black" :background "yellow" :weight bold)))
+                                 ("INVALID"          . (:foreground "black"         :background "yellow" :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t
         org-use-property-inheritance t
