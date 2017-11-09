@@ -156,7 +156,9 @@
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)
             map))
-(define-key ido-buffer-completion-map (kbd "H-SPC") 'ido-next-match)
+;; TODO: uncomment this
+;; (define-key ido-buffer-completion-map (kbd "H-SPC") 'ido-next-match)
+
 
 ;; ensure that I can override some keys in dired
 (define-minor-mode emacs-stdlib-hyper-keys-non-dired-mode ()

@@ -419,10 +419,11 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; magit
-(requiring-package (magit)
-  (global-set-key (kbd "C-x g") 'magit-status)
-  ;; TODO: probably not needed
-  (global-set-key (kbd "C-x l") 'magit-log-buffer-file))
+;; TODO: do not use this right now
+;; (requiring-package (magit)
+;;   (global-set-key (kbd "C-x g") 'magit-status)
+;;   ;; TODO: probably not needed
+;;   (global-set-key (kbd "C-x l") 'magit-log-buffer-file))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; nxml
@@ -484,8 +485,9 @@ TODO broken, provided a diff cleanup function too! "
     ;; TODO: change to ido-completing-read+
     ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
     (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
+  ;; TODO: below here de-commented
   (ido-mode t)
-   ;; TODO: change to ido-completing-read+
+  ;; TODO: change to ido-completing-read+
   (ido-ubiquitous-mode 1)
   (ido-hacks-mode 1)
   (require 'ido-vertical-mode)
@@ -516,9 +518,10 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jumplist
-(requiring-package (jumplist)
-  (global-set-key (kbd "s-<") 'jumplist-previous)
-  (global-set-key (kbd "s->") 'jumplist-next))
+;; TODO: do not use this right now
+;; (requiring-package (jumplist)
+;;   (global-set-key (kbd "s-<") 'jumplist-previous)
+;;   (global-set-key (kbd "s->") 'jumplist-next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-bullets
