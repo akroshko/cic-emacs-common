@@ -1631,4 +1631,22 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: move this somewhere proper
 (define-key org-mode-map (kbd "<C-mouse-1>") 'cic:org-paste-new-heading)
 
+(defun cic:count-words-region-or-buffer ()
+  "Count whole buffer if not active region."
+  (interactive)
+  (if (region-active-p)
+      (call-interactively 'count-words-region)
+    (progn
+      (save-excursion
+        (mark-whole-buffer)
+        (call-interactively 'count-words-region)))))
+
+(defun cic:kill-region-only-active (beg end &optional region)
+  "Kill region only if active.
+TODO: do something else (like copy whole line) if no region?"
+  (interactive (list (mark) (point) 'region))
+  (if (region-active-p)
+      (kill-region beg end region)
+    (message "Cannot delete unless there is an active region!")))
+
 (provide 'emacs-stdlib-functions)

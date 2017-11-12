@@ -67,6 +67,8 @@
             (define-key map (kbd "C-,")        'scroll-down-command)
             (define-key map (kbd "C-.")        'scroll-up-command)
             (define-key map (kbd "C-j")        'indent-new-comment-line)
+            ;; avoid accidental C-w from deleting many things
+            (define-key map (kbd "C-w")        'cic:kill-region-only-active)
             ;; (define-key map (kbd "s-S-x")    'scroll-down-command)
             ;; (define-key map (kbd "s-x")      'scroll-up-command)
             ;; XXXX: lived for such a short time
@@ -99,6 +101,7 @@
             (define-key map (kbd "M-]")      'cic:increase-indent)
             (define-key map (kbd "M-'")      'dabbrev-expand)
             (define-key map (kbd "M-/")      'dabbrev-expand)
+            (define-key map (kbd "M-=")      'cic:count-words-region-or-buffer)
             ;; (define-key map (kbd "M-?")      'isearch-backward)
             (define-key map (kbd "C-\\")     'cic:whack-whitespace)
             (define-key map (kbd "C-<")      'cic:other-window-previous)
