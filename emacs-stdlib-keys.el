@@ -114,6 +114,9 @@
             ;; steve yegge suggestion
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)
             ;; (global-set-key (kbd "C-x C-k") 'kill-region)
+            ;; TODO: disable swap point and mark, make something better
+            (define-key map (kbd "C-x C-x")   (lambda (interactive)))
+            (define-key map (kbd "C-x C-SPC") (lambda (interactive)))
             (define-key map (kbd "C-x M-c")  'cic:save-buffers-kill-emacs)
             ;; (define-key map (kbd "C-x C-b")  'buffer-menu)
             (define-key map (kbd "C-x C-b")  'cic:switch-buffer-new-window-below)
