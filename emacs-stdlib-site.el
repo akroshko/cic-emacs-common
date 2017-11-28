@@ -767,7 +767,8 @@ TODO broken, provided a diff cleanup function too! "
                          eldoc
                          emms
                          ess
-                         ;; ;; TODO: get rid of flymake
+                         f
+                         ;; TODO: get rid of flymake
                          ;; flymake-cursor
                          flycheck
                          flycheck-bashate
