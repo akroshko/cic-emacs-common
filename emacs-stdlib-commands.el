@@ -150,7 +150,8 @@ TODO: incomplete but still useful right now"
   (interactive)
   ;; XXXX: may not be best way, but prevents based on prevening firefox from closing when I restart emacs
   ;; TODO: find better way
-  (let ((browse-url-generic-program "chromium"))
+  (let ((browse-url-generic-program "chromium")
+        (browse-url-generic-args    '("--incognito")))
     (browse-url-generic (cic:url-at-point-or-line 'url))))
 
 (defun cic:browse-url-at-point-gnome-web ()
