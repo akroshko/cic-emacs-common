@@ -213,7 +213,7 @@
                                 "_.log" "_.pdf" "_.pdfsync"  "_.prv" "_.tex"
                                 ".aux" ".bbl" ".blg" ".bst" ".fdb_latexmk" ".fls" ".lof" ".lot" ".pdfsync" ".snm" ".synctex.gz" ".toc"
                                 ".pyd" ".pyc" ".sage.py"))
-  (setq dired-listing-switches "--group-directories-first -alh")
+  (setq dired-listing-switches "--group-directories-first -ahlv")
   (defun cic:dired-mode-minor-modes ()
     ;; I have symlinked directories that I don't like to be a mess
     (when (string-match "symlinked-documents" default-directory)
