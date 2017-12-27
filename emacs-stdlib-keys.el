@@ -48,16 +48,11 @@
             ;; TODO: not in use for now
             ;; (define-key map (kbd "S-SPC") (lambda () (interactive) (switch-to-buffer (other-buffer))))
             ;; these make working on a laptop or tablet type computer great
-            ;; TODO: no.... screws some things up
-            ;; (define-key map (kbd "<up>")      'previous-line)
-            ;; (define-key map (kbd "<down>")    'next-line)
-            ;; TODO: decide on these
-            (define-key map (kbd "C-<up>") (lambda ()
-                                             (interactive)
-                                             (scroll-down)))
-            (define-key map (kbd "C-<down>") (lambda ()
-                                               (interactive)
-                                               (scroll-up)))
+            (define-key map (kbd "<up>")     'cic:move-up)
+            (define-key map (kbd "<down>")   'cic:move-down)
+            (define-key map (kbd "S-<up>")   'cic:page-up)
+            (define-key map (kbd "S-<down>") 'cic:page-down)
+
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
             (define-key map [f12]            'cic:toggle-menubar)

@@ -1649,4 +1649,36 @@ TODO: do something else (like copy whole line) if no region?"
       (kill-region beg end region)
     (message "Cannot delete unless there is an active region!")))
 
+(defun cic:page-up ()
+  ;; https://www.emacswiki.org/emacs/Scrolling#toc3
+  ;; TODO get rid of flashing and instead smoothly go
+  (interactive)
+  (setq this-command 'previous-line)
+  (previous-line
+   (- (window-text-height)
+      next-screen-context-lines)))
+
+(defun cic:page-down ()
+  ;; TODO: in progress
+  ;; https://www.emacswiki.org/emacs/Scrolling#toc3
+  ;; restore cursore.... half pgup/down?
+  (interactive)
+  (setq this-command 'next-line)
+  (next-line
+   (- (window-text-height)
+      next-screen-context-lines)))
+
+(defun cic:move-up ()
+  ;; nice for reading code on laptop in bed
+  (interactive)
+  (setq this-command 'previous-line)
+  (scroll-down 4))
+
+(defun cic:move-down ()
+  ;; nice for reading code on laptop in bed
+  (interactive)
+  (setq this-command 'next-line)
+  (scroll-up 4))
+
+
 (provide 'emacs-stdlib-functions)
