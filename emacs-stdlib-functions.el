@@ -1671,17 +1671,23 @@ TODO: do something else (like copy whole line) if no region?"
 (defun cic:move-up ()
   ;; nice for reading code on laptop in bed
   (interactive)
-  (setq this-command 'previous-line)
-  ;; TODO: this seems to have to be non-nil or t for desired behaviour
-  ;;       I think other is a good symbol
-  (let ((scroll-preserve-screen-position 'other))
-    (scroll-down 4)))
+  ;; this combination is faster than letting (scroll-preserve-screen-position 'other)
+  (let ((saved-position (point)))
+    (ignore-errors (forward-line -1))
+    ;; if forward-line moves point
+    (when (/= (point) saved-position)
+      (condition-case nil
+          (scroll-down 1)
+        (beginning-of-buffer (forward-line))))))
 
 (defun cic:move-down ()
   ;; nice for reading code on laptop in bed
   (interactive)
-  (setq this-command 'next-line)
-  (let ((scroll-preserve-screen-position 'other))
-    (scroll-up 4)))
+  ;; this combination is faster than letting (scroll-preserve-screen-position 'other)
+  (let ((saved-position (point)))
+    (forward-line)
+    ;; if forward-line moves point
+    (when (/= (point) saved-position)
+      (scroll-up 1))))
 
 (provide 'emacs-stdlib-functions)
