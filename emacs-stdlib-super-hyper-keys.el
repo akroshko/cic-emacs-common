@@ -94,6 +94,9 @@
             (define-key map (kbd "s-o g")      'cic:browse-url-at-point-gnome-web)
             (define-key map (kbd "s-o w")      'cic:browse-url-at-point-w3m)
             ;; TODO: move this
+            (define-key map (kbd "s-p p s")    (lambda () (interactive) (profiler-start 'cpu)))
+            (define-key map (kbd "s-p p r")    'profiler-report)
+            ;; TODO: move this
             (define-key map (kbd "H-;")        'cic:ansi-term-localhost-popup)
             ;; decide alternate key for this....
             ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)

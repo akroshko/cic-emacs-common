@@ -81,10 +81,22 @@
 (global-font-lock-mode t)
 (setq initial-frame-alist nil
       default-frame-alist nil)
+;; XXXX on my machine (AMD video built into CPU) "Liberation Mono-8"
+;; (and Courier) are much faster than "DejaVu Sans Mono-7" for dired
+;; with 2000-4000 files, latter was up to 0.5s redraw.  The "Monospace
+;; Regular" that comes up with "emacs -Q" is also quite slow"
 (add-to-list 'initial-frame-alist
-             '(font . "DejaVu Sans Mono-7"))
+             ;; '(font . "DejaVu Sans Mono-7")
+             ;; '(font . "Liberation Mono-8")
+             '(font . "Droid Sans Mono-8")
+             ;; '(font . "Anonymous-8")
+             )
 (add-to-list 'default-frame-alist
-             '(font . "DejaVu Sans Mono-7"))
+             ;; '(font . "DejaVu Sans Mono-7")
+             ;; '(font . "Liberation Mono-8")
+             '(font . "Droid Sans Mono-8")
+             ;; '(font . "Anonymous-8")
+             )
 ;; this fixes many coding problems I used to have
 (prefer-coding-system 'utf-8)
 (setq coding-system-for-read 'utf-8
@@ -261,12 +273,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
-(setq ido-create-new-buffer 'always
-      ido-file-extensions-order '(".el" ".org" ".py" ".sage" ".tex" ".txt")
-      ido-ignore-extensions t)
-(unless (boundp 'ido-ignore-files)
-  (setq ido-ignore-files nil))
-(add-to-list 'ido-ignore-files "\\`_region_")
+(setq cic:ido-enable t)
+(when cic:ido-enable
+  (setq ido-create-new-buffer 'always
+        ido-file-extensions-order '(".el" ".org" ".py" ".sage" ".tex" ".txt")
+        ido-ignore-extensions t)
+  (unless (boundp 'ido-ignore-files)
+    (setq ido-ignore-files nil))
+  (add-to-list 'ido-ignore-files "\\`_region_"))
 (add-to-list 'completion-ignored-extensions ".aux")
 (add-to-list 'completion-ignored-extensions ".bbl")
 (add-to-list 'completion-ignored-extensions ".dvi")
@@ -324,7 +338,15 @@
   (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
-        org-todo-keywords      '((sequence "TODO(!@)" "NEXT(!@)" "INPROGRESS(!@)" "CANT(!@)" "DUPLICATE(!@)" "WAITING(!@)" "|" "DONE(!@)" "INVALID(!@)"))
+        org-todo-keywords      '((sequence "TODO(!@)"
+                                           "NEXT(!@)"
+                                           "INPROGRESS(!@)"
+                                           "CANT(!@)"
+                                           "DUPLICATE(!@)"
+                                           "WAITING(!@)"
+                                           "|"
+                                           "DONE(!@)"
+                                           "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
                                  ("INPROGRESS"       . (:foreground "magenta"       :background "gold"   :weight bold))

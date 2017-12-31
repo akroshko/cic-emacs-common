@@ -343,6 +343,7 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company mode
+;; TODO: reenable
 (requiring-package (company)
   (global-company-mode)
   (company-quickhelp-mode 1)
@@ -479,43 +480,44 @@ TODO broken, provided a diff cleanup function too! "
 ;; TODO good completion for org-mode
 ;; XXXX: keeping things fast for now
 ;; (setq ido-enable-flex-matching t)
-(setq ido-enable-flex-matching nil)
-;; XXXX: if t many things like describe-function is slow
-(setq ido-everywhere nil)
-(requiring-package (ido)
-  (require 'ido-hacks)
-  (requiring-package (ido-completing-read+)
-    ;; TODO: add any others
+(when cic:ido-enable
+  (setq ido-enable-flex-matching nil)
+  ;; XXXX: if t many things like describe-function is slow
+  (setq ido-everywhere nil)
+  (requiring-package (ido)
+    (require 'ido-hacks)
+    (requiring-package (ido-completing-read+)
+      ;; TODO: add any others
+      ;; TODO: change to ido-completing-read+
+      ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
+      (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
+    ;; TODO: below here de-commented
+    (ido-mode t)
     ;; TODO: change to ido-completing-read+
-    ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
-    (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
-  ;; TODO: below here de-commented
-  (ido-mode t)
-  ;; TODO: change to ido-completing-read+
-  (ido-ubiquitous-mode 1)
-  (ido-hacks-mode 1)
-  (require 'ido-vertical-mode)
-  (ido-vertical-mode 1)
-  ;;
-  ;; (require 'ido-grid-mode)
-  ;; (setq ido-grid-mode-max-columns 1
-  ;;     ido-grid-mode-max-rows 8
-  ;;     ido-grid-mode-prefix-scrolls t
-  ;;     ido-grid-mode-scroll-down #'ido-grid-mode-next-row
-  ;;     ido-grid-mode-scroll-up #'ido-grid-mode-previous-row
-  ;;     ido-grid-mode-order nil
-  ;;     ;; ido-grid-mode-start-collapsed t
-  ;;     )
-  ;; (setq ido-grid-min-rows 12
-  ;;       ido-grid-max-rows 12
-  ;;       ido-grid-mode-prefix-scrolls t
-  ;;       ido-grid-mode-order t)
-  ;; (ido-grid-mode 1)
-  ;; TODO: better, but not perfect
-  (setq ido-vertical-define-keys 'C-n-and-C-p-only
-        ido-vertical-show-count t
-        ido-max-prospects 50
-        ido-vertical-pad-list nil))
+    (ido-ubiquitous-mode 1)
+    (ido-hacks-mode 1)
+    (require 'ido-vertical-mode)
+    (ido-vertical-mode 1)
+    ;;
+    ;; (require 'ido-grid-mode)
+    ;; (setq ido-grid-mode-max-columns 1
+    ;;     ido-grid-mode-max-rows 8
+    ;;     ido-grid-mode-prefix-scrolls t
+    ;;     ido-grid-mode-scroll-down #'ido-grid-mode-next-row
+    ;;     ido-grid-mode-scroll-up #'ido-grid-mode-previous-row
+    ;;     ido-grid-mode-order nil
+    ;;     ;; ido-grid-mode-start-collapsed t
+    ;;     )
+    ;; (setq ido-grid-min-rows 12
+    ;;       ido-grid-max-rows 12
+    ;;       ido-grid-mode-prefix-scrolls t
+    ;;       ido-grid-mode-order t)
+    ;; (ido-grid-mode 1)
+    ;; TODO: better, but not perfect
+    (setq ido-vertical-define-keys 'C-n-and-C-p-only
+          ido-vertical-show-count t
+          ido-max-prospects 50
+          ido-vertical-pad-list nil)))
 
 (requiring-package (image+)
   (eval-after-load 'image '(require 'image+)))
@@ -704,20 +706,21 @@ TODO broken, provided a diff cleanup function too! "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smartscan
+;; TODO: disabling global modes that may impact performance
 ;; TODO may replace with "evil" when appropriate
 ;; XXXX: must be done before
-(setq smartscan-map
-      (let ((map (make-sparse-keymap)))
-        ;; TODO: change to something good soon
-        ;;       replaced with mousewheel emulation
-        ;; (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
-        ;; (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
-        ;; TODO: better replace
-        (define-key map (kbd "H-%") 'smartscan-symbol-replace)
-        map))
-(requiring-package (smartscan)
-  (setq smartscan-use-extended-syntax t)
-  (global-smartscan-mode 1))
+;; (setq smartscan-map
+;;       (let ((map (make-sparse-keymap)))
+;;         ;; TODO: change to something good soon
+;;         ;;       replaced with mousewheel emulation
+;;         ;; (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
+;;         ;; (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
+;;         ;; TODO: better replace
+;;         (define-key map (kbd "H-%") 'smartscan-symbol-replace)
+;;         map))
+;; (requiring-package (smartscan)
+;;   (setq smartscan-use-extended-syntax t)
+;;   (global-smartscan-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; spice-mode
