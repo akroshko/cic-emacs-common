@@ -1672,19 +1672,25 @@ TODO: do something else (like copy whole line) if no region?"
   ;; nice for reading code on laptop in bed
   (interactive)
   ;; this combination is faster than letting (scroll-preserve-screen-position 'other)
+
   (let ((saved-position (point)))
     (ignore-errors (forward-line -1))
     ;; if forward-line moves point
     (when (/= (point) saved-position)
-      (condition-case nil
-          (scroll-down 1)
-        (beginning-of-buffer (forward-line))))))
+      ;; condition-case nil
+      (ignore-errors (scroll-down 1))
+      ;; (beginning-of-buffer (forward-line))
+      )))
 
 (defun cic:move-down ()
   ;; nice for reading code on laptop in bed
   (interactive)
   ;; this combination is faster than letting (scroll-preserve-screen-position 'other)
-  (let ((saved-position (point)))
+  ;; TODO no sure some of these lets are necessary
+  (let ((saved-position (point))
+        (scroll-margin 0)
+        (scroll-conservatively 10000)
+        (next-screen-context-lines 0))
     (forward-line)
     ;; if forward-line moves point
     (when (/= (point) saved-position)
