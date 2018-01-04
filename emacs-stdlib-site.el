@@ -1,12 +1,12 @@
 ;;; emacs-stdlib-site.el --- Some configure that I use for common
 ;;; external packages.
 ;;
-;; Copyright (C) 2015-2016, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2015-2018, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20160810
+;; Version: 20180103
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -481,23 +481,39 @@ TODO broken, provided a diff cleanup function too! "
 ;; XXXX: keeping things fast for now
 ;; (setq ido-enable-flex-matching t)
 (when cic:ido-enable
-  (setq ido-enable-flex-matching nil)
+  (setq ido-enable-flex-matching t)
   ;; XXXX: if t many things like describe-function is slow
   (setq ido-everywhere nil)
   (requiring-package (ido)
-    (require 'ido-hacks)
+    (require 'cic-ido-hacks)
+    ;; TODO: reenable
     (requiring-package (ido-completing-read+)
       ;; TODO: add any others
       ;; TODO: change to ido-completing-read+
       ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
       (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
+    (set-face-foreground 'ido-only-match "DarkGreen")
+    (set-face-attribute  'ido-only-match nil :weight 'bold)
     ;; TODO: below here de-commented
     (ido-mode t)
     ;; TODO: change to ido-completing-read+
-    (ido-ubiquitous-mode 1)
-    (ido-hacks-mode 1)
-    (require 'ido-vertical-mode)
-    (ido-vertical-mode 1)
+    (ido-ubiquitous-mode t)
+    (ido-hacks-mode t)
+    ;; much faster performance than ido-vertical than, especially for describe-function
+    ;; no compatible with ido-hacks because it overrides ido-decorations
+    ;; https://www.emacswiki.org/emacs/InteractivelyDoThings#toc24
+    (setq ido-decorations (quote ("\n->  " "" "\n    " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]" "\n-> [" "]")))
+    (defun ido-disable-line-truncation ()
+      (set (make-local-variable 'truncate-lines) nil))
+    (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-truncation)
+    ;; TODO: are there keys I should disable
+    (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
+      (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+      (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+    (add-hook 'ido-setup-hook 'ido-define-keys)
+
+    ;; (require 'ido-vertical-mode)
+    ;; (ido-vertical-mode 1)
     ;;
     ;; (require 'ido-grid-mode)
     ;; (setq ido-grid-mode-max-columns 1
@@ -514,10 +530,11 @@ TODO broken, provided a diff cleanup function too! "
     ;;       ido-grid-mode-order t)
     ;; (ido-grid-mode 1)
     ;; TODO: better, but not perfect
-    (setq ido-vertical-define-keys 'C-n-and-C-p-only
-          ido-vertical-show-count t
-          ido-max-prospects 50
-          ido-vertical-pad-list nil)))
+    (setq ;; ido-vertical-define-keys 'C-n-and-C-p-only
+     ;; ido-vertical-show-count t
+     ido-max-prospects 50
+     ;; ido-vertical-pad-list nil
+     )))
 
 (requiring-package (image+)
   (eval-after-load 'image '(require 'image+)))
@@ -794,7 +811,7 @@ TODO broken, provided a diff cleanup function too! "
                          ;; TODO: change to ido-completing-read+
                          ido-completing-read+
                          ;; ido-ubiquitous
-                         ido-vertical-mode
+                         ;; ido-vertical-mode
                          idomenu
                          image+
                          ;; TODO get rid of
