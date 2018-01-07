@@ -1,11 +1,11 @@
 ;;; emacs-config.el --- My generic .emacs settings.
 ;;
-;; Copyright (C) 2015-2016, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2015-2018, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160810
+;; Version: 20180106
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
