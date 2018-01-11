@@ -145,7 +145,7 @@
 ;; disable backup and autosave
 (setq backup-inhibited t)
 (setq auto-save-default nil)
-(requiring-package (autoervert)
+(requiring-package (autorevert)
   (global-auto-revert-mode t)
   ;; TODO: don't tell about reverting for now
   (setq auto-revert-verbose nil))
