@@ -1414,67 +1414,129 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 (global-set-key (kbd "H-c")     'cic:current-clean)
 
 ;; TODO: make this work with other things
-(defun cic:current-compile ()
+(defun cic:current-compile (&optional arg)
   "Just see how my document is doing."
   ;; TODO: maybe enable disabling images
-  (interactive)
+  (interactive "P")
   (cond ((eq major-mode 'latex-mode)
-         (save-some-buffers t)
-         (setq auto-revert-verbose-old auto-revert-verbose)
-         (setq auto-revert-verbose nil)
-         ;; get includeonly working
-         (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
-           (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex")))
-         (TeX-command "LaTeX" 'TeX-master-file nil))))
+         (cond ((equal arg '(4))
+                (let ((full-filename (buffer-file-name)))
+                  ;; TODO: need current compile but wait?
+                  ;; recursive call to compile
+                  (cic:current-compile nil)
+                  (let ((active-process (with-current-file full-filename
+                                          (TeX-active-process))))
+                    ;; (mpp active-process)
+                    (when active-process
+                      (mpp "Starting...")
+                      (set-process-sentinel active-process 'first-latex-compile-process-sentinel)))))
+               ((equal arg '(16))
+                (cic:current-compile 'full))
+               ((equal arg '(64))
+                (let ((full-filename (buffer-file-name)))
+                  ;; TODO: need current compile but wait?
+                  ;; recursive call to compile
+                  (cic:current-compile 'full)
+                  (let ((active-process (with-current-file full-filename
+                                          (TeX-active-process))))
+                    ;; (mpp active-process)
+                    (when active-process
+                      (mpp "Starting multi-...")
+                      (set-process-sentinel active-process 'first-latex-full-compile-process-sentinel)))))
+               ;; TODO: for later
+               ((equal arg 'full)
+                (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
+                (TeX-command "LaTeX" 'TeX-master-file nil))
+               (t
+                (save-some-buffers t)
+                ;; (setq auto-revert-verbose-old auto-revert-verbose)
+                ;; (setq auto-revert-verbose nil)
+                ;; get includeonly working
+                (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
+                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex")))
+                (TeX-command "LaTeX" 'TeX-master-file nil))))))
 
-(defun cic:current-full-compile ()
-  "Compile the whole thing."
-  (interactive)
-  (cond ((eq major-mode 'latex-mode)
-         (save-some-buffers t)
-         (setq auto-revert-verbose-old auto-revert-verbose)
-         (setq auto-revert-verbose nil)
-         (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
-         (TeX-command "LaTeX" 'TeX-master-file nil)
+(defun first-latex-compile-process-sentinel (process event)
+  (mpp (concat "First: " event))
+  (when (equal event "finished\n")
+    ;; call next
+    (mpp "first sentinel")
+    (let ((full-filename (buffer-file-name)))
+      (TeX-command "BibTeX" 'TeX-master-file nil)
+      (let ((active-process (with-current-file full-filename
+                              (TeX-active-process))))
+        (if active-process
+            (set-process-sentinel active-process 'second-bibtex-compile-process-sentinel)
+          (mpp "No first active process"))))))
 
-         )))
+(defun second-bibtex-compile-process-sentinel (process event)
+  (mpp (concat "Second: " event))
+  (when (equal event "finished\n")
+    ;; call next
+    (mpp "second sentinel")
+    (let ((full-filename (buffer-file-name)))
+      (cic:current-compile nil)
+      (let ((active-process (with-current-file full-filename
+                              (TeX-active-process))))
+        (if active-process
+            (set-process-sentinel active-process 'third-latex-compile-process-sentinel)
+          (mpp "No second active process"))))))
 
-(defun cic:current-full-compile-bibtex ()
-  "Compile the whole thing several times including a bibtex."
-  (interactive)
-  (cond ((eq major-mode 'latex-mode)
-         (save-some-buffers t)
-         (setq auto-revert-verbose-old auto-revert-verbose)
-         (setq auto-revert-verbose nil)
-         (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
-         ;; https://www.emacswiki.org/emacs/TN#toc8
-         ;; TODO: check succcess
-         (save-excursion
-           (TeX-command "LaTeX"  'TeX-master-file nil)
-           ;; if current buffer is latex document
-           ;; (get-buffer-process (TeX-process-buffer-name (TeX-active-master)))
-           (sleep-for 1.0)
-           (while (get-buffer-process (current-buffer))
-             (sleep-for 1.0)))
-         (save-excursion
-           (TeX-command "BibTeX" 'TeX-master-file nil)
-           (sleep-for 1.0)
-           (while (get-buffer-process (current-buffer))
-             (sleep-for 1.0)))
-         (save-excursion
-           (TeX-command "LaTeX"  'TeX-master-file nil)
-           (sleep-for 1.0)
-           (while (get-buffer-process (current-buffer))
-             (sleep-for 1.0)))
-         (save-excursion
-           (TeX-command "LaTeX"  'TeX-master-file nil)
-           (sleep-for 2.0)
-           (while (get-buffer-process (current-buffer))
-             (sleep-for 1.0)))
-         (message "Done LaTeX multi-compile!"))))
+(defun third-latex-compile-process-sentinel (process event)
+  (mpp (concat "Third: " event))
+  (when (equal event "finished\n")
+    (mpp "third sentinel")
+    (let ((full-filename (buffer-file-name)))
+      (cic:current-compile nil))))
+
+(defun first-latex-full-compile-process-sentinel (process event)
+  (mpp (concat "First multi-: " event))
+  (when (equal event "finished\n")
+    ;; call next
+    (mpp "first sentinel multi-")
+    (let ((full-filename (buffer-file-name)))
+      (TeX-command "BibTeX" 'TeX-master-file nil)
+      (let ((active-process (with-current-file full-filename
+                              (TeX-active-process))))
+        (if active-process
+            (set-process-sentinel active-process 'second-bibtex-full-compile-process-sentinel)
+          (mpp "No first multi- active process"))))))
+
+(defun second-bibtex-full-compile-process-sentinel (process event)
+  (mpp (concat "Second multi-: " event))
+  (when (equal event "finished\n")
+    ;; call next
+    (mpp "second sentinel multi-")
+    (let ((full-filename (buffer-file-name)))
+      (cic:current-compile 'full)
+      (let ((active-process (with-current-file full-filename
+                              (TeX-active-process))))
+        (if active-process
+            (set-process-sentinel active-process 'third-latex-full-compile-process-sentinel)
+          (mpp "No second multi- active process"))))))
+
+(defun third-latex-full-compile-process-sentinel (process event)
+  (mpp (concat "Third multi-: " event))
+  (when (equal event "finished\n")
+    (mpp "third sentinel multi-")
+    (let ((full-filename (buffer-file-name)))
+      (cic:current-compile 'full)
+      (let ((active-process (with-current-file full-filename
+                              (TeX-active-process))))
+        (if active-process
+            (set-process-sentinel active-process 'fourth-latex-full-compile-process-sentinel)
+          (mpp "No third mutli- active process"))))))
+
+(defun fourth-latex-full-compile-process-sentinel (process event)
+  (mpp (concat "Fourth multi-: " event))
+  (when (equal event "finished\n")
+    (mpp "fourth sentinel multi-")
+    (sit-for 1.0)
+      (message "Done LaTeX multi-compile!")))
+
 
 ;; build, just latex for now
-;; TODO: clean this out
+;; TODO: clean this out, other things capture it now...
 (defun cic:current-build ()
   (interactive)
   (cond ((eq major-mode 'latex-mode)

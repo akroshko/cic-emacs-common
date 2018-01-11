@@ -317,10 +317,7 @@ TODO broken, provided a diff cleanup function too! "
                                                                     TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX in draft mode."))
                  (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                  (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
-                 (define-key TeX-mode-map (kbd "C-s-b")   'cic:current-full-compile)
-                 ;; DO EVERYTHING BY HOLDING DOWN NEARLY ALL KEYS
-                 (define-key TeX-mode-map (kbd "C-s-S-b") 'cic:current-full-compile-bibtex)
-                 ;; TODO: want symbol instead of lambda for this
+                 ;; TODO: want function symbol instead of lambda for this
                  (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                              (interactive)
                                                              (TeX-command "BibTeX" 'TeX-master-file nil)))
