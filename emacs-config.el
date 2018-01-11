@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180106
+;; Version: 20180110
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -99,8 +99,10 @@
              )
 ;; this fixes many coding problems I used to have
 (prefer-coding-system 'utf-8)
-(setq coding-system-for-read 'utf-8
-      coding-system-for-write 'utf-8)
+;; https://emacs.stackexchange.com/questions/10146/cant-open-zip-files-in-emacs
+;; TODO: ..... breaks zip files.... and other things that read bytes into buffer.... need a finer grained way of fixing it
+;; (setq coding-system-for-read 'utf-8
+;;       coding-system-for-write 'utf-8)
 
 (setq-default cursor-type 'box)
 
@@ -213,6 +215,8 @@
 (setq calc-multiplication-has-precedence nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
+;; TODO: why did I not include dired-aux before, what do I have to set for it?
+(requiring-package (dired-aux))
 (requiring-package (dired-x)
   (setq dired-omit-files-p t
         ;; these help avoid unwanted file operations
