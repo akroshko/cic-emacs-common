@@ -744,6 +744,10 @@ TODO broken, provided a diff cleanup function too! "
   (add-to-list 'auto-mode-alist '("\\.cir$" . spice-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(requiring-package (vc)
+  (setq vc-follow-symlinks t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; w3m
 (setq w3m-default-display-inline-images t)
 (setq w3m-use-cookies t)
