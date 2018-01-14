@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180103
+;; Version: 20180114
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -282,24 +282,9 @@ TODO broken, provided a diff cleanup function too! "
                  ;; XXXX: specific to University of Saskatchewan thesis template
                  (eval-after-load "reftex"
                    '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
-                 ;; I remap these to other things
+                 ;; TODO: do I remap these to other things
                  ;; (define-key TeX-mode-map (kbd "C-c C-b")  nil)
                  ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
-                 ;; advice is good
-                 ;; TODO: I want to report warnings and errors, but still do nothing
-                 ;; (defvar auto-revert-verbose-old nil
-                 ;;   "Old value of auto-revert-verbose.")
-                 ;; (setq auto-revert-verbose-old auto-revert-verbose)
-                 ;; (defun TeX-LaTeX-sentinel-revert-buffer-non-verbose (orig-fun &rest args)
-                 ;;   (let (ret)
-                 ;;     (setq ret (apply orig-fun args))
-                 ;;     ;; TODO: this is probably not the right way to do this, what happens if multiple sentinels or things try to do this?
-                 ;;     ;; TODO: decide best way to do this, only works with (cic:current-build) right now
-                 ;;     (auto-revert-set-timer)
-                 ;;     (sleep-for 0.2)
-                 ;;     ;; (setq auto-revert-verbose auto-revert-verbose-old)
-                 ;;     ret))
-                 ;; (advice-add 'TeX-LaTeX-sentinel :around #'TeX-LaTeX-sentinel-revert-buffer-non-verbose)
                  (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
                    (let ((ret (apply orig-fun args)))
                      (setq TeX-command-next TeX-command-default)
@@ -483,7 +468,6 @@ TODO broken, provided a diff cleanup function too! "
   (setq ido-everywhere nil)
   (requiring-package (ido)
     (require 'cic-ido-hacks)
-    ;; TODO: reenable
     (requiring-package (ido-completing-read+)
       ;; TODO: add any others
       ;; TODO: change to ido-completing-read+
@@ -761,8 +745,7 @@ TODO broken, provided a diff cleanup function too! "
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ;; ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
-                         ;; ("org" . "http://orgmode.org/elpa/")
-                         ))
+                         ("org" . "http://orgmode.org/elpa/")))
 (setq package-check-signature nil)
 (setq cic:package-list '(ace-jump-mode
                          apache-mode
