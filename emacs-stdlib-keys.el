@@ -189,6 +189,9 @@
 
 (defun cic:save-buffers-kill-emacs ()
   (interactive)
+  ;; TODO: why do I have my own symbol for this?
+  ;;       fix or elaborate?
+  ;;       I think I wanted some arg default?
   (save-buffers-kill-emacs))
 
 ;; misc keys
