@@ -141,7 +141,8 @@ TODO: incomplete but still useful right now"
   (interactive)
   ;; XXXX: may not be best way, but prevents firefox from closing when I restart emacs
   ;; TODO: find better way
-  (let ((browse-url-generic-program "firefox"))
+  (let ((browse-url-generic-program "firefox")
+        (browse-url-generic-args    '("-P" "default")))
     ;; (browse-url-firefox (cic:url-at-point-or-line 'url))
     (browse-url-generic (cic:url-at-point-or-line 'url))))
 
