@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180110
+;; Version: 20180118
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -150,14 +150,15 @@
   ;; TODO: don't tell about reverting for now
   (setq auto-revert-verbose nil))
 (setq tags-revert-without-query 1)
-;; try not to warn about large files unless necessary
+;; try not to warn about large files unless really really necessary
 (setq large-file-warning-threshold 100000000000)
 ;; http://stackoverflow.com/questions/18316665/how-to-improve-emacs-performace-when-view-large-file
 ;; TODO: can become a problem with some files used for capturing
 ;;       temporarily increased to 10mb
 ;;       should only do for large files that are not text (e.g. org, above a certain threshold)
 (defun cic:large-file-read-only-hook ()
-  "If a file is over a given size, make the buffer read only."
+  "If a file is over a given size (default 10mb), make the buffer
+read only."
   (when (> (buffer-size) (* 1024 1024 10))
     (setq buffer-read-only t)
     (buffer-disable-undo)
@@ -377,11 +378,14 @@
         org-cycle-level-after-item/entry-creation nil)
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
-    (when (display-graphic-p)
-      (setq org-startup-with-inline-images t
-            ;; XXXX: want images look reasonable on most systems
-            ;; TODO: set differently for different screens
-            org-image-actual-width '(400))))
+    ;; should I setq-local?
+    (when (and (display-graphic-p) (not (string-match "-log" (buffer-file-name))))
+      ;; this setq-local is important for avoiding misbehaving on
+      ;; large org-mode formated log files
+      (setq-local org-startup-with-inline-images t)
+      ;; XXXX: want images look reasonable on most systems
+      ;; TODO: set differently for different screens
+      (setq-local org-image-actual-width '(400))))
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()
   ;;   (font-lock-add-keywords 'org-mode
@@ -389,10 +393,10 @@
   ;;                              ;; font-lock-warning-face
   ;;                              font-lock-keyword-face))))
   ;; literal hyperlinks setup
+  (add-hook 'org-mode-hook 'org-image-setup)
   (defun org-literal-hyperlinks-setup ()
     (org-remove-from-invisibility-spec '(org-link))
     (org-restart-font-lock))
-  (add-hook 'org-mode-hook 'org-image-setup)
   ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
   (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   ;; (setq org-log-done 'time)
