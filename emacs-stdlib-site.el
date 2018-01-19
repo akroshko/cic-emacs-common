@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180114
+;; Version: 20180119
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -74,8 +74,10 @@ TODO broken, provided a diff cleanup function too! "
 (add-to-list 'auto-mode-alist '("psqlrc"              . sql-mode))
 
 (requiring-package (sh-script)
-;; TODO: find another thing to run executable-interpret
-  (define-key sh-mode-map (kbd "C-c C-x") nil))
+  ;; TODO: find another thing to run executable-interpret
+  (define-key sh-mode-map (kbd "C-c C-x") nil)
+  ;; my aliases often have
+  (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?=")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys

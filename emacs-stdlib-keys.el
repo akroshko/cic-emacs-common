@@ -52,7 +52,11 @@
             (define-key map (kbd "<down>")   'cic:move-down)
             (define-key map (kbd "S-<up>")   'cic:page-up)
             (define-key map (kbd "S-<down>") 'cic:page-down)
-
+            ;; TODO: make a symbol...
+            (define-key map (kbd "C-<up>")   (lambda () (interactive)
+                                               (scroll-down 1)))
+            (define-key map (kbd "C-<down>") (lambda () (interactive)
+                                               (scroll-up 1)))
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
             (define-key map [f12]            'cic:toggle-menubar)
