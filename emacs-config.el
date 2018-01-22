@@ -379,7 +379,7 @@ read only."
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
     ;; should I setq-local?
-    (when (and (display-graphic-p) (not (string-match "-log" (buffer-file-name))))
+    (when (and (display-graphic-p) (or (not (buffer-file-name)) (not (string-match "-log" (buffer-file-name)))))
       ;; this setq-local is important for avoiding misbehaving on
       ;; large org-mode formated log files
       (setq-local org-startup-with-inline-images t)
