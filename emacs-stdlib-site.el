@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180119
+;; Version: 20180125
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -465,6 +465,7 @@ TODO broken, provided a diff cleanup function too! "
 ;; XXXX: keeping things fast for now
 ;; (setq ido-enable-flex-matching t)
 (when cic:ido-enable
+  ;; TODO: want option for flex matching all the time
   (setq ido-enable-flex-matching t)
   ;; XXXX: if t many things like describe-function is slow
   (setq ido-everywhere nil)

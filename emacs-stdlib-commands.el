@@ -917,7 +917,8 @@ and date.  Behaviour based on org-insert-heading."
              (setq reftex-toc-include-labels nil)
              (if arg
                  (reftex-toc-max-level 3)
-               (reftex-toc-max-level 2)))))
+               (reftex-toc-max-level 2))
+             (reftex-toc-rescan))))
         ((eq major-mode 'reftex-toc-mode)
          (delete-window))
         (t

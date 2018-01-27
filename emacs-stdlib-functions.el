@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20171227
+;; Version: 20180125
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -715,6 +715,11 @@ whitespace) or a nil."
 (defun cic:delete-current-line ()
   "Delete the current line without touching the kill ring.
 TODO: this function needs work."
+;; TODO: use this from  https://www.emacswiki.org/emacs/ElispCookbook#toc13
+;; (let ((beg (point)))
+;;    (forward-line 1)
+;;    (forward-char -1)
+;;    (delete-region beg (point)))
   (let ((p1 (line-beginning-position))
         saved-text-properties
         p2)

@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180118
+;; Version: 20180125
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -279,6 +279,12 @@ read only."
 ;; TODO: make both work
 (define-key emacs-lisp-mode-map (kbd "C-x C-h") 'mark-defun)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; facemenu
+;; unset the facemenu key
+(define-key global-map "\M-o" nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
 (setq cic:ido-enable t)
@@ -322,7 +328,10 @@ read only."
   (define-key org-mode-map (kbd "C-S-<return>") 'org-insert-subheading)
   ;; (define-key org-mode-map (kbd "C-j")          ')
   ;; TOOD: probably want something a bit different
-  (define-key org-mode-map (kbd "M-o M-o") (lambda (&optional arg) (interactive "P") (org-cycle '(64))))
+  ;;       generally won't work
+  ;; (define-key org-mode-map (kbd "M-o M-o") (lambda (&optional arg) (interactive "P") (org-cycle '(64))))
+  ;; TODO: add more things..... to jump between invisible and visible....
+  (define-key org-mode-map (kbd "M-o") 'org-toggle-link-display)
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )
@@ -346,15 +355,15 @@ read only."
   (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
-        org-todo-keywords      '((sequence "TODO(!@)"
-                                           "NEXT(!@)"
-                                           "INPROGRESS(!@)"
-                                           "CANT(!@)"
-                                           "DUPLICATE(!@)"
-                                           "WAITING(!@)"
-                                           "|"
-                                           "DONE(!@)"
-                                           "INVALID(!@)"))
+        org-todo-keywords    '((sequence "TODO(!@)"
+                                         "NEXT(!@)"
+                                         "INPROGRESS(!@)"
+                                         "CANT(!@)"
+                                         "DUPLICATE(!@)"
+                                         "WAITING(!@)"
+                                         "|"
+                                         "DONE(!@)"
+                                         "INVALID(!@)"))
         org-todo-keyword-faces '(("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
                                  ("INPROGRESS"       . (:foreground "magenta"       :background "gold"   :weight bold))
@@ -379,24 +388,29 @@ read only."
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-setup ()
     ;; should I setq-local?
-    (when (and (display-graphic-p) (or (not (buffer-file-name)) (not (string-match "-log" (buffer-file-name)))))
-      ;; this setq-local is important for avoiding misbehaving on
-      ;; large org-mode formated log files
-      (setq-local org-startup-with-inline-images t)
-      ;; XXXX: want images look reasonable on most systems
-      ;; TODO: set differently for different screens
-      (setq-local org-image-actual-width '(400))))
+    (let ((the-buffer-file-name (buffer-file-name)))
+      (when (and (display-graphic-p) (or (not the-buffer-file-name) (not (string-match "-log" the-buffer-file-name))))
+        ;; this setq-local is important for avoiding misbehaving on
+        ;; large org-mode formated log files
+        (setq-local org-startup-with-inline-images t)
+        ;; XXXX: want images look reasonable on most systems
+        ;; TODO: set differently for different screens
+        (setq-local org-image-actual-width '(400))))
+    )
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()
   ;;   (font-lock-add-keywords 'org-mode
   ;;                           '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
   ;;                              ;; font-lock-warning-face
   ;;                              font-lock-keyword-face))))
-  ;; literal hyperlinks setup
+
   (add-hook 'org-mode-hook 'org-image-setup)
+  ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
-    (org-remove-from-invisibility-spec '(org-link))
-    (org-restart-font-lock))
+    (let ((the-buffer-file-name (buffer-file-name)))
+      (unless (and the-buffer-file-name (string-match "help\\.org" the-buffer-file-name))
+        (org-remove-from-invisibility-spec '(org-link))
+        (org-restart-font-lock))))
   ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
   (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   ;; (setq org-log-done 'time)
