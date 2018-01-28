@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180125
+;; Version: 20180128
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -59,7 +59,7 @@
 (add-to-list 'command-switch-alist '("diff" . command-line-diff))
 (defun command-line-diff (switch)
   "Allow diffs from the command line.
-TODO broken, provided a diff cleanup function too! "
+TODO broken, provided a diff cleanup function too!"
   (let ((file1 (pop command-line-args-left))
         (file2 (pop command-line-args-left)))
     (ediff file1 file2)))
@@ -752,6 +752,7 @@ TODO broken, provided a diff cleanup function too! "
 (setq package-check-signature nil)
 (setq cic:package-list '(ace-jump-mode
                          apache-mode
+                         apt-sources-list
                          arduino-mode
                          auctex
                          auto-overlays
