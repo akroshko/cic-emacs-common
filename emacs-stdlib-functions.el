@@ -1459,7 +1459,26 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 ;; get includeonly working
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
                   (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex")))
-                (TeX-command "LaTeX" 'TeX-master-file nil))))))
+                (TeX-command "LaTeX" 'TeX-master-file nil))))
+        ((eq major-mode 'python-mode)
+         ;; TODO: use some beter configuration
+         ;; XXXX: pyflakes can't easily ignore common design decision I make
+         ;; (python-check (concat "pyflakes " (buffer-file-name)))
+         ;; TODO: do I want this...
+         ;; (flycheck-buffer)
+         ;; TODO: better customization
+         ;; https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
+         ;; http://flake8.pycqa.org/en/latest/user/error-codes.html
+         ;; TODO: have a production mode
+         ;; XXXX: these reflect common stylistic changes I've made for research-focused code,
+         ;;       e.g., from <<module>> import * is incredibly useful when experimenting with many functions reflecting many math problems,
+         ;;             enforcing space after comma is not always best style for huge lists of numbers,
+         ;;             long lines are good for long formulas,
+         ;;             multiple spaces after commas are good for complex data structures,
+         ;;             sometimes add paths is good before importing on experimental setups,
+         ;;             requiring whitespace around operators does not allows intuitive grouping of expressions
+         ;;             I like to comment blocks out so wrong and unexpected indentation will always be found
+         (python-check (concat "flake8 --ignore=E114,E116,E124,E127,E201,E221,E222,E225,E226,E231,E241,E251,E261,E266,E302,E305,E401,F401,E402,F402,E403,F403,E405,F405,E501 " (buffer-file-name))))))
 
 (defun first-latex-compile-process-sentinel (process event)
   (mpp (concat "First: " event))

@@ -375,19 +375,20 @@ TODO broken, provided a diff cleanup function too!"
                 (delete-window (get-buffer-window "*Flycheck errors*"))
               (flycheck-list-errors))
           (flycheck-buffer))))
-  (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
+  ;; TODO: reenalbe when it works for my workflow again
+  ;; (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
   ;; I use these for other stuff
   ;; (global-set-key (kbd "s-,") 'flycheck-previous-error)
   ;; (global-set-key (kbd "s-.") 'flycheck-next-error)
   ;; hacks for my own stuff
-  (put 'python-flake8    (intern "flycheck-modes") '(python-mode sage-mode))
-  (put 'python-pycompile (intern "flycheck-modes") '(python-mode sage-mode))
-  (requiring-package (flycheck-pyflakes)
-    (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
+  ;; (put 'python-flake8    (intern "flycheck-modes")     '(python-mode sage-mode))
+  ;; (put 'python-pycompile (intern "flycheck-modes")     '(python-mode sage-mode))
+  ;; (requiring-package (flycheck-pyflakes)
+  ;;   (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
   ;; I still install these, but most of my stuff is not good enough to
   ;; stick to rigid style
-  (add-to-list 'flycheck-disabled-checkers 'python-flake8)
-  (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+  ;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+  ;; (add-to-list 'flycheck-disabled-checkers 'python-pylint)
   ;; TODO: need to specify good defaults
   )
 
@@ -552,6 +553,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; TODO: figure this
   ;; (define-key python-mode-map (kbd "M-[") 'python-indent-shift-left)
   ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
+  (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
   (defconst python-fulldoc-setup-code
     "def __PYDOC_get_fulldoc(obj):
     try:

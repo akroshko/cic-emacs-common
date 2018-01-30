@@ -938,12 +938,13 @@ and date.  Behaviour based on org-insert-heading."
       (dolist (window (window-list))
         ;; get window name
         (let ((buffer-name (buffer-name (window-buffer window))))
-          (when (and
-                 (starts-with buffer-name "*")
-                 (ends-with   buffer-name "*")
-                 (not (string-match "scratch" buffer-name)))
+          (when (and (starts-with buffer-name "*")
+                     (ends-with   buffer-name "*")
+                     (not (string-match "scratch" buffer-name)))
             (delete-window window)
-            (setq window-deleted t))))
+            (setq window-deleted t))
+          (when (starts-with buffer-name "*Python check:")
+            (kill-buffer buffer-name))))
       (when window-deleted
         (setq cic:kill-transient-windows-undo undo-info)))))
 
