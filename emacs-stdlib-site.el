@@ -300,14 +300,21 @@ TODO broken, provided a diff cleanup function too!"
                  (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
                  ;; TODO: make this act more like org mode
                  ;; TODO: make sure several runs of this file doesn't bugger variable
-                 (cic:add-to-alist 'TeX-command-list "LaTeXdraft" '("%`%l%(mode) -draftmode %' %t"
-                                                                    TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX in draft mode."))
+                 (cic:add-to-alist 'TeX-command-list "LaTeXdraft" "%`%l%(mode) -draftmode %' %t" 'TeX-run-TeX nil '(latex-mode doctex-mode) :help "Run LaTeX in draft mode.")
+                 ;; TODO: maybe???
                  (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
+                 (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
                  (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                  ;; TODO: want function symbol instead of lambda for this
                  (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                              (interactive)
                                                              (TeX-command "BibTeX" 'TeX-master-file nil)))
+                 (define-key TeX-mode-map (kbd "s-x b")   '(lambda ()
+                                                             (interactive)
+                                                             (TeX-command "BibTeX" 'TeX-master-file nil)))
+                 (define-key TeX-mode-map (kbd "s-x c")    '(lambda ()
+                                                              (interactive)
+                                                              (TeX-command "LaTeXdraft" 'TeX-master-file nil)))
                  ;; TODO: do I ever want this back, should I replace something else?
                  ;; (define-key TeX-mode-map (kbd "C-c C-b")  )
                  )
@@ -554,6 +561,14 @@ TODO broken, provided a diff cleanup function too!"
   ;; (define-key python-mode-map (kbd "M-[") 'python-indent-shift-left)
   ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
   (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
+  ;; (define-key python-mode-map (kbd "s-x") 'cic:current-compile)
+  (define-key python-mode-map (kbd "s-x c") (lambda ()
+                                              (interactive)
+                                              (let ((return-code (call-process "python" nil nil nil "-m" "py_compile" (buffer-file-name))))
+                                                (if (equal return-code 0)
+                                                    (message "Syntax check passed!!!")
+                                                  ;; TODO: flash if failed...
+                                                  (message "***!!!Syntax check failed!!!***")))))
   (defconst python-fulldoc-setup-code
     "def __PYDOC_get_fulldoc(obj):
     try:

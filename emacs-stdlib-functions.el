@@ -1478,7 +1478,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;;             sometimes add paths is good before importing on experimental setups,
          ;;             requiring whitespace around operators does not allows intuitive grouping of expressions
          ;;             I like to comment blocks out so wrong and unexpected indentation will always be found
-         (python-check (concat "flake8 --ignore=E114,E116,E124,E127,E201,E221,E222,E225,E226,E231,E241,E251,E261,E266,E302,E305,E401,F401,E402,F402,E403,F403,E405,F405,E501 " (buffer-file-name))))))
+         (python-check (concat "flake8 --ignore=E114,E116,E122,E124,E127,E201,E221,E222,E225,E226,E231,E241,E251,E261,E266,E302,E305,E401,F401,E402,F402,E403,F403,E405,F405,E501 " (buffer-file-name))))))
 
 (defun first-latex-compile-process-sentinel (process event)
   (mpp (concat "First: " event))
@@ -1687,14 +1687,16 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (ignore-errors (scroll-down))
     (select-window current-window)))
 
-(defun cic:add-to-alist (the-alist the-key the-value)
-  (if (assoc the-key (symbol-value the-alist))
-      ;; replace
-      (progn
-        ;; https://emacs.stackexchange.com/questions/3397/how-to-replace-an-element-of-an-alist
-        (setf (cdr (assoc the-key (symbol-value the-alist))) the-value))
-    ;; otherwise add anew
-    (add-to-list the-alist (list the-key the-value))))
+(defun cic:add-to-alist (the-alist the-key &rest the-values)
+  (add-to-list the-alist (append (list the-key) the-values))
+  ;; (if (assoc the-key (symbol-value the-alist))
+  ;;     ;; replace
+  ;;     (progn
+  ;;       ;; https://emacs.stackexchange.com/questions/3397/how-to-replace-an-element-of-an-alist
+  ;;       (setf (cdr (assoc the-key (symbol-value the-alist))) the-value))
+  ;;   ;; otherwise add anew
+  ;;   (add-to-list the-alist (list the-key the-value)))
+  )
 
 (defun cic:switch-buffer-new-window-below ()
   ;; TODO: unwind if not successful or if I cancel ido-switch-buffer
