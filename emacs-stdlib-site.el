@@ -562,13 +562,19 @@ TODO broken, provided a diff cleanup function too!"
   ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
   (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
   ;; (define-key python-mode-map (kbd "s-x") 'cic:current-compile)
-  (define-key python-mode-map (kbd "s-x c") (lambda ()
-                                              (interactive)
-                                              (let ((return-code (call-process "python" nil nil nil "-m" "py_compile" (buffer-file-name))))
-                                                (if (equal return-code 0)
-                                                    (message "Syntax check passed!!!")
-                                                  ;; TODO: flash if failed...
-                                                  (message "***!!!Syntax check failed!!!***")))))
+  (define-key python-mode-map (kbd "s-x c") 'cic:check-python)
+  (defun cic:check-python ()
+    (interactive)
+    (when (buffer-live-p (get-buffer "*cic-python-check*"))
+      (with-current-buffer "*cic-python-check*"
+        (erase-buffer)
+        (goto-char (point-min))))
+    (let ((return-code (call-process "python" nil "*cic-python-check*" nil "-m" "py_compile" (buffer-file-name))))
+      (if (equal return-code 0)
+          (message "Syntax check passed!!!")
+        ;; TODO: flash if failed...
+        ;; (message "***!!!Syntax check failed!!!***")
+        (message (with-current-buffer "*cic-python-check*" (buffer-substring (point-min) (point-max)))))))
   (defconst python-fulldoc-setup-code
     "def __PYDOC_get_fulldoc(obj):
     try:

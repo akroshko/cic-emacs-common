@@ -152,7 +152,8 @@
             ;; (define-key map (kbd "H-0")          'cic:delete-window)
             ;; TODO: keep these but maybe temporary while I build new muscle memory
             (define-key map (kbd "H-l")          'cic:delete-window-below)
-            (define-key map (kbd "H-K")          'cic:delete-frame)
+            ;; TODO: decide on k... using other things right now...
+            ;; (define-key map (kbd "H-K")          'cic:delete-frame)
             ;; TODO: temporary while I build new muscle memory
             (define-key map (kbd "H-x")          'save-buffer)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
