@@ -532,6 +532,22 @@ TODO broken, provided a diff cleanup function too!"
   (eval-after-load 'image '(require 'image+)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; json-mode
+(requiring-package (json-mode)
+  (require 'rx)
+  (defconst cic:json-mode-comment-re
+    (rx line-start
+        (zero-or-more whitespace)
+        (group
+         (char ?/)
+         (char ?/)
+         (zero-or-more not-newline)
+         eol)))
+  ;; TODO: make sure this does not grow list indefinitely as I reload this file
+  ;; TODO: using warning rather than comment because comments are not valid vanilla json syntax
+  (add-to-list 'json-font-lock-keywords-1 (list cic:json-mode-comment-re 1 font-lock-warning-face)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jumplist
 ;; TODO: do not use this right now
 ;; (requiring-package (jumplist)
