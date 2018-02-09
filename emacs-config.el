@@ -8,6 +8,8 @@
 ;; Version: 20180125
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
+;; This file is NOT part of GNU Emacs.
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 3, or
@@ -282,7 +284,6 @@ read only."
 ;; TODO: make both work
 (define-key emacs-lisp-mode-map (kbd "C-x C-h") 'mark-defun)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; facemenu
 ;; unset the facemenu key
@@ -316,6 +317,9 @@ read only."
 ;; image-mode
 ;; TODO: find out how to animate images by default
 (setq image-animate-loop t)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc
+(requiring-package (misc))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; new-comment
 (requiring-package (newcomment))

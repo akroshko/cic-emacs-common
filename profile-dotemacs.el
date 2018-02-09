@@ -1,11 +1,14 @@
 ;;; profile-dotemacs.el --- Profile your Emacs init file
 
-;; Copyright (C) 2010, 2012  David Engster
+;; Copyright (C) 2018 Andrew Kroshko, all rights reserved; 2010, 2012 David Engster.
 
 ;; Author: David Engster <dengste@eml.cc>
-
+;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
+;; Version: 20180209
+;; URL: https://github.com/akroshko/emacs-stdlib
+;;
 ;; This file is NOT part of GNU Emacs.
-
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 2
@@ -77,10 +80,19 @@
 
 ;; User variables
 
-(defvar profile-dotemacs-file "~/.emacs"
+;; I use a symlink to git controlled repo, this stops warning on loading
+(setq vc-follow-symlinks t)
+;; TODO: disable for checking full server setup, but I generally don't care about that
+(setq cic:emacs-minimal t)
+(defvar profile-dotemacs-file "~/.emacs-cic.el"
   "File to be profiled.")
 
-(defvar profile-dotemacs-low-percentage 3
+;; original, this is one line for me
+;; (defvar profile-dotemacs-file "~/.emacs"
+;;   "File to be profiled.")
+
+;; changed to one from 3
+(defvar profile-dotemacs-low-percentage 1
   "Percentage which should be considered low.
 All sexp's with a running time below this percentage will be
 grayed out.")

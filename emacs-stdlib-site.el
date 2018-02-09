@@ -9,6 +9,8 @@
 ;; Version: 20180128
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
+;; This file is NOT part of GNU Emacs.
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 3, or
@@ -121,203 +123,206 @@ TODO broken, provided a diff cleanup function too!"
 ;; http://william.famille-blum.org/blog/static.php?page=static081010-000413
 ;; http://www.barik.net/archive/2012/07/18/154432/
 ;; put this as reverse search c:\emacs-24.2\bin\emacsclientw.exe +%l "%f"
-(requiring-catch ("auctex")
-                 (require 'bib-cite)
-                 (require 'latex-extra)
-                 (require 'tex-site)
-                 (require 'tex)
-                 (require 'texmathp)
-                 ;; TODO: needed on my laptop, not sure why
-                 (require 'font-latex)
-                 (setq TeX-PDF-mode t)
-                 (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
-                 (setq TeX-source-correlate-method 'synctex
-                       TeX-source-correlate-mode t
-                       TeX-source-correlate-start-server t
-                       ;; https://emacs.stackexchange.com/questions/13426/auctex-doesnt-run-bibtex
-                       ;; Enable parse on load.
-                       TeX-parse-self t
-                       TeX-auto-save t
-                       TeX-clean-confirm nil
-                       ;; the default reindents before newline
-                       )
-                 (setq LaTeX-paragraph-commands
-                       '("TODO"))
-                 (setq preview-auto-cache-preamble t)
-                 (setq preview-scale-function 1.5)
-                 (setq reftex-plug-into-AUCTeX t
-                       reftex-cite-view-format "%3a %y, %t, %B, %j %v:%P, %s %<"
-                       reftex-toc-include-labels t
-                       reftex-index-include-context t
-                       reftex-label-alist (list '("section" 115 "%S" "~\\ref{%s}"
-                                                  t
-                                                  (regexp "parts?" "chapters?" "chap\\." "sections?" "sect?\\." "paragraphs?" "par\\." "\\\\S" "\247" "Teile?" "Kapitel" "Kap\\." "Abschnitte?" "appendi\\(x\\|ces\\)" "App\\." "Anh\"?ange?" "Anh\\."))))
-                 (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
-                 (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
-                 ;; disable electric-indent-mode, I like paste things like tables verbatim and electric-indent screws it up
-                 (defun cic:latex-disable-electic-indent ()
-                   ;; TODO: electric-indent-just-newline would be nice
-                   (electric-indent-local-mode 0))
-                 (add-hook 'LaTeX-mode-hook 'cic:latex-disable-electic-indent)
-                 (add-hook 'TeX-mode-hook 'cic:latex-disable-electic-indent)
-                 (setq TeX-view-program-list
-                       ;; TODO: how to maximize by default
-                       '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
-                         ;; ???
-                         ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
-                 (setq TeX-view-program-selection
-                       '((output-dvi "DVI Viewer")
-                         (output-pdf "zathura")
-                         (output-html "HTML Viewer")))
-                 (defun cic:view-alternate ()
-                   (interactive)
-                   (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
-                                                       (output-pdf "Evince")
-                                                       (output-html "HTML Viewer"))))
-                     (TeX-view)))
-                 (define-key TeX-mode-map (kbd "C-c M-v") 'cic:view-alternate)
-                 (defun cic:reftex-reference ()
-                   (interactive)
-                   (let ((reftex-refstyle "\\ref"))
-                     (reftex-reference " ")))
-                 ;; TODO: would love to combine figure and table
-                 (defun cic:reftex-reference-figure ()
-                   (interactive)
-                   (let ((reftex-refstyle "\\ref"))
-                     (reftex-reference "f")))
-                 (defun cic:reftex-reference-section ()
-                   (interactive)
-                   (let ((reftex-refstyle "\\ref"))
-                     (reftex-reference "s")))
-                 (defun cic:reftex-reference-table ()
-                   (interactive)
-                   (let ((reftex-refstyle "\\ref"))
-                     (reftex-reference "t")))
-                 (defun cic:reftex-reference-equation ()
-                   (interactive)
-                   (let ((reftex-refstyle "\\ref"))
-                     (reftex-reference "e")))
-                 (defun cic:auctex-latex-init ()
-                   (add-to-list 'TeX-expand-list
-                                '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))
-                   ;; (font-lock-add-keywords nil
-                   ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
-                   ;; does not conflict with emacs-otlb
-                   (local-set-key (kbd "H-i") 'cic:outline)
-                   ;; think of "view"
-                   ;; TODO: make this something for all modes, should this be hyper-v or ???
-                   ;; TODO: used for other things right now...
-                   ;; (local-set-key (kbd "H-x") 'reftex-view-crossref)
-                   ;; set up references
-                   ;; TODO: try these again, do I use them?
-                   (local-set-key (kbd "H-r") 'cic:reftex-reference)
-                   (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
-                   (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
-                   (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
-                   (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
-                   ;; jump to process buffer
-                   (local-set-key (kbd "H-o") 'cic:switch-to-process-buffer)
-                   ;; init crossref and such
-                   (reftex-parse-all)
-                   (dolist (file (reftex-get-bibfile-list))
-                     (reftex-get-file-buffer-force file))
-                   ;; XXXX: adds colon as symbol constituent too
-                   (modify-syntax-entry ?: "w"))
-                 ;; (setq TeX-pr)
-                 (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
-                 (defun cic:TeX-output-mode-init ()
-                   ;; jump to latex buffer
-                   (local-set-key (kbd "H-o") 'cic:switch-to-latex-buffer))
-                 (add-hook 'TeX-output-mode-hook 'cic:TeX-output-mode-init)
-                 (defun cic:reftex-toc-init ()
-                   (local-set-key (kbd "H-i") 'cic:outline))
-                 (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
-                 (defun cic:reftex-select-label-init ()
-                   ;; sync with above?
-                   (local-set-key (kbd "H-r") 'reftex-select-quit)
-                   (local-set-key (kbd "H-f") 'reftex-select-quit)
-                   (local-set-key (kbd "H-e") 'reftex-select-quit)
-                   (local-set-key (kbd "H-s") 'reftex-select-quit)
-                   (local-set-key (kbd "H-t") 'reftex-select-quit))
-                 ;; TODO: eventually unify these functions
-                 (defun cic:switch-to-process-buffer ()
-                   (interactive)
-                   (let ((latex-buffer (current-buffer))
-                         (process-buffer (TeX-process-buffer-name (file-name-sans-extension (buffer-file-name))))
-                         (tex-help-window nil))
-                     ;; if a window called tex-help is open, just go to next
-                     (walk-windows (lambda (w)
-                                     (when (equal (buffer-name (window-buffer w)) "*TeX Help*")
-                                       (setq tex-help-window w))))
-                     (if tex-help-window
-                         (next-error)
-                       (if (get-buffer process-buffer)
-                           (progn
-                             (switch-to-buffer process-buffer)
-                             (setq-local cic:latex-buffer latex-buffer)
-                             ;; reparse and goto first error
-                             (goto-char (point-min))
-                             (if (cic:any-errors-in-process-buffer (current-buffer))
-                                 (TeX-next-error '(4))
-                               (goto-char (point-max))))
-                         (message "Process buffer doesn't exist!!!")))))
-                 (defun cic:any-errors-in-process-buffer (process-buffer)
-                   (with-current-buffer process-buffer
-                     (save-excursion
-                       (goto-char (point-min))
-                       (> (length (delq nil (mapcar (lambda (e)
-                                                      (when (eq (car e) 'error)
-                                                        t))
-                                                    TeX-error-list))) 0))))
-                 (defun cic:switch-to-latex-buffer ()
-                   (interactive)
-                   (if cic:latex-buffer
-                       (switch-to-buffer cic:latex-buffer)
-                     (message "No default latex buffer!!!")))
-                 (add-hook 'reftex-select-label-mode-hook 'cic:reftex-select-label-init)
-                 (setq font-latex-match-reference-keywords
-                       '(("citemp" "[{")
-                         ("citem" "[{")))
-                 ;; RefTeX
-                 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-                 (setq reftex-plug-into-AUCTeX t)
-                 ;; XXXX: specific to University of Saskatchewan thesis template
-                 (eval-after-load "reftex"
-                   '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
-                 ;; TODO: do I remap these to other things
-                 ;; (define-key TeX-mode-map (kbd "C-c C-b")  nil)
-                 ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
-                 (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
-                   (let ((ret (apply orig-fun args)))
-                     (setq TeX-command-next TeX-command-default)
-                     ;; not sure return value is needed, but OK
-                     ret))
-                 (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-successful)
-                 (defun TeX-LaTeX-current-build-filename (orig-fun &rest args)
-                   (setq cic:current-build-filename (buffer-file-name))
-                   (apply orig-fun args))
-                 (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
-                 (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
-                 ;; TODO: make this act more like org mode
-                 ;; TODO: make sure several runs of this file doesn't bugger variable
-                 (cic:add-to-alist 'TeX-command-list "LaTeXdraft" "%`%l%(mode) -draftmode %' %t" 'TeX-run-TeX nil '(latex-mode doctex-mode) :help "Run LaTeX in draft mode.")
-                 ;; TODO: maybe???
-                 (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
-                 (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
-                 (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
-                 ;; TODO: want function symbol instead of lambda for this
-                 (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
-                                                             (interactive)
-                                                             (TeX-command "BibTeX" 'TeX-master-file nil)))
-                 (define-key TeX-mode-map (kbd "s-x b")   '(lambda ()
-                                                             (interactive)
-                                                             (TeX-command "BibTeX" 'TeX-master-file nil)))
-                 (define-key TeX-mode-map (kbd "s-x c")    '(lambda ()
-                                                              (interactive)
-                                                              (TeX-command "LaTeXdraft" 'TeX-master-file nil)))
-                 ;; TODO: do I ever want this back, should I replace something else?
-                 ;; (define-key TeX-mode-map (kbd "C-c C-b")  )
-                 )
+(unless cic:emacs-minimal
+  ;; auctex wrong fit for a minimal opening
+  (requiring-catch ("auctex")
+                   (require 'bib-cite)
+                   (require 'latex-extra)
+                   (require 'tex-site)
+                   (require 'tex)
+                   (require 'texmathp)
+                   ;; TODO: needed on my laptop, not sure why
+                   (require 'font-latex)
+                   (setq TeX-PDF-mode t)
+                   (add-to-list 'auto-mode-alist '("\\.tikz$" . LaTeX-mode))
+                   (setq TeX-source-correlate-method 'synctex
+                         TeX-source-correlate-mode t
+                         TeX-source-correlate-start-server t
+                         ;; https://emacs.stackexchange.com/questions/13426/auctex-doesnt-run-bibtex
+                         ;; Enable parse on load.
+                         TeX-parse-self t
+                         TeX-auto-save t
+                         TeX-clean-confirm nil
+                         ;; the default reindents before newline
+                         )
+                   (setq LaTeX-paragraph-commands
+                         '("TODO"))
+                   (setq preview-auto-cache-preamble t)
+                   (setq preview-scale-function 1.5)
+                   (setq reftex-plug-into-AUCTeX t
+                         reftex-cite-view-format "%3a %y, %t, %B, %j %v:%P, %s %<"
+                         reftex-toc-include-labels t
+                         reftex-index-include-context t
+                         reftex-label-alist (list '("section" 115 "%S" "~\\ref{%s}"
+                                                    t
+                                                    (regexp "parts?" "chapters?" "chap\\." "sections?" "sect?\\." "paragraphs?" "par\\." "\\\\S" "\247" "Teile?" "Kapitel" "Kap\\." "Abschnitte?" "appendi\\(x\\|ces\\)" "App\\." "Anh\"?ange?" "Anh\\."))))
+                   (add-hook 'LaTeX-mode-hook 'cic:flyspell-init-text)
+                   (add-hook 'TeX-mode-hook 'cic:flyspell-init-text)
+                   ;; disable electric-indent-mode, I like paste things like tables verbatim and electric-indent screws it up
+                   (defun cic:latex-disable-electic-indent ()
+                     ;; TODO: electric-indent-just-newline would be nice
+                     (electric-indent-local-mode 0))
+                   (add-hook 'LaTeX-mode-hook 'cic:latex-disable-electic-indent)
+                   (add-hook 'TeX-mode-hook 'cic:latex-disable-electic-indent)
+                   (setq TeX-view-program-list
+                         ;; TODO: how to maximize by default
+                         '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
+                           ;; ???
+                           ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
+                   (setq TeX-view-program-selection
+                         '((output-dvi "DVI Viewer")
+                           (output-pdf "zathura")
+                           (output-html "HTML Viewer")))
+                   (defun cic:view-alternate ()
+                     (interactive)
+                     (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
+                                                         (output-pdf "Evince")
+                                                         (output-html "HTML Viewer"))))
+                       (TeX-view)))
+                   (define-key TeX-mode-map (kbd "C-c M-v") 'cic:view-alternate)
+                   (defun cic:reftex-reference ()
+                     (interactive)
+                     (let ((reftex-refstyle "\\ref"))
+                       (reftex-reference " ")))
+                   ;; TODO: would love to combine figure and table
+                   (defun cic:reftex-reference-figure ()
+                     (interactive)
+                     (let ((reftex-refstyle "\\ref"))
+                       (reftex-reference "f")))
+                   (defun cic:reftex-reference-section ()
+                     (interactive)
+                     (let ((reftex-refstyle "\\ref"))
+                       (reftex-reference "s")))
+                   (defun cic:reftex-reference-table ()
+                     (interactive)
+                     (let ((reftex-refstyle "\\ref"))
+                       (reftex-reference "t")))
+                   (defun cic:reftex-reference-equation ()
+                     (interactive)
+                     (let ((reftex-refstyle "\\ref"))
+                       (reftex-reference "e")))
+                   (defun cic:auctex-latex-init ()
+                     (add-to-list 'TeX-expand-list
+                                  '("%(masterdir)" (lambda () (file-truename (TeX-master-directory)))))
+                     ;; (font-lock-add-keywords nil
+                     ;;                         '(("\\citemp" 1 font-latex-warning-face t)))))
+                     ;; does not conflict with emacs-otlb
+                     (local-set-key (kbd "H-i") 'cic:outline)
+                     ;; think of "view"
+                     ;; TODO: make this something for all modes, should this be hyper-v or ???
+                     ;; TODO: used for other things right now...
+                     ;; (local-set-key (kbd "H-x") 'reftex-view-crossref)
+                     ;; set up references
+                     ;; TODO: try these again, do I use them?
+                     (local-set-key (kbd "H-r") 'cic:reftex-reference)
+                     (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
+                     (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
+                     (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
+                     (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
+                     ;; jump to process buffer
+                     (local-set-key (kbd "H-o") 'cic:switch-to-process-buffer)
+                     ;; init crossref and such
+                     (reftex-parse-all)
+                     (dolist (file (reftex-get-bibfile-list))
+                       (reftex-get-file-buffer-force file))
+                     ;; XXXX: adds colon as symbol constituent too
+                     (modify-syntax-entry ?: "w"))
+                   ;; (setq TeX-pr)
+                   (add-hook 'LaTeX-mode-hook 'cic:auctex-latex-init)
+                   (defun cic:TeX-output-mode-init ()
+                     ;; jump to latex buffer
+                     (local-set-key (kbd "H-o") 'cic:switch-to-latex-buffer))
+                   (add-hook 'TeX-output-mode-hook 'cic:TeX-output-mode-init)
+                   (defun cic:reftex-toc-init ()
+                     (local-set-key (kbd "H-i") 'cic:outline))
+                   (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
+                   (defun cic:reftex-select-label-init ()
+                     ;; sync with above?
+                     (local-set-key (kbd "H-r") 'reftex-select-quit)
+                     (local-set-key (kbd "H-f") 'reftex-select-quit)
+                     (local-set-key (kbd "H-e") 'reftex-select-quit)
+                     (local-set-key (kbd "H-s") 'reftex-select-quit)
+                     (local-set-key (kbd "H-t") 'reftex-select-quit))
+                   ;; TODO: eventually unify these functions
+                   (defun cic:switch-to-process-buffer ()
+                     (interactive)
+                     (let ((latex-buffer (current-buffer))
+                           (process-buffer (TeX-process-buffer-name (file-name-sans-extension (buffer-file-name))))
+                           (tex-help-window nil))
+                       ;; if a window called tex-help is open, just go to next
+                       (walk-windows (lambda (w)
+                                       (when (equal (buffer-name (window-buffer w)) "*TeX Help*")
+                                         (setq tex-help-window w))))
+                       (if tex-help-window
+                           (next-error)
+                         (if (get-buffer process-buffer)
+                             (progn
+                               (switch-to-buffer process-buffer)
+                               (setq-local cic:latex-buffer latex-buffer)
+                               ;; reparse and goto first error
+                               (goto-char (point-min))
+                               (if (cic:any-errors-in-process-buffer (current-buffer))
+                                   (TeX-next-error '(4))
+                                 (goto-char (point-max))))
+                           (message "Process buffer doesn't exist!!!")))))
+                   (defun cic:any-errors-in-process-buffer (process-buffer)
+                     (with-current-buffer process-buffer
+                       (save-excursion
+                         (goto-char (point-min))
+                         (> (length (delq nil (mapcar (lambda (e)
+                                                        (when (eq (car e) 'error)
+                                                          t))
+                                                      TeX-error-list))) 0))))
+                   (defun cic:switch-to-latex-buffer ()
+                     (interactive)
+                     (if cic:latex-buffer
+                         (switch-to-buffer cic:latex-buffer)
+                       (message "No default latex buffer!!!")))
+                   (add-hook 'reftex-select-label-mode-hook 'cic:reftex-select-label-init)
+                   (setq font-latex-match-reference-keywords
+                         '(("citemp" "[{")
+                           ("citem" "[{")))
+                   ;; RefTeX
+                   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+                   (setq reftex-plug-into-AUCTeX t)
+                   ;; XXXX: specific to University of Saskatchewan thesis template
+                   (eval-after-load "reftex"
+                     '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
+                   ;; TODO: do I remap these to other things
+                   ;; (define-key TeX-mode-map (kbd "C-c C-b")  nil)
+                   ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
+                   (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
+                     (let ((ret (apply orig-fun args)))
+                       (setq TeX-command-next TeX-command-default)
+                       ;; not sure return value is needed, but OK
+                       ret))
+                   (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-successful)
+                   (defun TeX-LaTeX-current-build-filename (orig-fun &rest args)
+                     (setq cic:current-build-filename (buffer-file-name))
+                     (apply orig-fun args))
+                   (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
+                   (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
+                   ;; TODO: make this act more like org mode
+                   ;; TODO: make sure several runs of this file doesn't bugger variable
+                   (cic:add-to-alist 'TeX-command-list "LaTeXdraft" "%`%l%(mode) -draftmode %' %t" 'TeX-run-TeX nil '(latex-mode doctex-mode) :help "Run LaTeX in draft mode.")
+                   ;; TODO: maybe???
+                   (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
+                   (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
+                   (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
+                   ;; TODO: want function symbol instead of lambda for this
+                   (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
+                                                               (interactive)
+                                                               (TeX-command "BibTeX" 'TeX-master-file nil)))
+                   (define-key TeX-mode-map (kbd "s-x b")   '(lambda ()
+                                                               (interactive)
+                                                               (TeX-command "BibTeX" 'TeX-master-file nil)))
+                   (define-key TeX-mode-map (kbd "s-x c")    '(lambda ()
+                                                                (interactive)
+                                                                (TeX-command "LaTeXdraft" 'TeX-master-file nil)))
+                   ;; TODO: do I ever want this back, should I replace something else?
+                   ;; (define-key TeX-mode-map (kbd "C-c C-b")  )
+                   ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
@@ -358,11 +363,15 @@ TODO broken, provided a diff cleanup function too!"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emms
-(requiring-package (emms-setup)
-  (require 'emms-info-libtag)
-  (emms-all)
-  (emms-default-players)
-  (setq emms-info-function '(emms-info-libtag)))
+(unless cic:emacs-minimal
+  ;; this sexp adds a LOT to load time and I don't use emms much right now
+  ;; minimal does not need it
+  (requiring-package (emms-setup)
+    (require 'emms-info-libtag)
+    (emms-all)
+    (emms-default-players)
+    (setq emms-info-function '(emms-info-libtag))))
+
 
 (requiring-package (flyspell)
   ;; TODO: change this if I need it
@@ -370,34 +379,37 @@ TODO broken, provided a diff cleanup function too!"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; flycheck
-(requiring-package (flycheck)
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (setq flycheck-check-syntax-automatically nil)
-  (defun cic:flycheck-buffer-or-list (&optional arg)
-    (interactive "P")
-    (if arg
-        (flycheck-clear)
+(unless cic:emacs-minimal
+  ;; no flycheck for a minimal mode
+  (requiring-package (flycheck)
+    (add-hook 'after-init-hook #'global-flycheck-mode)
+    (setq flycheck-check-syntax-automatically nil)
+    (defun cic:flycheck-buffer-or-list (&optional arg)
+      (interactive "P")
+      (if arg
+          (flycheck-clear)
         (if (eq last-command 'cic:flycheck-buffer-or-list)
             (if (get-buffer-window "*Flycheck errors*")
                 (delete-window (get-buffer-window "*Flycheck errors*"))
               (flycheck-list-errors))
           (flycheck-buffer))))
-  ;; TODO: reenalbe when it works for my workflow again
-  ;; (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
-  ;; I use these for other stuff
-  ;; (global-set-key (kbd "s-,") 'flycheck-previous-error)
-  ;; (global-set-key (kbd "s-.") 'flycheck-next-error)
-  ;; hacks for my own stuff
-  ;; (put 'python-flake8    (intern "flycheck-modes")     '(python-mode sage-mode))
-  ;; (put 'python-pycompile (intern "flycheck-modes")     '(python-mode sage-mode))
-  ;; (requiring-package (flycheck-pyflakes)
-  ;;   (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
-  ;; I still install these, but most of my stuff is not good enough to
-  ;; stick to rigid style
-  ;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
-  ;; (add-to-list 'flycheck-disabled-checkers 'python-pylint)
-  ;; TODO: need to specify good defaults
-  )
+    ;; TODO: reenalbe when it works for my workflow again
+    ;; (global-set-key (kbd "C-c C-x") 'cic:flycheck-buffer-or-list)
+    ;; I use these for other stuff
+    ;; (global-set-key (kbd "s-,") 'flycheck-previous-error)
+    ;; (global-set-key (kbd "s-.") 'flycheck-next-error)
+    ;; hacks for my own stuff
+    ;; (put 'python-flake8    (intern "flycheck-modes")     '(python-mode sage-mode))
+    ;; (put 'python-pycompile (intern "flycheck-modes")     '(python-mode sage-mode))
+    ;; (requiring-package (flycheck-pyflakes)
+    ;;   (put 'python-pyflakes    (intern "flycheck-modes") '(python-mode sage-mode)))
+    ;; I still install these, but most of my stuff is not good enough to
+    ;; stick to rigid style
+    ;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+    ;; (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+    ;; TODO: need to specify good defaults
+    ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; free keys
@@ -691,7 +703,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; find latest installed sage and add to load path
   (let ((sagedir (car (reverse (sort (delq nil (mapcar (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt"))) 'string<)))))
     (add-to-list 'load-path (concat "/opt/" sagedir "/local/share/emacs/site-lisp/sage-mode"))
-    ;; TODO: need something different that just gives message rather than raising error
+    ;; TODO: I will need to make my own sage version
     (if (featurep 'sage)
         (requiring-package (sage)
           (require 'sage "sage")

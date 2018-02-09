@@ -1,13 +1,15 @@
 ;;; emacs-stdlib-keys.el --- Emacs keybindings that add some
 ;;; functionality over the basic keybindings.
 ;;
-;; Copyright (C) 2015-2016, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2015-2018, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20160525
+;; Version: 20180209
 ;; URL: https://github.com/akroshko/emacs-stdlib
+;;
+;; This file is NOT part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
