@@ -88,7 +88,7 @@
             ;; m==system manager
             (define-key map (kbd "s-m p")      'cic:create-password-insert)
             (define-key map (kbd "s-m M-p")    'cic:create-password-insert-select)
-            (define-key map (kbd "s-v")        'cic:yank-primary)
+            ;; (define-key map (kbd "s-v")        'cic:yank-primary)
             ;; j==jump
             ;; O == Open, meaning I'm Opening Outside of emacs
             (define-key map (kbd "s-o c")      'cic:browse-url-at-point-conkeror)

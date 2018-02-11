@@ -330,6 +330,14 @@ TODO broken, provided a diff cleanup function too!"
   (bash-completion-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clippy
+;; TODO: replace with something less silly
+(requiring-package (clippy)
+  ;; TODO: experimental
+  (global-set-key (kbd "M-,") 'clippy-describe-function)
+  (global-set-key (kbd "M-h") 'clippy-describe-function)  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; crontab-mode
 (requiring-package (crontab-mode)
   (add-to-list 'auto-mode-alist '("\\.cron\\(tab\\)?\\'" . crontab-mode))
@@ -578,6 +586,10 @@ TODO broken, provided a diff cleanup function too!"
                                (org-bullets-mode 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; pos-tip
+(requiring-package (pos-tip))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python and sage
 ;; add to minor mode and flymake map?
 ;; http://stackoverflow.com/questions/2571436/emacs-annoying-flymake-dialog-box
@@ -685,7 +697,7 @@ TODO broken, provided a diff cleanup function too!"
                     ((string-match "sage"  theline)
                      (setq-local python-shell-interpreter "sage")
                      (setq-local python-shell-interpreter-args ""))
-                    ;; default is just normal python
+                    ;; default is just default built-in python
                     (t
                      (setq-local python-shell-interpreter "python")
                      (setq-local python-shell-interpreter-args "-i"))))))

@@ -124,10 +124,10 @@
             (define-key map (kbd "C-x r i")  'string-insert-rectangle)
             (define-key map (kbd "C-x r \\") 'delete-whitespace-rectangle)
             ;; (define-key map (kbd "C-v")      'hl-line-mode)
-            ;; (define-key map (kbd "C-v")      'cic:line-mode-or-disable-visuals)
+            ;; (define-key map (kbd "C-v")      'cic:hl-line-mode-or-disable-visuals)
             ;; TODO: can probably use a more complex key
-            (define-key map (kbd "M-h")      'cic:line-mode-or-disable-visuals)
-            (define-key map (kbd "M-g h")    'cic:line-mode-or-disable-visuals)
+            (define-key map (kbd "s-v")      'cic:hl-line-mode-or-disable-visuals)
+            (define-key map (kbd "M-g h")    'cic:hl-line-mode-or-disable-visuals)
             ;; disable normal movement keys will eventually remap
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))

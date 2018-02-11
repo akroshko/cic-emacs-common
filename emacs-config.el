@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180125
+;; Version: 20180210
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -110,8 +110,18 @@
 
 ;; bluish/reddish modeline
 ;; (set-face-background 'mode-line "#6699cc")
-(set-face-background 'mode-line "#6699ff")
-(set-face-background 'modeline-inactive "#ffaa88")
+(defun cic:configure-modeline-color ()
+  (if (and (fboundp 'server-running-p) (server-running-p))
+      (progn
+        (set-face-background 'mode-line "#6699ff")
+        (set-face-background 'modeline-inactive "#ffaa88"))
+    (progn
+      (set-face-background 'mode-line "#00ffff")
+      (set-face-background 'modeline-inactive "#ff00ff"))))
+(add-hook 'before-make-frame-hook 'cic:configure-modeline-color)
+;; run for when starting without server
+(cic:configure-modeline-color)
+
 ;; highlight in olive green, visible on many of my modes
 (set-face-attribute 'region nil :background "#c0ff3e")
 ; quiet, please! No dinging!
@@ -169,9 +179,11 @@ read only."
 ;; set an appropriate tmp directory
 ;; XXXX: this directory might have to be explicitely created
 (setq temporary-file-directory "~/.emacs.d/tmp/")
-;; clipboard
+;; clipboard and tooltips
 (setq x-select-enable-primary t
-      x-select-enable-clipboard t)
+      x-select-enable-clipboard t
+      x-gtk-use-system-tooltips nil)
+;; TODO: file modes... do I want this somewhere else?
 (auto-compression-mode 1)
 ;; case
 (setq sort-fold-case t)

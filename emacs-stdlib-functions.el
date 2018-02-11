@@ -1631,7 +1631,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (select-frame (make-frame-command))
   (cic:x-force-maximized))
 
-(defun cic:line-mode-or-disable-visuals (&optional arg)
+(defun cic:hl-line-mode-or-disable-visuals (&optional arg)
   "Turn off any visuals that other functions might have put on."
   (interactive "P")
   (if arg
@@ -1707,11 +1707,11 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (windmove-down)
   (ido-switch-buffer))
 
-(defun cic:yank-primary ()
-  (interactive)
-  (let ((x-select-enable-primary t)
-        (x-select-enable-clipboard nil))
-    (call-interactively 'yank)))
+;; (defun cic:yank-primary ()
+;;   (interactive)
+;;   (let ((x-select-enable-primary t)
+;;         (x-select-enable-clipboard nil))
+;;     (call-interactively 'yank)))
 
 (defun cic:org-paste-new-heading ()
   (interactive)
