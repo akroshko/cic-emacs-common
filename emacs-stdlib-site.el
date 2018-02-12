@@ -335,7 +335,24 @@ TODO broken, provided a diff cleanup function too!"
 (requiring-package (clippy)
   ;; TODO: experimental
   (global-set-key (kbd "M-,") 'clippy-describe-function)
-  (global-set-key (kbd "M-h") 'clippy-describe-function)  )
+  ;; (global-set-key (kbd "M-h") 'clippy-describe-function)
+  (global-set-key (kbd "M-h") 'cic:clippy-describe)
+  (defvar cic:clippy-last-show nil
+    "")
+  (defun cic:clippy-describe ()
+    (interactive)
+    (if (eq last-command 'cic:clippy-describe)
+        (progn
+          (if (eq cic:clippy-last-show 'function)
+              (progn
+                (call-interactively 'clippy-describe-variable)
+                (setq cic:clippy-last-show 'variable))
+            (progn
+              (call-interactively 'clippy-describe-function)
+              (setq cic:clippy-last-show 'function))))
+      (progn
+        (call-interactively 'clippy-describe-function)
+        (setq cic:clippy-last-show 'function)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; crontab-mode
