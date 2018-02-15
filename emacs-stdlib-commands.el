@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180209
+;; Version: 20180213
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -647,6 +647,7 @@ alphanumeric."
   (let ((d (eval-defun nil)))
     (funcall d)))
 (defun cic:elisp-pp-capture-buffer ()
+  (interactive)
   (switch-to-buffer "*PPCapture*"))
 (defun cic:elisp-messages-buffer ()
   (switch-to-buffer "*Messages*"))
@@ -655,9 +656,29 @@ alphanumeric."
   (funcall (cic:toggle-variable debug-on-error
                                 "Debug on error enabled."
                                 "Debug on error disabled.")))
+
+(defconst cic:emacs-scratch-buffer-string
+  ";; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+"
+  "I'm attached to the appearance of the default scratch buffer.")
+
 (defun cic:elisp-scratch-buffer ()
   (interactive)
-  (switch-to-buffer "*scratch*"))
+  (if (get-buffer "*scratch*")
+      (switch-to-buffer "*scratch*")
+    (cic:elisp-recreate-scratch-buffer)))
+;; https://www.emacswiki.org/emacs/RecreateScratchBuffer
+(defun cic:elisp-recreate-scratch-buffer ()
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  ;; TODO: not sure I need this because I auto-mode paredit....
+  (lisp-interaction-mode)
+  (insert cic:emacs-scratch-buffer-string)
+  (setq buffer-undo-list nil)
+  (set-buffer-modified-p nil))
 (defun cic:help-org ()
   (interactive)
   (info "org"))

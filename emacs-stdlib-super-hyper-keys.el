@@ -68,6 +68,8 @@
             (define-key map (kbd "s-e i")      'ielm)
             ;; TODO: these aren't in line with my current scheme
             (define-key map (kbd "s-e j")      'cic:elisp-pp-capture-buffer)
+            ;; TODO: decide on this...
+            (define-key map (kbd "s-e p")      'cic:elisp-pp-capture-buffer)
             (define-key map (kbd "s-e m")      'cic:elisp-messages-buffer)
             (define-key map (kbd "s-e e")      'cic:elisp-debug-on-error)
             (define-key map (kbd "s-e s")      'cic:elisp-scratch-buffer)
