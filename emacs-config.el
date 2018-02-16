@@ -405,25 +405,22 @@ read only."
         org-fontify-whole-heading-line t
         org-cycle-level-after-item/entry-creation nil)
   ;; TODO: not sure why this works, if it works, and if I still need it
-  (defun org-image-setup ()
-    ;; should I setq-local?
+  (defun org-image-enable ()
     (let ((the-buffer-file-name (buffer-file-name)))
-      (when (and (display-graphic-p) (or (not the-buffer-file-name) (not (string-match "-log" the-buffer-file-name))))
-        ;; this setq-local is important for avoiding misbehaving on
-        ;; large org-mode formated log files
-        (setq-local org-startup-with-inline-images t)
-        ;; XXXX: want images look reasonable on most systems
-        ;; TODO: set differently for different screens
-        (setq-local org-image-actual-width '(400))))
-    )
+      (unless (and the-buffer-file-name (string-match "-log.*\.org" the-buffer-file-name))
+        (org-display-inline-images))))
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()
   ;;   (font-lock-add-keywords 'org-mode
   ;;                           '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
   ;;                              ;; font-lock-warning-face
   ;;                              font-lock-keyword-face))))
-
-  (add-hook 'org-mode-hook 'org-image-setup)
+  ;; XXXX: no need to use display-graphic-p here
+  ;;       server does not have this...
+  ;; Disable inline images by default, then toggle them on in a hook
+  (setq org-startup-with-inline-images nil)
+  (setq org-image-actual-width 400)
+  (add-hook 'org-mode-hook 'org-image-enable)
   ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
     (let ((the-buffer-file-name (buffer-file-name)))
