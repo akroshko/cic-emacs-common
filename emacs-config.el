@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180210
+;; Version: 20180216
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -420,6 +420,12 @@ read only."
   ;; Disable inline images by default, then toggle them on in a hook
   (setq org-startup-with-inline-images nil)
   (setq org-image-actual-width 400)
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 64))
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 128))
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 400))
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 480))
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 640))
+  (add-to-list 'safe-local-variable-values '(org-image-actual-width . 800))
   (add-hook 'org-mode-hook 'org-image-enable)
   ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
