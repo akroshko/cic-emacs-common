@@ -174,14 +174,22 @@
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "H-d") 'cic:insert-date-time-stamp)
             (define-key map (kbd "H-D") 'cic:insert-date-time-stamp)
-            (define-key map (kbd "H-i") 'cic:outline)
+            ;; TODO: why are these here?
             ;; (define-key map (kbd "H-d") 'cic:insert-current-time)
             ;; (define-key map (kbd "H-D") 'cic:insert-current-timestamp)
             map))
 
+(define-minor-mode emacs-stdlib-hyper-keys-non-dired-org-mode ()
+  :global nil
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "H-i") 'cic:outline)
+            map))
+
 (add-hook 'after-change-major-mode-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
+(add-hook 'after-change-major-mode-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-org-mode)
 ;; XXXX: for auctex latex mode, apparently does not run above hook
 (add-hook 'find-file-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-mode)
+(add-hook 'find-file-hook 'cic:enable-emacs-stdlib-hyper-keys-non-dired-org-mode)
 
 (defun wdired-change-to-dired-mode--disable-hyper (orig-fun &rest args)
   (let ((ret (apply orig-fun args)))
@@ -195,6 +203,13 @@
          (emacs-stdlib-hyper-keys-non-dired-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-mode t))))
+
+(defun cic:enable-emacs-stdlib-hyper-keys-non-dired-org-mode ()
+  ;; TODO: make a list for these eventually
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'org-mode))
+         (emacs-stdlib-hyper-keys-non-dired-org-mode 0))
+        (t
+         (emacs-stdlib-hyper-keys-non-dired-org-mode t))))
 
 ;; TODO: update so I can enter a date (and/or time) into
 ;;       comments anywhere
