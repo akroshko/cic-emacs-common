@@ -82,20 +82,22 @@ TODO: incomplete but still useful right now"
       (beginning-of-line))))
 
 ;; TODO: move somewhere else?
-(define-key org-mode-map (kbd "H-t") 'cic:org-todo)
-(define-key org-mode-map (kbd "s-:") 'cic:org-todo)
+(define-key org-mode-map (kbd "H-t")   'cic:org-todo)
+;; (define-key org-mode-map (kbd "s-:")   'cic:org-todo)
 (define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
-(define-key org-mode-map (kbd "H-T") 'cic:org-todo-clear)
-(define-key org-mode-map (kbd "s-;") 'cic:org-todo-inprogress-done)
-
+(define-key org-mode-map (kbd "H-T")   'cic:org-todo-clear)
+;; (define-key org-mode-map (kbd "s-;")   'cic:org-todo-inprogress-done)
+(define-key org-mode-map (kbd "s-:")   'cic:org-todo-cycle-done)
+(define-key org-mode-map (kbd "s-;")   'cic:org-todo-cycle-not-done)
 
 (defun cic:org-at-todo-p ()
   ;; TODO: there are much much better ways to do this!
   (let (matched
         ;; TODO: this should be changed to read org-todo-keywords
-        (todo-keyword-strings '("TODO" "NEXT" "INPROGRESS" "CANT" "WAITING" "DONE" "INVALID")))
+        (todo-keyword-strings '("NOTE" "TODO" "NEXT" "PRIORITY" "INPROGRESS" "DUPLICATE" "CANT" "WAITING" "DONE" "INVALID"))
+        (the-current-line (cic:get-current-line)))
     (dolist (tks todo-keyword-strings)
-      (when (string-match tks (cic:get-current-line))
+      (when (string-match tks the-current-line)
         (setq matched t)))
     matched))
 
@@ -112,12 +114,60 @@ TODO: incomplete but still useful right now"
   (interactive "P")
   (if arg
       (org-todo 'none)
-    (cond ((string-match "INPROGRESS" (cic:get-current-line))
-           (org-todo "CANT"))
-          ((string-match "CANT" (cic:get-current-line))
-           (org-todo "DONE"))
-          (t
-           (org-todo "INPROGRESS")))))
+    (let ((the-current-line (cic:get-current-line)))
+      (cond ((string-match "INPROGRESS" the-current-line)
+             (org-todo "CANT"))
+            ((string-match "CANT" the-current-line)
+             (org-todo "DONE"))
+            (t
+             (org-todo "INPROGRESS"))))))
+
+(defun cic:org-todo-cycle-not-done (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-todo 'none)
+    (let ((the-current-line (cic:get-current-line)))
+      (cond ((string-match "NOTE" the-current-line)
+             (org-todo "TODO"))
+            ((string-match "TODO" the-current-line)
+             (org-todo "NEXT"))
+            ((string-match "NEXT" the-current-line)
+             (org-todo "PRIORITY"))
+            ((string-match "PRIORITY" the-current-line)
+             (org-todo "INPROGRESS"))
+            ((string-match "INPROGRESS" the-current-line)
+             (org-todo "WAITING"))
+            ((string-match "WAITING" the-current-line)
+             (org-todo "NOTE"))
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ;; TODO: DONE goes to INPROGRESS, INVALID goes to TOD
+            ((string-match "DONE" the-current-line)
+             (org-todo "INPROGRESS"))
+            ((string-match "DUPLICATE" the-current-line)
+             (org-todo "TODO"))
+            ((string-match "CANT" the-current-line)
+             (org-todo "TODO"))
+            ((string-match "INVALID" the-current-line)
+             (org-todo "TODO"))
+            (t
+             ;; goto NOTE by default? for now?
+             (org-todo "NOTE"))))))
+
+(defun cic:org-todo-cycle-done (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-todo 'none)
+    (let ((the-current-line (cic:get-current-line)))
+      (cond ((string-match "DONE"      the-current-line)
+             (org-todo "DUPLICATE"))
+            ((string-match "DUPLICATE" the-current-line)
+             (org-todo "CANT"))
+            ((string-match "CANT"      the-current-line)
+             (org-todo "INVALID"))
+            ((string-match "INVALID"   the-current-line)
+             (org-todo "DONE"))
+            (t
+             (org-todo "DONE"))))))
 
 (defun cic:org-todo-set (arg)
   (interactive "P")

@@ -374,25 +374,33 @@ read only."
   (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
-        org-todo-keywords    '((sequence "TODO(!@)"
+        org-todo-keywords    '((sequence "NOTE(!@)"
+                                         ;;;;;;;;;;;;;;;;;;;;
+                                         "TODO(!@)"
                                          "NEXT(!@)"
+                                         "PRIORITY(!@)"
                                          "INPROGRESS(!@)"
-                                         "CANT(!@)"
-                                         "DUPLICATE(!@)"
                                          "WAITING(!@)"
                                          "|"
                                          "DONE(!@)"
+                                         "DUPLICATE(!@)"
+                                         "CANT(!@)"
                                          "INVALID(!@)"))
-        org-todo-keyword-faces '(("TODO"             . "firebrick")
+        ;; TODO: probably want a slightly different color contrast for note
+        org-todo-keyword-faces '(("NOTE"             . (:foreground "yellow"      :background "dark green" :weight bold))
+                                 ;;;;;;;;;;;;;;;;;;;;
+                                 ("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
-                                 ("INPROGRESS"       . (:foreground "magenta"       :background "gold"   :weight bold))
-                                 ("DUPLICATE"        . (:foreground "black"         :background "orange" :weight bold))
-                                 ("CANT"             . (:foreground "black"         :background "yellow" :weight bold))
-                                 ("WAITING"          . "magenta")
-                                 ("DONE"             . (:foreground "dark orange"   :background "blue"   :weight bold))
+                                 ("PRIORITY"         . (:foreground "light blue"  :background "red"        :weight bold))
+                                 ("INPROGRESS"       . (:foreground "magenta"     :background "gold"       :weight bold))
+                                 ("WAITING"          . (:foreground "magenta"     :background "gold"       :weight bold))
+                                 ;;;;;;;;;;;;;;;;;;;;
+                                 ("DONE"             . (:foreground "dark orange" :background "blue"       :weight bold))
+                                 ("DUPLICATE"        . (:foreground "yellow"      :background "blue"       :weight bold))
+                                 ("CANT"             . (:foreground "yellow"      :background "blue"       :weight bold))
                                  ;; XXXX: does not work well with green highlighting
                                  ;; ("DONE"             . (:foreground "green" :background "blue" :weight bold))
-                                 ("INVALID"          . (:foreground "black"         :background "yellow" :weight bold)))
+                                 ("INVALID"          . (:foreground "yellow"       :background "blue"       :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t
         org-use-property-inheritance t
