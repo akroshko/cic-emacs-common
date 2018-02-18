@@ -400,7 +400,7 @@ read only."
                                  ("CANT"             . (:foreground "yellow"      :background "blue"       :weight bold))
                                  ;; XXXX: does not work well with green highlighting
                                  ;; ("DONE"             . (:foreground "green" :background "blue" :weight bold))
-                                 ("INVALID"          . (:foreground "yellow"       :background "blue"       :weight bold)))
+                                 ("INVALID"          . (:foreground "yellow"      :background "blue"       :weight bold)))
         org-enforce-todo-dependencies t
         org-enforce-todo-checkbox-dependencies t
         org-use-property-inheritance t
