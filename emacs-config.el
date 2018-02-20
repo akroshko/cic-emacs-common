@@ -374,7 +374,9 @@ read only."
   (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
+        ;; TODO: add seperator...
         org-todo-keywords    '((sequence "NOTE(!@)"
+                                         "REFILE(!@)"
                                          ;;;;;;;;;;;;;;;;;;;;
                                          "TODO(!@)"
                                          "NEXT(!@)"
@@ -388,6 +390,7 @@ read only."
                                          "INVALID(!@)"))
         ;; TODO: probably want a slightly different color contrast for note
         org-todo-keyword-faces '(("NOTE"             . (:foreground "yellow"      :background "dark green" :weight bold))
+                                 ("REFILE"           . (:foreground "red"         :background "cyan"       :weight bold))
                                  ;;;;;;;;;;;;;;;;;;;;
                                  ("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")

@@ -87,7 +87,8 @@ TODO: incomplete but still useful right now"
 (define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
 (define-key org-mode-map (kbd "H-T")   'cic:org-todo-clear)
 ;; (define-key org-mode-map (kbd "s-;")   'cic:org-todo-inprogress-done)
-(define-key org-mode-map (kbd "s-:")   'cic:org-todo-cycle-done)
+(define-key org-mode-map (kbd "s-:")   'cic:org-todo-cycle-note)
+(define-key org-mode-map (kbd "s-'")   'cic:org-todo-cycle-done)
 (define-key org-mode-map (kbd "s-;")   'cic:org-todo-cycle-not-done)
 
 (defun cic:org-at-todo-p ()
@@ -122,13 +123,25 @@ TODO: incomplete but still useful right now"
             (t
              (org-todo "INPROGRESS"))))))
 
-(defun cic:org-todo-cycle-not-done (&optional arg)
+(defun cic:org-todo-cycle-note (&optional arg)
   (interactive "P")
   (if arg
       (org-todo 'none)
     (let ((the-current-line (cic:get-current-line)))
       (cond ((string-match "NOTE" the-current-line)
-             (org-todo "TODO"))
+             (org-todo "REFILE"))
+            ((string-match "REFILE" the-current-line)
+             (org-todo "NOTE"))
+            (t
+             (org-todo "NOTE"))))))
+
+(defun cic:org-todo-cycle-not-done (&optional arg)
+  (interactive "P")
+  (if arg
+      (org-todo 'none)
+    (let ((the-current-line (cic:get-current-line)))
+      (cond ;; ((string-match "NOTE" the-current-line)
+            ;;  (org-todo "TODO"))
             ((string-match "TODO" the-current-line)
              (org-todo "NEXT"))
             ((string-match "NEXT" the-current-line)
@@ -138,7 +151,7 @@ TODO: incomplete but still useful right now"
             ((string-match "INPROGRESS" the-current-line)
              (org-todo "WAITING"))
             ((string-match "WAITING" the-current-line)
-             (org-todo "NOTE"))
+             (org-todo "TODO"))
             ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
             ;; TODO: DONE goes to INPROGRESS, INVALID goes to TOD
             ((string-match "DONE" the-current-line)
@@ -151,7 +164,7 @@ TODO: incomplete but still useful right now"
              (org-todo "TODO"))
             (t
              ;; goto NOTE by default? for now?
-             (org-todo "NOTE"))))))
+             (org-todo "TODO"))))))
 
 (defun cic:org-todo-cycle-done (&optional arg)
   (interactive "P")
