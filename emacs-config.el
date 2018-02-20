@@ -182,7 +182,8 @@ read only."
 ;; clipboard and tooltips
 (setq x-select-enable-primary t
       x-select-enable-clipboard t
-      x-gtk-use-system-tooltips nil)
+      x-gtk-use-system-tooltips nil
+      select-active-regions nil)
 ;; TODO: file modes... do I want this somewhere else?
 (auto-compression-mode 1)
 ;; case
