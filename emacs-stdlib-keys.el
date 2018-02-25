@@ -184,8 +184,10 @@
   (emacs-stdlib-keys-mode 0)
   (emacs-stdlib-keys-org-mode 0)
   (emacs-stdlib-keys-non-term-mode 0)
-  (local-set-key (kbd "m-v") 'kill-ring-save-whole-word-or-region)
-  (local-set-key (kbd "m-v") 'yank))
+  ;; screws up minibuffer
+  ;; (local-set-key (kbd "m-v") 'kill-ring-save-whole-word-or-region)
+  ;; (local-set-key (kbd "m-v") 'yank)
+)
 (add-hook 'minibuffer-setup-hook 'cic:stdlib-keys-minibuffer-setup-hook)
 
 (defun cic:backward-symbol (&optional arg)
