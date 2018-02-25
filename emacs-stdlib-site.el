@@ -435,7 +435,6 @@ TODO broken, provided a diff cleanup function too!"
     ;; TODO: need to specify good defaults
     ))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; free keys
 (requiring-package (free-keys)

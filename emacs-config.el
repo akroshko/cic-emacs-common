@@ -419,7 +419,7 @@ read only."
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
     (let ((the-buffer-file-name (buffer-file-name)))
-      (unless (and the-buffer-file-name (string-match "-log.*\.org" the-buffer-file-name))
+      (unless (and the-buffer-file-name (string-match "-log.*\\.org" the-buffer-file-name))
         (org-display-inline-images))))
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()

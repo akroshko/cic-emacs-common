@@ -199,14 +199,15 @@
 
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-mode ()
   ;; TODO: make a list for these eventually
-  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode))
+  ;; TODO: line-items-mode is not in this package, but here for now
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'line-items-mode))
          (emacs-stdlib-hyper-keys-non-dired-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-mode t))))
 
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-org-mode ()
   ;; TODO: make a list for these eventually
-  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'org-mode))
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'org-mode) (eq major-mode 'line-items-mode))
          (emacs-stdlib-hyper-keys-non-dired-org-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-org-mode t))))
