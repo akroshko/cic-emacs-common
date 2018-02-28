@@ -521,6 +521,13 @@ read only."
   (setq uniquify-buffer-name-style 'forward))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; winner-mode
+(requiring-package (winner)
+  (define-key winner-mode-map (kbd "M-9") 'winner-undo)
+  (define-key winner-mode-map (kbd "M-0") 'winner-redo)
+  (winner-mode 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; printing
 ;; https://www.emacswiki.org/emacs/CupsInEmacs
 (setq lpr-command "xpp")
