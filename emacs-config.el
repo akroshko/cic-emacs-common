@@ -122,6 +122,19 @@
 ;; run for when starting without server
 (cic:configure-modeline-color)
 
+;; disable superfluous mail check
+(setq display-time-string-forms '((if (and (not display-time-format) display-time-day-and-date)
+                                      (format-time-string "%a %b %e " now)
+                                    "")
+                                  (propertize
+                                   (format-time-string
+                                    (or display-time-format
+                                        (if display-time-24hr-format "%H:%M" "%-I:%M%p"))
+                                    now)
+                                   'help-echo
+                                   (format-time-string "%a %b %e, %Y" now))
+                                  load))
+
 ;; highlight in olive green, visible on many of my modes
 (set-face-attribute 'region nil :background "#c0ff3e")
 ; quiet, please! No dinging!
@@ -526,6 +539,15 @@ read only."
   (define-key winner-mode-map (kbd "M-9") 'winner-undo)
   (define-key winner-mode-map (kbd "M-0") 'winner-redo)
   (winner-mode 1))
+
+(requiring-package (vc)
+  (remove-hook 'find-file-hook 'vc-find-file-hook)
+  ;; (add-hook 'find-file-hook (lambda () (setq mode-line-format (remove '(vc-mode vc-mode) mode-line-format))))
+  )
+
+;; https://stackoverflow.com/questions/5748814/how-does-one-disable-vc-git-in-emacs
+;; TODO: another alternative
+;; (eval-after-load "vc" '(remove-hook 'find-file-hook 'vc-find-file-hook))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; printing
