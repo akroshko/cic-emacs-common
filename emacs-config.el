@@ -540,10 +540,13 @@ read only."
   (define-key winner-mode-map (kbd "M-0") 'winner-redo)
   (winner-mode 1))
 
+;; TODO: if I eval-buffer this buffer, I get vc-mode back
 (requiring-package (vc)
   (remove-hook 'find-file-hook 'vc-find-file-hook)
-  ;; (add-hook 'find-file-hook (lambda () (setq mode-line-format (remove '(vc-mode vc-mode) mode-line-format))))
-  )
+  (add-hook 'find-file-hook 'cic:remove-vc-modeline))
+
+(defun cic:remove-vc-modeline ()
+  (setq mode-line-format (remove '(vc-mode vc-mode) mode-line-format)))
 
 ;; https://stackoverflow.com/questions/5748814/how-does-one-disable-vc-git-in-emacs
 ;; TODO: another alternative
