@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180209
+;; Version: 20180409
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -148,9 +148,9 @@
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
-            ;; TODO: disabled while I get new muscle memory
-            ;; (define-key map (kbd "H-h")          'cic:cycle-with-last-buffer)
+            (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
+            (define-key map (kbd "H-v")          'cic:toggle-media)
             ;; (define-key map (kbd "H-k")          'cic:delete-window)
             ;; TODO: temporary while I build new muscle memory
             ;; (define-key map (kbd "H-0")          'cic:delete-window)
@@ -200,14 +200,14 @@
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-mode ()
   ;; TODO: make a list for these eventually
   ;; TODO: line-items-mode is not in this package, but here for now
-  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'line-items-mode))
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'wdired-mode) (eq major-mode 'image-mode) (eq major-mode 'line-items-mode))
          (emacs-stdlib-hyper-keys-non-dired-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-mode t))))
 
 (defun cic:enable-emacs-stdlib-hyper-keys-non-dired-org-mode ()
   ;; TODO: make a list for these eventually
-  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'image-mode) (eq major-mode 'org-mode) (eq major-mode 'line-items-mode))
+  (cond ((or (eq major-mode 'dired-mode) (eq major-mode 'wdired-mode) (eq major-mode 'image-mode) (eq major-mode 'org-mode) (eq major-mode 'line-items-mode))
          (emacs-stdlib-hyper-keys-non-dired-org-mode 0))
         (t
          (emacs-stdlib-hyper-keys-non-dired-org-mode t))))

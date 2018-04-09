@@ -1786,4 +1786,13 @@ TODO: do something else (like copy whole line) if no region?"
     (when (/= (point) saved-position)
       (scroll-up 1))))
 
+(defun cic:toggle-media ()
+  (interactive)
+  (cond ((eq major-mode 'org-mode)
+         (org-toggle-inline-images))
+        ((eq major-mode 'dired-mode)
+         nil)
+        ((eq major-mode 'wdired-mode)
+         nil)))
+
 (provide 'emacs-stdlib-functions)
