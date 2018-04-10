@@ -1793,6 +1793,7 @@ TODO: do something else (like copy whole line) if no region?"
         ((eq major-mode 'dired-mode)
          nil)
         ((eq major-mode 'wdired-mode)
-         nil)))
+         nil))
+  (message "Media toggled!"))
 
 (provide 'emacs-stdlib-functions)
