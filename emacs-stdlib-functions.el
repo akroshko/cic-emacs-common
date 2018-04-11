@@ -99,15 +99,6 @@ this for every line."
     (setq str (replace-match "" t t str)))
   str)
 
-;; (defun cic:chomp (str)
-;;   "Chomp leading and tailing whitespace from STR.  Just beginning and end of lines
-;; TODO: are this one and strip-full redundant?
-;; TODO: determine which is more efficient"
-;;   (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
-;;                                     (: (* (any " \t\n")) eos)))
-;;                             ""
-;;                             str))
-
 (defun s-trim-full-no-properties (str)
   "Like strip-full but remove text properties."
   (substring-no-properties (s-trim-full str)))
@@ -159,16 +150,6 @@ this for every line."
     (while (string-match "-$" str)
       (setq str (replace-match "" t t str))))
   str)
-
-;; (defun cic:remove-trailing-whitespace (str)
-;;   "Strip trailing whitespace off of STR."
-;;   (when (string-match "[ \t\n]*$" str)
-;;     (concat (replace-match "" nil nil str))))
-
-;; (defun cic:remove-leading-whitespace (str)
-;;   "Strip leading whitespace off of STR."
-;;   (when (string-match "^[ \t\n]*" str)
-;;     (concat (replace-match "" nil nil str))))
 
 (defun cic:full-string-p (thing-or-string)
   "Determine if something is nil or an empty string."
