@@ -483,9 +483,11 @@ TODO broken, provided a diff cleanup function too!"
   (add-hook 'lisp-mode-hook 'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+  (with-current-buffer "*scratch*"
+    (enable-paredit-mode))
   (eval-after-load "paredit.el"
     (requiring-package (paredit-menu)))
-  ;; change keys around for easy navigation of pars
+  ;; change keys around for easy navigation of parenthesis
   ;; XXXX: change capitalization keys
   (global-set-key (kbd "M-C") 'capitalize-word)
   (global-set-key (kbd "M-L") 'downcase-word)
