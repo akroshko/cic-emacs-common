@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180128
+;; Version: 20180410
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -87,7 +87,7 @@ TODO broken, provided a diff cleanup function too!"
 (when (file-exists-p "~/.gpg-agent-info.env")
   (let ((gpg-agent
         ;; read the file
-         (strip-full (with-temp-buffer
+         (s-trim-full (with-temp-buffer
                   (insert-file-contents "~/.gpg-agent-info.env")
                   (buffer-string)))))
     ;; set the variable
@@ -540,29 +540,7 @@ TODO broken, provided a diff cleanup function too!"
       (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
     (add-hook 'ido-setup-hook 'ido-define-keys)
 
-    ;; (require 'ido-vertical-mode)
-    ;; (ido-vertical-mode 1)
-    ;;
-    ;; (require 'ido-grid-mode)
-    ;; (setq ido-grid-mode-max-columns 1
-    ;;     ido-grid-mode-max-rows 8
-    ;;     ido-grid-mode-prefix-scrolls t
-    ;;     ido-grid-mode-scroll-down #'ido-grid-mode-next-row
-    ;;     ido-grid-mode-scroll-up #'ido-grid-mode-previous-row
-    ;;     ido-grid-mode-order nil
-    ;;     ;; ido-grid-mode-start-collapsed t
-    ;;     )
-    ;; (setq ido-grid-min-rows 12
-    ;;       ido-grid-max-rows 12
-    ;;       ido-grid-mode-prefix-scrolls t
-    ;;       ido-grid-mode-order t)
-    ;; (ido-grid-mode 1)
-    ;; TODO: better, but not perfect
-    (setq ;; ido-vertical-define-keys 'C-n-and-C-p-only
-     ;; ido-vertical-show-count t
-     ido-max-prospects 50
-     ;; ido-vertical-pad-list nil
-     )))
+    (setq ido-max-prospects 50)))
 
 (requiring-package (image+)
   (eval-after-load 'image '(require 'image+)))
@@ -829,80 +807,104 @@ TODO broken, provided a diff cleanup function too!"
                          ("melpa" . "https://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (setq package-check-signature nil)
-(setq cic:package-list '(ace-jump-mode
+(setq cic:package-list '(
+                         ;; apropos-fn+var
+                         ;; company-auctex
+                         ;; flymake-cursor
+                         ;; hexrgb
+                         ;; ido-grid-mode
+                         ;; ido-ubiquitous
+                         ;; ido-vertical-mode
+                         ;; ido-vertical-mode
+                         ;; image-dired+
+                         ;; letcheck
+                         ;; py-import-check
+                         ;; pylint
+                         ;; TODO get rid of
+                         ;; TODO: change to ido-completing-read+
+                         ;; TODO: get rid of flymake
+                         ;; TODO: unsure about popwin mode
+
+                         ace-jump-mode
                          apache-mode
                          apt-sources-list
                          arduino-mode
+                         async
                          auctex
                          auto-overlays
-                         conkeror-minor-mode
-                         apropos-fn+var
                          bash-completion
-                         benchmark-init
-                         biblio
                          bbdb
                          bbdb-ext
+                         benchmark-init
+                         biblio
                          capture
                          company
-                         ;; company-auctex
                          company-arduino
+                         company-c-headers
+                         company-irony
                          company-math
                          company-quickhelp
-                         cl-lib
-                         csv-mode
+                         conkeror-minor-mode
                          crontab-mode
+                         csv-mode
                          cython-mode
+                         dash
                          dired-avfs
+                         dired-hacks-utils
+                         dired-icon
                          dired-rainbow
                          eimp
                          eldoc
                          emms
+                         epl
                          ess
                          f
-                         ;; TODO: get rid of flymake
-                         ;; flymake-cursor
                          flycheck
                          flycheck-bashate
                          flycheck-checkbashisms
                          flycheck-cython
                          flycheck-package
                          flycheck-pyflakes
+                         flymake-cursor
                          free-keys
                          fuzzy-match
                          gh-md
+                         ghub
+                         git-commit
                          gnuplot
                          gnuplot-mode
-                         ;; hexrgb
-                         ido-grid-mode
-                         ido-hacks
-                         ;; TODO: change to ido-completing-read+
                          ido-completing-read+
-                         ;; ido-ubiquitous
-                         ;; ido-vertical-mode
+                         ido-hacks
+                         ido-ubiquitous
                          idomenu
                          image+
-                         ;; TODO get rid of
-                         lacarte
-                         latex-extra
-                         ;; letcheck
-                         ;; image-dired+
                          json-mode
                          jumplist
+                         lacarte
+                         latex-extra
                          magit
                          markdown-mode
+                         math-symbol-lists
                          matlab-mode
+                         memoize
                          mew
+                         nhexl-mode
                          org
                          org-bullets
+                         package-lint
                          paredit
                          paredit-menu
+                         peep-dired
+                         pos-tip
                          prolog
-                         ;; pylint
-                         ;; py-import-check
+                         pythonic
                          rainbow-delimiters
                          readline-complete
+                         s
+                         sage-shell-mode
                          sicp
                          simple-call-tree
+                         simple-httpd
                          slime
                          slime-company
                          smartscan
@@ -911,9 +913,13 @@ TODO broken, provided a diff cleanup function too!"
                          ssh-tunnels
                          tracwiki-mode
                          twittering-mode
-                         ;; w3m
+                         vline
+                         w3m
+                         wanderlust
+                         with-editor
                          xml-rpc
-                         vline))
+
+                         ))
 
 (defun cic:install-packages ()
   (interactive)
@@ -923,7 +929,8 @@ TODO broken, provided a diff cleanup function too!"
       ;; there are sometimes errors, catch them
       (condition-case error-string
           (package-install package)
-        (error (message (concat "Failed to install package: " (symbol-name package) " " error-string)))))))
+        (error (message (concat "Failed to install package: " (symbol-name package) " ")))))))
+;; error-string
 
 (defun cic:update-packages ()
   (package-list-packages)

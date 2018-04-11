@@ -60,6 +60,9 @@
             (define-key map (kbd "s-%")        'cic:query-replace-case-sensitive)
             (define-key map (kbd "s-*")        'cic:recalculate)
             (define-key map (kbd "s-=")        (lambda () (interactive) (what-cursor-position t)))
+            (define-key map (kbd "s-a a")      'apropos)
+            (define-key map (kbd "s-a x")      'apropos-command)
+            (define-key map (kbd "s-a v")      'apropos-value)
             ;; TODO: e for edit for now, e=emacs a lot for me
             (define-key map (kbd "s-c e")      'wdired-change-to-wdired-mode)
             ;; generic emacs development

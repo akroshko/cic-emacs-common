@@ -233,13 +233,13 @@ TODO: incomplete but still useful right now"
 (defun cic:url-at-point-or-line (&optional current-line)
   "Find the URL at point and return.  Find the url in
 CURRENT-LINE if specified."
-  (let ((url (cic:strip-after-double-colon (thing-at-point 'url))))
+  (let ((url (cic:trim-after-double-colon (thing-at-point 'url))))
     (unless url
       (unless current-line
         (setq current-line (cic:get-current-line)))
       (let ((url-start (string-match cic:emacs-stdlib-url-regexp current-line)))
         (when url-start
-          (setq url (cic:strip-after-double-colon (substring current-line url-start (match-end 0)))))))
+          (setq url (cic:trim-after-double-colon (substring current-line url-start (match-end 0)))))))
     url))
 
 (defun cic:org-insert-two-level (&optional arg)
@@ -513,7 +513,7 @@ visit it."
   (replace-regexp-in-string "\\(^\\|[^\.A-Za-z]\\)\\([0-9]\+\\)\\($\\|[^\.A-Za-z0-9]\\)" "\\2\." thestring nil nil 2))
 
 (defun convert-newlines-to-spaces (thestring)
-  (replace-regexp-in-string "\n" " " (strip-full thestring)))
+  (replace-regexp-in-string "\n" " " (s-trim-full thestring)))
 
 ;; TODO: combine these terminal/paste commands into common function
 ;; TODO: save output in case of emacs crash and/or run in screen

@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180209
+;; Version: 20180410
 ;; URL: https://github.com/akroshko/emacs-stdlib
 
 ;; This file is NOT part of GNU Emacs.
@@ -38,15 +38,6 @@
 
 (defalias 'mpp 'cic:mpp)
 (defalias 'mpp-echo 'cic:mpp)
-(defalias 'chomp 'cic:chomp)
-(defalias 'strip-full 'cic:strip-full)
-(defalias 'strip-full-no-properties 'cic:strip-full-no-properties)
-(defalias 'strip-full-single-spaces 'cic:strip-full-single-spaces)
-(defalias 'strip-colons 'cic:strip-colons)
-(defalias 'strip-square-brackets 'cic:strip-square-brackets)
-(defalias 'strip-dashes 'cic:strip-dashes)
-(defalias 'remove-trailing-whitespace 'cic:remove-trailing-whitespace)
-(defalias 'remove-leading-whitespace 'cic:remove-leading-whitespace)
 (defalias 'full-string-p 'cic:full-string-p)
 (defalias 'string-to-float 'cic:string-to-float)
 (defalias 'car-fallthrough 'cic:car-fallthrough)

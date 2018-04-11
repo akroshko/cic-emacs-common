@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180209
+;; Version: 20180410
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -91,7 +91,7 @@ TODO: flag to not use timestamp"
   "Create a time-stamp."
   (format-time-string "%H:%M:%S" (current-time)))
 
-(defun cic:strip-full (str)
+(defun s-trim-full (str)
   "Strip full leading and trailing whitespace from STR.  Does
 this for every line."
   (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
@@ -99,27 +99,27 @@ this for every line."
     (setq str (replace-match "" t t str)))
   str)
 
-(defun cic:chomp (str)
-  "Chomp leading and tailing whitespace from STR.  Just beginning and end of lines
-TODO: are this one and strip-full redundant?
-TODO: determine which is more efficient"
-  (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
-                                    (: (* (any " \t\n")) eos)))
-                            ""
-                            str))
+;; (defun cic:chomp (str)
+;;   "Chomp leading and tailing whitespace from STR.  Just beginning and end of lines
+;; TODO: are this one and strip-full redundant?
+;; TODO: determine which is more efficient"
+;;   (replace-regexp-in-string (rx (or (: bos (* (any " \t\n")))
+;;                                     (: (* (any " \t\n")) eos)))
+;;                             ""
+;;                             str))
 
-(defun cic:strip-full-no-properties (str)
+(defun s-trim-full-no-properties (str)
   "Like strip-full but remove text properties."
-  (substring-no-properties (strip-full str)))
+  (substring-no-properties (s-trim-full str)))
 
-(defun cic:strip-full-single-spaces (str)
+(defun cic:trim-into-one-line (str)
   "Convert STR into one line with no leading or trailing whitespace."
   (while (string-match "[[:space:]]*\n+[[:space:]]*\\|[[:space:]]\\{2,\\}"
                        str)
     (setq str (replace-match " " t t str)))
-  (strip-full str))
+  (s-trim-full str))
 
-(defun cic:strip-colons (str)
+(defun s-trim-colons (str)
   "Strip leading and trailing colons off of STR."
   (when (stringp str)
     (while (string-match "^:" str)
@@ -128,21 +128,21 @@ TODO: determine which is more efficient"
       (setq str (replace-match "" t t str))))
   str)
 
-(defun cic:strip-trailing-slash (str)
+(defun cic:trim-trailing-slash (str)
   "Strip trailing slash off of STR."
   (when (stringp str)
     (while (string-match "/$" str)
       (setq str (replace-match "" t t str))))
   str)
 
-(defun cic:strip-after-double-colon (str)
+(defun cic:trim-after-double-colon (str)
   "Strip everything after and including a double colon in STR."
   (when (stringp str)
     (if (string-match "\\(.*\\)::.*" str)
         (setq str (match-string 1 str))))
   str)
 
-(defun strip-square-brackets (str)
+(defun s-trim-square-brackets (str)
   "Strip leading and trailing square brackets off of STR."
   (when (stringp str)
     (while (string-match "^\\[" str)
@@ -151,7 +151,7 @@ TODO: determine which is more efficient"
       (setq str (replace-match "" t t str))))
   str)
 
-(defun strip-dashes (str)
+(defun s-trim-dashes (str)
   "Strip leading and trailing dashes off of STR."
   (when (stringp str)
     (while (string-match "^-" str)
@@ -160,19 +160,19 @@ TODO: determine which is more efficient"
       (setq str (replace-match "" t t str))))
   str)
 
-(defun cic:remove-trailing-whitespace (str)
-  "Strip trailing whitespace off of STR."
-  (when (string-match "[ \t\n]*$" str)
-    (concat (replace-match "" nil nil str))))
+;; (defun cic:remove-trailing-whitespace (str)
+;;   "Strip trailing whitespace off of STR."
+;;   (when (string-match "[ \t\n]*$" str)
+;;     (concat (replace-match "" nil nil str))))
 
-(defun cic:remove-leading-whitespace (str)
-  "Strip leading whitespace off of STR."
-  (when (string-match "^[ \t\n]*" str)
-    (concat (replace-match "" nil nil str))))
+;; (defun cic:remove-leading-whitespace (str)
+;;   "Strip leading whitespace off of STR."
+;;   (when (string-match "^[ \t\n]*" str)
+;;     (concat (replace-match "" nil nil str))))
 
 (defun cic:full-string-p (thing-or-string)
   "Determine if something is nil or an empty string."
-  (if (or (not thing-or-string) (equal (strip-full thing-or-string) ""))
+  (if (or (not thing-or-string) (equal (s-trim-full thing-or-string) ""))
       nil
     t))
 
@@ -288,7 +288,7 @@ in FILENAME given COLUMN number."
     (dolist (the-filename filename)
       (list (do-org-table-rows the-filename table-name row
                                (org-table-goto-column column)
-                               (when (string= key-value (strip-full (org-table-get nil column)))
+                               (when (string= key-value (s-trim-full (org-table-get nil column)))
                                  (setq found-list (append found-list (list (list the-filename (point)))))))))
     (setq found-list (delq nil found-list))
     (when (> (length found-list) 1)
@@ -306,7 +306,7 @@ number."
                                  (setq lisp-table (cic:org-table-to-lisp-no-separators)))
     (do-org-table-rows filename table-name row
                        (org-table-goto-column column)
-                       (when (string= key-value (strip-full (org-table-get nil column)))
+                       (when (string= key-value (s-trim-full (org-table-get nil column)))
                          (setq found-row (cic:org-table-assoc lisp-table key-value column))))
     found-row))
 
@@ -318,7 +318,7 @@ COLUMN. number"
   (let (key-values)
     (do-org-table-rows filename table-name row
                        (org-table-goto-column column)
-                       (setq key-values (cons (strip-full-no-properties (org-table-get nil column)) key-values)))
+                       (setq key-values (cons (s-trim-full-no-properties (org-table-get nil column)) key-values)))
     (remove-if 'full-string-p key-values)
     key-values))
 
@@ -707,12 +707,12 @@ LINE."
 (defun cic:is-empty-string-whitespace (str)
   "Test if STR is empty, all whitespace, or nil."
   (when str
-    (string-equal (strip-full str) "")))
+    (string-equal (s-trim-full str) "")))
 
 (defun cic:is-not-empty-string-nil (str)
   "Check if STR is an empty string (no characters or all
 whitespace) or a nil."
-  (and str (not (string= (strip-full str) ""))))
+  (and str (not (string= (s-trim-full str) ""))))
 
 (defun cic:delete-current-line ()
   "Delete the current line without touching the kill ring.
@@ -899,7 +899,7 @@ properly escaped and combined with | to be an emacs regexp."
 current line at point."
   (unless current-line
     (setq current-line (cic:get-current-line)))
-  (- (length current-line) (length (remove-leading-whitespace current-line))))
+  (- (length current-line) (length (s-trim-left current-line))))
 
 (defun cic:list-from-file-filename (filename)
   "Get a list based on the lines in FILENAME."
@@ -1077,7 +1077,7 @@ think openssl is find for this purpose."
                ;; get a random number
                (setq new-password-char nil)
                (while (not new-password-char)
-                 (setq new-password-char (string-to-number (strip-full (shell-command-to-string "openssl rand -hex 1")) 16))
+                 (setq new-password-char (string-to-number (s-trim-full (shell-command-to-string "openssl rand -hex 1")) 16))
                  (if (>= new-password-char length-passwordchars)
                      (setq new-password-char nil)
                    (setq new-password (concat new-password (substring char-set new-password-char (1+ new-password-char)))))))
@@ -1202,7 +1202,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 (defun cic:elisp-array-string (elisp-array i j)
   (let ((thestr (elt (elt elisp-array i) j)))
     (if (stringp thestr)
-        (cic:strip-full-no-properties thestr)
+        (s-trim-full-no-properties thestr)
       "")))
 
 ;; from https://stackoverflow.com/questions/6532898/is-there-a-apply-function-to-region-lines-in-emacs
@@ -1302,7 +1302,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
           (with-temp-buffer
             (org-mode)
             ;; trim whitespace
-            (insert (chomp region-to-move))
+            (insert (s-trim region-to-move))
             ;; add subtree to the end with tag
             (goto-char (point-min))
             (if (cic:org-headline-p (cic:get-current-line))
@@ -1344,7 +1344,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                  (current-filename (cic:current-grouppath (buffer-file-name)))
                  (current-toplevel-tree (save-excursion (cic:goto-previous-heading-level 1)
                                                         (org-back-to-heading)
-                                                        (cic:strip-full-no-properties (org-get-heading))))
+                                                        (s-trim-full-no-properties (org-get-heading))))
                  (check-input-char 13))
              ;; avoid if region is active
              (save-window-excursion
