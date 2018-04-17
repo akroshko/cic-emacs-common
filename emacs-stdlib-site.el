@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180410
+;; Version: 20180414
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -483,6 +483,7 @@ TODO broken, provided a diff cleanup function too!"
   (add-hook 'lisp-mode-hook 'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+  ;; TODO: what if I eval this??? then what
   (with-current-buffer "*scratch*"
     (enable-paredit-mode))
   (eval-after-load "paredit.el"
@@ -499,7 +500,10 @@ TODO broken, provided a diff cleanup function too!"
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
   (eldoc-add-command
    'paredit-backward-delete
-   'paredit-close-round))
+   'paredit-close-round)
+  ;; TODO: what if I eval this??? then what
+  (with-current-buffer "*scratch*"
+    (eldoc-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido-mode
