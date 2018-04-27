@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180414
+;; Version: 20180425
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -302,6 +302,10 @@ TODO broken, provided a diff cleanup function too!"
                      (apply orig-fun args))
                    (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                    (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
+                   (defun TeX-LaTeX-no-view (orig-fun &rest args)
+                     (when (not (TeX-process (TeX-master-file)))
+                       (apply orig-fun args)))
+                   (advice-add 'TeX-view :around #'TeX-LaTeX-no-view)
                    ;; TODO: make this act more like org mode
                    ;; TODO: make sure several runs of this file doesn't bugger variable
                    (cic:add-to-alist 'TeX-command-list "LaTeXdraft" "%`%l%(mode) -draftmode %' %t" 'TeX-run-TeX nil '(latex-mode doctex-mode) :help "Run LaTeX in draft mode.")
