@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180411
+;; Version: 20180510
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -408,8 +408,8 @@ read only."
                                  ;;;;;;;;;;;;;;;;;;;;
                                  ("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
-                                 ("PRIORITY"         . (:foreground "light blue"  :background "red"        :weight bold))
                                  ("INPROGRESS"       . (:foreground "magenta"     :background "gold"       :weight bold))
+                                 ("PRIORITY"         . (:foreground "light blue"  :background "red"        :weight bold))
                                  ("WAITING"          . (:foreground "magenta"     :background "gold"       :weight bold))
                                  ;;;;;;;;;;;;;;;;;;;;
                                  ("DONE"             . (:foreground "dark orange" :background "blue"       :weight bold))
