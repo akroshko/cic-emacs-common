@@ -143,6 +143,10 @@
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "M-n") 'next-error)
             (define-key map (kbd "M-p") 'previous-error)
+            ;; backup keys (make non-capitilized next/previous/error
+            ;; do for other modes
+            ;; (define-key map (kbd "s-N") 'next-error)
+            ;; (define-key map (kbd "s-P") 'previous-error)
             map))
 ;; (define-key map (kbd "C-<return>") 'org-insert-heading-respect-content)
 

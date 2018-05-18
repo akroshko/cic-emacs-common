@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180510
+;; Version: 20180512
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -121,6 +121,10 @@
 (add-hook 'before-make-frame-hook 'cic:configure-modeline-color)
 ;; run for when starting without server
 (cic:configure-modeline-color)
+
+;; TODO: more intuitive percentage
+(setcar mode-line-position
+        '(:eval (format "%4.1f%%%%" (/ (point) 0.01 (point-max)))))
 
 ;; disable superfluous mail check
 (setq display-time-string-forms '((if (and (not display-time-format) display-time-day-and-date)

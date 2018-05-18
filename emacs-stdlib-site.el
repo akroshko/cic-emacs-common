@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180425
+;; Version: 20180517
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -325,8 +325,11 @@ TODO broken, provided a diff cleanup function too!"
                                                                 (TeX-command "LaTeXdraft" 'TeX-master-file nil)))
                    ;; TODO: do I ever want this back, should I replace something else?
                    ;; (define-key TeX-mode-map (kbd "C-c C-b")  )
-                   ))
-
+                   ;; prevent tex mode from overwriting next/previous error
+                   (define-key TeX-mode-map (kbd "s-N") (lambda () (interactive)
+                                                          (call-interactively 'next-error)))
+                   (define-key TeX-mode-map  (kbd "s-P") (lambda () (interactive)
+                                                           (call-interactively 'previous-error)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
