@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180517
+;; Version: 20180525
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -402,8 +402,41 @@ TODO broken, provided a diff cleanup function too!"
     (require 'emms-info-libtag)
     (emms-all)
     (emms-default-players)
-    (setq emms-info-function '(emms-info-libtag))))
-
+    (requiring-package (emms-mark)
+      ;; TODO: always says no first track
+      ;; (setq emms-playlist-default-major-mode 'emms-mark-mode)
+      )
+    (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
+    (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
+    (setq emms-info-function '(emms-info-libtag))
+    (setq emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
+    ;; XXXX: redefine for my computers running Debian in 2018+, take out -c option
+    (defun emms-volume-amixer-change (amount)
+      "Change amixer master volume by AMOUNT."
+      (message "Playback channels: %s"
+               (with-temp-buffer
+                 (when (zerop
+                        (call-process "amixer" nil (current-buffer) nil
+                                      ;; "-c"
+                                      ;; (format "%d" emms-volume-amixer-card)
+                                      "sset" emms-volume-amixer-control
+                                      (format "%d%%%s" (abs amount)
+                                              (if (< amount 0) "-" "+"))))
+                   (if (re-search-backward "\\[\\([0-9]+%\\)\\]" nil t)
+                       (match-string 1))))))
+    (define-emms-simple-player mpg321-custom '(file url)
+      (emms-player-simple-regexp "mp3" "mp2")
+      "mpg321" "--gain" "10")
+    (delq 'emms-player-mpv emms-player-list)
+    (delq 'emms-player-mpg321-custom emms-player-list)
+    (delq 'emms-player-vlc emms-player-list)
+    (delq 'emms-player-vlc-playlist emms-player-list)
+    (pushnew 'emms-player-mpg321-custom emms-player-list))
+    ;; (requiring-package (emms-player-mpv)
+    ;;   (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
+    ;;   (delq 'emms-player-mpv emms-player-list)
+    ;;   (pushnew 'emms-player-mpv emms-player-list))
+    )
 
 (requiring-package (flyspell)
   ;; TODO: change this if I need it
@@ -869,6 +902,7 @@ TODO broken, provided a diff cleanup function too!"
                          eimp
                          eldoc
                          emms
+                         ;; emms-player-mpv
                          epl
                          ess
                          f
