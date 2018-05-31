@@ -62,6 +62,8 @@
             (define-key map (kbd "s-=")        (lambda () (interactive) (what-cursor-position t)))
             (define-key map (kbd "s-a a")      'apropos)
             (define-key map (kbd "s-a s-a")    'apropos)
+            ;; TODO: choose one of these
+            (define-key map (kbd "s-a c")      'apropos-command)
             (define-key map (kbd "s-a x")      'apropos-command)
             (define-key map (kbd "s-a v")      'apropos-value)
             ;; TODO: e for edit for now, e=emacs a lot for me
