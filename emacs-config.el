@@ -39,6 +39,12 @@
 ;;
 ;;; Code:
 
+;; make sure warnings do not pop up, set this first
+;; TODO: this deals with issues in org-protocol, warning of new format, and capture frames
+;;       solution is to either have them do right warning level so it does not pop up by default
+;; TODO: this may be right default for emacs
+(setq warning-minimum-level :error)
+
 (unless (fboundp 'requiring-package)
     (defvar load-errors-p nil
       "Whether or not there were errors loading on startup.")
@@ -72,12 +78,6 @@
                     (let ((ssh-output (split-string (buffer-substring-no-properties (point-min) (point-max)) "=")))
                       (setenv "SSH_AUTH_SOCK" (car (split-string (elt ssh-output 1) ";")))
                       (setenv "SSH_AGENT_PID" (car (split-string (elt ssh-output 2) ";"))))))
-
-;; make sure warnings do not pop up
-;; TODO: this deals with issues in org-protocol, warning of new format, and capture frames
-;;       solution is to either have them do right warning level so it does not pop up by default
-;; TODO: this may be right default for emacs
-(setq warning-minimum-level :error)
 
 ;; set proper fonts, characters, and colors
 (global-font-lock-mode t)
