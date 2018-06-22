@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180512
+;; Version: 20180617
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -69,15 +69,15 @@
     (put 'requiring-package 'lisp-indent-function 1))
 
 ;; TODO: is this the best place
-(defun cic:init-crypt ()
-  (interactive)
-  ;; XXXX: can only use built-in here
-  (setenv "GPG_AGENT_INFO" (with-temp-buffer (insert-file-contents (cic:join-paths (getenv "GNUPGHOME") (concat "gpg-agent-info-" (system-name))))
-                                             (s-trim-full (elt (split-string (buffer-substring-no-properties (point-min) (point-max)) "=") 1))))
-  (with-temp-buffer (insert-file-contents (concat "~/.keychain/" (system-name) "-sh"))
-                    (let ((ssh-output (split-string (buffer-substring-no-properties (point-min) (point-max)) "=")))
-                      (setenv "SSH_AUTH_SOCK" (car (split-string (elt ssh-output 1) ";")))
-                      (setenv "SSH_AGENT_PID" (car (split-string (elt ssh-output 2) ";"))))))
+;; (defun cic:init-crypt ()
+;;   (interactive)
+;;   ;; XXXX: can only use built-in here
+;;   ;; (setenv "GPG_AGENT_INFO" (with-temp-buffer (insert-file-contents (cic:join-paths (getenv "GNUPGHOME") (concat "gpg-agent-info-" (system-name))))
+;;   ;;                                            (s-trim-full (elt (split-string (buffer-substring-no-properties (point-min) (point-max)) "=") 1))))
+;;   (with-temp-buffer (insert-file-contents (concat "~/.keychain/" (system-name) "-sh"))
+;;                     (let ((ssh-output (split-string (buffer-substring-no-properties (point-min) (point-max)) "=")))
+;;                       (setenv "SSH_AUTH_SOCK" (car (split-string (elt ssh-output 1) ";")))
+;;                       (setenv "SSH_AGENT_PID" (car (split-string (elt ssh-output 2) ";"))))))
 
 ;; set proper fonts, characters, and colors
 (global-font-lock-mode t)

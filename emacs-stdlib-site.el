@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180525
+;; Version: 20180617
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -363,11 +363,12 @@ TODO broken, provided a diff cleanup function too!"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; crontab-mode
-(requiring-package (crontab-mode)
-  (add-to-list 'auto-mode-alist '("\\.cron\\(tab\\)?\\'" . crontab-mode))
-  (add-to-list 'auto-mode-alist '("cron\\(tab\\)?\\."    . crontab-mode))
-  ;; TODO: do I want anything else?
-  (add-to-list 'auto-mode-alist '("crontab"              . crontab-mode)))
+;; TODO: replace, not in melpa?
+;; (requiring-package (crontab-mode)
+;;   (add-to-list 'auto-mode-alist '("\\.cron\\(tab\\)?\\'" . crontab-mode))
+;;   (add-to-list 'auto-mode-alist '("cron\\(tab\\)?\\."    . crontab-mode))
+;;   ;; TODO: do I want anything else?
+;;   (add-to-list 'auto-mode-alist '("crontab"              . crontab-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company mode
@@ -870,7 +871,6 @@ TODO broken, provided a diff cleanup function too!"
                          ;; TODO: change to ido-completing-read+
                          ;; TODO: get rid of flymake
                          ;; TODO: unsure about popwin mode
-
                          ace-jump-mode
                          apache-mode
                          apt-sources-list
@@ -884,6 +884,7 @@ TODO broken, provided a diff cleanup function too!"
                          benchmark-init
                          biblio
                          capture
+                         clippy
                          company
                          company-arduino
                          company-c-headers
@@ -891,7 +892,7 @@ TODO broken, provided a diff cleanup function too!"
                          company-math
                          company-quickhelp
                          conkeror-minor-mode
-                         crontab-mode
+                         ;; crontab-mode
                          csv-mode
                          cython-mode
                          dash
@@ -960,7 +961,7 @@ TODO broken, provided a diff cleanup function too!"
                          ssh-tunnels
                          tracwiki-mode
                          twittering-mode
-                         vline
+                         ;; vline
                          w3m
                          wanderlust
                          with-editor
