@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180410
+;; Version: 20180703
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -668,7 +668,15 @@ LINE."
   "List files in PATH."
   (cic:filter-excise (lambda (e)
                    (not (file-directory-p (cic:join-paths path e))))
-                 (directory-files path)))
+                     (directory-files path)))
+
+;; TODO: option to take out dot directories?
+(defun cic:list-directories (path)
+  "List directories in PATH.  Gets rid of . and .."
+  (let ((the-dirs (cic:filter-excise (lambda (e)
+                                       (file-directory-p (cic:join-paths path e)))
+                                     (directory-files path))))
+    (cl-remove ".." (cl-remove "." the-dirs :test #'string=) :test #'string=)))
 
 (defun cic:find-file-goto-line (filename &optional line)
   (let ((old-buffer (current-buffer))
@@ -1004,35 +1012,9 @@ XXXX: Not currently used or tested."
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "This is 52 characters total.")
 
-(defun cic:create-password-12-Alphanum ()
-  "Create a 12 character alphanumeric password. Don't know of
-  anywhere that can't do alphanum with capitals."
-  (cic:create-password cic:password-characters-Alphanum 12))
-
-(defun cic:create-password-18-alphanum-lower ()
-  "Create a 15 character alphanumeric password. Don't know of
-  anywhere that can't do alphanum with capitals."
-  (cic:create-password cic:password-characters-alphanum-lower 18))
-
-(defun cic:create-password-12-Alphanum-punct ()
-  "Create a 12 character alphanumeric password with punctuation
-  and capitals."
-  (cic:create-password cic:password-characters-Alphanum-punct 12))
-
-(defun cic:create-password-24-Alphanum ()
-  "Create a 24 character alphanumeric password with capitals.  Don't know of
-  anywhere that can't do alphanum with capitals."
-  (cic:create-password cic:password-characters-Alphanum 24))
-
-(defun cic:create-password-24-Alphanum-punct ()
-  "Create a 24 character alphanumeric password with punctuation
-  and capitals."
-  (cic:create-password cic:password-characters-Alphanum-punct 24))
-
-(defun cic:create-password-30-alpha-lower ()
-  "Create a 30 character alphanumeric password with punctuation
-  and capitals."
-  (downcase (cic:create-password cic:password-characters-Alpha 30)))
+(defconst cic:password-characters-alpha-lower
+  "abcdefghijklmnopqrstuvwxyz"
+  "This is 26 characters total.")
 
 (defun cic:create-password (char-set char-num &optional random-source)
   "Create a random password from CHAR-SET that is CHAR-NUM
@@ -1431,9 +1413,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                     (when active-process
                       (mpp "Starting multi-...")
                       (set-process-sentinel active-process 'first-latex-full-compile-process-sentinel)))))
-               ;; TODO: for later
+               ;; TODO: make more universal
                ((equal arg 'full)
-                (shell-command-to-string (concat "echo \"\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex"))
+                (shell-command-to-string (concat "echo \"\" > ~/cic-vcs-phd/phdthesis/includeonly.tex"))
                 (TeX-command "LaTeX" 'TeX-master-file nil))
                (t
                 (save-some-buffers t)
@@ -1441,7 +1423,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 ;; (setq auto-revert-verbose nil)
                 ;; get includeonly working
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
-                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > /home/akroshko/cic-vcs-phd/phdthesis/includeonly.tex")))
+                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > ~/cic-vcs-phd/phdthesis/includeonly.tex")))
                 (TeX-command "LaTeX" 'TeX-master-file nil))))
         ((eq major-mode 'python-mode)
          ;; TODO: use some beter configuration
@@ -1776,5 +1758,76 @@ TODO: do something else (like copy whole line) if no region?"
         ((eq major-mode 'wdired-mode)
          nil))
   (message "Media toggled!"))
+
+(defun org-quote-region ()
+  (interactive)
+  (if (org-at-table-p)
+      (call-interactively 'org-table-rotate-recalc-marks)
+    (cond
+     ((region-active-p)
+      (let ((start (region-beginning))
+            (end (region-end)))
+        (goto-char end)
+        (end-of-line)
+        (insert "\n#+END_QUOTE")
+        (goto-char start)
+        (beginning-of-line)
+        (insert "#+BEGIN_QUOTE\n")))
+     (t
+      (insert "#+BEGIN_" choice "\n")
+      (save-excursion (insert "#+END_" choice))))))
+
+;;bind to key
+;; TODO: avoiding wierd stuff if I hold control, will I ever use org-set-tags command?
+(define-key org-mode-map (kbd "C-c q")   'org-quote-region)
+(define-key org-mode-map (kbd "C-c C-q") 'org-quote-region)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; capture from an external source
+;; these are often called from the command line
+
+(defun cic:capture-conkeror-buffer (title capture-text)
+  (let ((decoded-title (base64-decode-string title))
+        (decoded-temp-filename (base64-decode-string capture-text)))
+    ;; TODO: need safe titles and add datestring
+    ;; TODO: should I redo the buffer?
+    (with-current-buffer-create (concat "capture-conkeror-" decoded-title)
+      ;; TODO: can use replace
+      (insert-file-contents decoded-temp-filename)
+      (goto-char (point-min))
+      ;; TODO: format a bit better because html is stupid
+      )))
+
+;; (cic:capture-rxvt-scrollback "/home/akroshko/tmp/collect/urxvt-20171017103512.txt")
+(defun cic:capture-rxvt-scrollback (tmp-file)
+  ;; TODO need to close tmp-file buffer afterwards
+  ;;      need some more robust code for with-current-file and killing buffers from elisp functions
+  ;;      two find-file-noselect is stupid
+  (let ((captured-scrollback (with-current-file tmp-file
+                               (buffer-substring-no-properties (point-min) (point-max)))))
+    (kill-buffer-if-not-modified (find-file-noselect tmp-file))
+    ;; TODO: need safe titles and add datestring
+    (with-current-buffer-create (concat "capture-urxvt-scrollback-" (format-time-string "%Y%m%d%H%M%S" (current-time)))
+      (insert captured-scrollback)
+      (goto-char (point-max))
+      ;; TODO: format a bit better because html is stupid
+      )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; apt
+(defun cic:apt-show ()
+  (interactive)
+  ;; TODO: need to add . to this
+  (let* ((the-symbol (thing-at-point 'symbol))
+         ;; TODO: test for invalid packages
+         (apt-show-output (shell-command-to-string (concat "apt-cache show " the-symbol)))
+         (current-window (get-buffer-window))
+         (the-buffer (pop-to-buffer "*apt show*")))
+    (with-current-buffer the-buffer
+      (erase-buffer)
+      (insert apt-show-output)
+      (goto-char (point-min)))
+    (select-window current-window)))
+(global-set-key (kbd "s-m a") 'cic:apt-show)
 
 (provide 'emacs-stdlib-functions)

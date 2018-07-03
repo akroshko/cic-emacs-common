@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180617
+;; Version: 20180627
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -332,6 +332,22 @@ TODO broken, provided a diff cleanup function too!"
                                                            (call-interactively 'previous-error)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; annotate
+(requiring-package (annotate)
+  ;; only enable annotate for read-only files
+  (add-hook 'find-file-hook 'cic:annotate-enable)
+  (defun cic:annotate-enable ()
+    (when (string-match "\\.ro\\." buffer-file-name)
+      (annotate-mode)))
+  (defun annotate--remove-annotation-property--inhibit-readonly (orig-fun &rest args)
+    (let ((old-buffer-read-only buffer-read-only))
+      (read-only-mode -1)
+      (apply orig-fun args)
+      (when old-buffer-read-only
+        (read-only-mode 1))))
+  (advice-add 'annotate--remove-annotation-property :around #'annotate--remove-annotation-property--inhibit-readonly))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; bash-completion
 (requiring-package (bash-completion)
   (bash-completion-setup))
@@ -359,7 +375,20 @@ TODO broken, provided a diff cleanup function too!"
               (setq cic:clippy-last-show 'function))))
       (progn
         (call-interactively 'clippy-describe-function)
-        (setq cic:clippy-last-show 'function)))))
+        (setq cic:clippy-last-show 'function))))
+  ;; gives the table heading when at a table
+  ;; TODO: find definition of words this way too
+  (defun clippy-org-describe ()
+    (interactive)
+    (when (org-at-table-p)
+      (let* ((the-string (cic:org-get-column-heading))
+             (the-string-filled (with-temp-buffer
+                                  (insert the-string)
+                                  (goto-char (point-min))
+                                  (fill-paragraph)
+                                  (buffer-substring (point-min) (point-max)))))
+        (clippy-say the-string-filled))))
+  (define-key org-mode-map (kbd "M-h") 'clippy-org-describe))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; crontab-mode
@@ -490,6 +519,165 @@ TODO broken, provided a diff cleanup function too!"
           '("\\.gnuplot$" . gnuplot-mode)
           '("\\.gp$" . gnuplot-mode))
          auto-mode-alist)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; image-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; add keys to the image-mode
+(requiring-package (image-mode)
+  (defun cic:image-goto-middle ()
+    (interactive)
+    (let* ((window-width  (window-body-width))
+           (window-height (window-body-height))
+           (image-size    (image-display-size (image-get-display-property) nil))
+           (image-width   (car image-size))
+           (image-height  (cdr image-size))
+           move-width
+           move-height)
+      ;; if image is smaller than window in some dimension, do not move
+      (image-bob)
+      (unless (<= image-width window-width)
+        (setq move-width (round (/ (- image-width window-width) 2)))
+        (image-forward-hscroll move-width))
+      (unless (<= image-height window-height)
+        (setq move-height (round (/ (- image-height window-height) 2)))
+        (image-scroll-up move-height))))
+
+  ;; find window size
+  ;; (image-display-size (image-get-display-property))
+  ;; (image-size)
+  ;; get frame size
+
+  (defun cic:image-top-middle ()
+    (interactive)
+    (let* ((window-width  (window-body-width))
+           (image-size    (image-display-size (image-get-display-property) nil))
+           (image-width   (car image-size))
+           move-width)
+      ;; if image is smaller than window in some dimension, do not move
+      (image-bob)
+      (unless (<= image-width window-width)
+        (setq move-width (round (/ (- image-width window-width) 2)))
+        (image-forward-hscroll move-width))))
+
+  (defun cic:image-bottom-middle ()
+    (interactive)
+    (let* ((window-width  (window-body-width))
+           (window-height (window-body-height))
+           (image-size    (image-display-size (image-get-display-property) nil))
+           (image-width   (car image-size))
+           (image-height  (cdr image-size))
+           move-width)
+      ;; if image is smaller than window in some dimension, do not move
+      (image-bob)
+      (unless (<= image-width window-width)
+        (setq move-width (round (/ (- image-width window-width) 2)))
+        (image-forward-hscroll move-width))
+      (unless (<= image-height window-height)
+        (image-scroll-up (round image-height)))))
+
+  (defun cic:image-left-middle ()
+    (interactive)
+    (let* ((window-width  (window-body-width))
+           (window-height (window-body-height))
+           (image-size    (image-display-size (image-get-display-property) nil))
+           (image-width   (car image-size))
+           (image-height  (cdr image-size))
+           move-width
+           move-height)
+      ;; if image is smaller than window in some dimension, do not move
+      (image-bob)
+      (unless (<= image-height window-height)
+        (setq move-height (round (/ (- image-height window-height) 2)))
+        (image-scroll-up move-height))))
+
+  (defun cic:image-right-middle ()
+    (interactive)
+    (let* ((window-width  (window-body-width))
+           (window-height (window-body-height))
+           (image-size    (image-display-size (image-get-display-property) nil))
+           (image-width   (car image-size))
+           (image-height  (cdr image-size))
+           move-width
+           move-height)
+      ;; if image is smaller than window in some dimension, do not move
+      (image-bob)
+      (unless (<= image-width window-width)
+        (image-forward-hscroll (round image-width)))
+      (unless (<= image-height window-height)
+        (setq move-height (round (/ (- image-height window-height) 2)))
+        (image-scroll-up move-height))))
+
+  (defun cic:image-toggle-zoom ()
+    (interactive)
+    (unless (boundp 'cic:image-last-zoom)
+      (setq-local cic:image-last-zoom 'default))
+    ;; TODO: somehow save this default zoom
+    ;; TODO: indicate zoom somewhere
+    )
+
+  ;; TODO: pop back to dired, or go to next on deletion?
+  (defun cic:image-delete ()
+    (interactive)
+    )
+
+  (defconst cic:image-move-lines-columns 8
+    "Amount of move in images by lines")
+
+  (defun cic:image-previous-lines ()
+    (interactive)
+    (image-previous-line cic:image-move-lines-columns))
+
+  (defun cic:image-next-lines ()
+    (interactive)
+    (image-next-line cic:image-move-lines-columns))
+
+  (defun cic:image-backward-hscroll ()
+    (interactive)
+    (image-backward-hscroll cic:image-move-lines-columns))
+
+  (defun cic:image-forward-hscroll ()
+    (interactive)
+    (image-forward-hscroll cic:image-move-lines-columns))
+
+  ;; TODO: need down to be middle lower of buffer
+  (define-key image-mode-map (kbd "e")               'image-scroll-up)
+  (define-key image-mode-map (kbd "s")               'image-backward-hscroll)
+  (define-key image-mode-map (kbd "d")               'image-scroll-down)
+  (define-key image-mode-map (kbd "f")               'image-forward-hscroll)
+  (define-key image-mode-map (kbd "D")               'cic:dired-preview-image-delete)
+  (define-key image-mode-map (kbd "H-i")             'cic:dired-preview-image-mode)
+  (define-key image-mode-map (kbd "<up>")            'cic:image-previous-lines)
+  (define-key image-mode-map (kbd "<kp-up>")         'cic:image-previous-lines)
+  (define-key image-mode-map (kbd "<down>")          'cic:image-next-lines)
+  (define-key image-mode-map (kbd "<kp-down>")       'cic:image-previous-lines)
+  (define-key image-mode-map (kbd "<left>")          'cic:image-backward-hscroll)
+  (define-key image-mode-map (kbd "<prior>")         'cic:image-backward-hscroll)
+  (define-key image-mode-map (kbd "<right>")         'cic:image-forward-hscroll)
+  (define-key image-mode-map (kbd "<next>")          'cic:image-forward-hscroll)
+  ;; move to extreme points in image
+  (define-key image-mode-map (kbd "C-<kp-up>")       'cic:image-top-middle)
+  (define-key image-mode-map (kbd "C-<up>")          'cic:image-top-middle)
+  (define-key image-mode-map (kbd "C-<kp-down>")     'cic:image-bottom-middle)
+  (define-key image-mode-map (kbd "C-<down>")        'cic:image-bottom-middle)
+  (define-key image-mode-map (kbd "C-<kp-left>")     'cic:image-left-middle)
+  (define-key image-mode-map (kbd "C-<prior>")       'cic:image-left-middle)
+  (define-key image-mode-map (kbd "C-<kp-right>")    'cic:image-right-middle)
+  (define-key image-mode-map (kbd "C-<next>")        'cic:image-right-middle)
+  (define-key image-mode-map (kbd "C-<kp-home>")     'image-bob)
+  (define-key image-mode-map (kbd "C-<f17>")         'image-bob)
+  (define-key image-mode-map (kbd "C-<kp-prior>")    (lambda (&optional arg) (interactive) (image-bob) (image-eol arg)))
+  (define-key image-mode-map (kbd "C-<f19>")         (lambda (&optional arg) (interactive) (image-bob) (image-eol arg)))
+  (define-key image-mode-map (kbd "C-<kp-end>")      (lambda (&optional arg) (interactive) (image-eob) (image-bol arg)))
+  (define-key image-mode-map (kbd "C-<f13>")         (lambda (&optional arg) (interactive) (image-eob) (image-bol arg)))
+  (define-key image-mode-map (kbd "C-<kp-next>")     'image-eob)
+  (define-key image-mode-map (kbd "C-<f15>")         'image-eob)
+  ;; TODO: kp-begin is 5, toggle fit width/height/etc., maybe make this 0? would love 5 to go to middle
+  ;; TODO: figure these out
+  (define-key image-mode-map (kbd "C-<kp-begin>")    'cic:image-goto-middle)
+  (define-key image-mode-map (kbd "<kp-insert>")     'cic:image-toggle-zoom)
+  ;; the C-S- prevents accidental deletion
+  (define-key image-mode-map (kbd "C-S-<kp-delete>") 'cic:image-delete))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; magit
@@ -872,9 +1060,10 @@ TODO broken, provided a diff cleanup function too!"
                          ;; TODO: get rid of flymake
                          ;; TODO: unsure about popwin mode
                          ace-jump-mode
+                         annotate
                          apache-mode
                          apt-sources-list
-                         arduino-mode
+                         ;; arduino-mode
                          async
                          auctex
                          auto-overlays
@@ -886,7 +1075,7 @@ TODO broken, provided a diff cleanup function too!"
                          capture
                          clippy
                          company
-                         company-arduino
+                         ;; company-arduino
                          company-c-headers
                          company-irony
                          company-math
@@ -915,22 +1104,22 @@ TODO broken, provided a diff cleanup function too!"
                          flycheck-pyflakes
                          flymake-cursor
                          free-keys
-                         fuzzy-match
+                         ;; fuzzy-match
                          gh-md
                          ghub
-                         git-commit
+                         ;; git-commit
                          gnuplot
                          gnuplot-mode
                          ido-completing-read+
                          ido-hacks
-                         ido-ubiquitous
+                         ;; ido-ubiquitous
                          idomenu
                          image+
                          json-mode
                          jumplist
-                         lacarte
+                         ;; lacarte
                          latex-extra
-                         magit
+                         ;; magit
                          markdown-mode
                          math-symbol-lists
                          matlab-mode
@@ -945,7 +1134,7 @@ TODO broken, provided a diff cleanup function too!"
                          peep-dired
                          pos-tip
                          prolog
-                         pythonic
+                         ;; pythonic
                          rainbow-delimiters
                          readline-complete
                          s
@@ -971,13 +1160,18 @@ TODO broken, provided a diff cleanup function too!"
 
 (defun cic:install-packages ()
   (interactive)
-  (dolist (package cic:package-list)
-    ;; package-built-in-p something else to check?
-    (unless (cic:package-installed-manager-p package)
-      ;; there are sometimes errors, catch them
-      (condition-case error-string
-          (package-install package)
-        (error (message (concat "Failed to install package: " (symbol-name package) " ")))))))
+  (let ((failed nil))
+    (dolist (package cic:package-list)
+      ;; package-built-in-p something else to check?
+      (unless (cic:package-installed-manager-p package)
+        ;; there are sometimes errors, catch them
+        (condition-case error-string
+            (package-install package)
+          (error (progn
+                   (setq filed t)
+                   (message (concat "Failed to install package: " (symbol-name package) " ")))))))
+    (when failed
+      (message "Some packages failed to install!"))))
 ;; error-string
 
 (defun cic:update-packages ()

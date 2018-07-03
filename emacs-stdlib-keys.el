@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180209
+;; Version: 20180629
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -49,16 +49,9 @@
   :keymap (let ((map (make-sparse-keymap)))
             ;; TODO: not in use for now
             ;; (define-key map (kbd "S-SPC") (lambda () (interactive) (switch-to-buffer (other-buffer))))
-            ;; these make working on a laptop or tablet type computer great
-            (define-key map (kbd "<up>")     'cic:move-up)
-            (define-key map (kbd "<down>")   'cic:move-down)
+
             (define-key map (kbd "S-<up>")   'cic:page-up)
             (define-key map (kbd "S-<down>") 'cic:page-down)
-            ;; TODO: make a symbol...
-            (define-key map (kbd "C-<up>")   (lambda () (interactive)
-                                               (scroll-down 1)))
-            (define-key map (kbd "C-<down>") (lambda () (interactive)
-                                               (scroll-up 1)))
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
             (define-key map [f12]            'cic:toggle-menubar)
@@ -98,8 +91,9 @@
             (define-key map (kbd "M-i")      'indent-for-tab-command)
             ;; TODO: replace
             (define-key map (kbd "M-l")      'cic:goto-previous-mark)
-            (define-key map (kbd "M-[")      'cic:decrease-indent)
-            (define-key map (kbd "M-]")      'cic:increase-indent)
+            ;; TODO: interferes with prior/next keys in terminal mode
+            ;; (define-key map (kbd "M-[")      'cic:decrease-indent)
+            ;; (define-key map (kbd "M-]")      'cic:increase-indent)
             (define-key map (kbd "M-'")      'dabbrev-expand)
             (define-key map (kbd "M-/")      'dabbrev-expand)
             (define-key map (kbd "M-=")      'cic:count-words-region-or-buffer)
@@ -150,6 +144,19 @@
             map))
 ;; (define-key map (kbd "C-<return>") 'org-insert-heading-respect-content)
 
+;; TODO: what other modes need this
+(define-minor-mode emacs-stdlib-keys-non-image-mode
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            ;; these make working on a laptop or tablet type computer great
+            ;; but only for text files
+            (define-key map (kbd "<up>")     'cic:move-up)
+            (define-key map (kbd "<down>")   'cic:move-down)
+            ;; TODO: make a symbol? just use scroll up/down
+            (define-key map (kbd "C-<up>")   'scroll-down)
+            (define-key map (kbd "C-<down>") 'scroll-up)
+            map))
+
 (requiring-package (org)
   (define-minor-mode emacs-stdlib-keys-org-mode
     :global t
@@ -180,6 +187,12 @@
     (emacs-stdlib-keys-non-org-mode 0))
   (add-hook 'org-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode))
 
+(defun cic:stdlib-keys-image-mode-setup-hook ()
+  ;; TODO: which other ones?
+  (when (eq major-mode 'image-mode)
+    (emacs-stdlib-keys-non-image-mode 0)))
+(add-hook 'find-file-hook 'cic:stdlib-keys-image-mode-setup-hook)
+
 (defun cic:stdlib-keys-term-setup-hook ()
   (emacs-stdlib-keys-non-term-mode 0))
 (add-hook 'term-mode-hook 'cic:stdlib-keys-term-setup-hook)
@@ -191,7 +204,8 @@
   ;; screws up minibuffer
   ;; (local-set-key (kbd "m-v") 'kill-ring-save-whole-word-or-region)
   ;; (local-set-key (kbd "m-v") 'yank)
-)
+  )
+
 (add-hook 'minibuffer-setup-hook 'cic:stdlib-keys-minibuffer-setup-hook)
 
 (defun cic:backward-symbol (&optional arg)

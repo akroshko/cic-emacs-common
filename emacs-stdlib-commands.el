@@ -664,32 +664,35 @@ into current buffer.  Without ARG, defaults to 24 character
 alphanumeric."
   (interactive "P")
   (let ((select-list (list
-                      (list '30l   "30 character alphabet")
-                      (list '24anp "24 character alphanumeric with punctuation")
-                      (list '12anp "12 character alphanumeric with punctuation")
-                      (list '18anl "18 character alphanumeric lowercase")
-                      (list '24an  "24 character alphanumeric")
-                      (list '12an  "12 character alphanumeric")))
+                      (list '18anl      "18 character alphanumeric lowercase")
+                      (list '18anlsuff  "18 character alphanumeric lowercase with 2 character suffix.")
+                      (list '24l        "24 character alphabet lowercase")
+                      (list '24anl      "24 character alphanumeric lowercase")
+                      (list '18anp      "18 character alphanumeric with punctuation")
+                      (list '12anp      "12 character alphanumeric with punctuation")
+                      (list '8anp       "8 character alphanumeric with punctuation")))
         selected)
     (cond ((eq select t)
            (setq selected (cic:select-list-item select-list 'cadr))
            (setq selected (car (elt select-list selected))))
           (arg
-           (setq selected '18anl))
+           (setq selected '18anlsuff))
           (t
-           (setq selected '30l)))
-    (cond ((eq selected '12an)
-           (insert (cic:create-password-12-Alphanum)))
+           (setq selected '18anl)))
+    (cond ((eq selected '8anp)
+           (insert (cic:create-password cic:password-characters-Alphanum-punct 8)))
           ((eq selected '12anp)
-           (insert (cic:create-password-12-Alphanum-punct)))
-          ((eq selected '18anl)
-           (insert (cic:create-password-18-alphanum-lower)))
-          ((eq selected '24an)
-           (insert (cic:create-password-24-Alphanum)))
-          ((eq selected '24anp)
-           (insert (cic:create-password-24-Alphanum-punct)))
+           (insert (cic:create-password cic:password-characters-Alphanum-punct 12)))
+          ((eq selected '18anlsuff)
+           (insert (concat (cic:create-password cic:password-characters-alphanum-lower 18) "Q.")))
+          ((eq selected '18anp)
+           (insert (cic:create-password cic:password-characters-Alphanum-punct 18)))
+          ((eq selected '24anl)
+           (insert (cic:create-password cic:password-characters-alphanum-lower 24)))
+          ((eq selected '24l)
+           (insert (cic:create-password cic:password-characters-alpha-lower 24)))
           (t
-           (insert (cic:create-password-30-alpha-lower))))))
+           (insert (cic:create-password cic:password-characters-alphanum-lower 18))))))
 
 (defun cic:create-password-insert-select ()
   "Select a random password type and insert into current buffer."
@@ -802,31 +805,38 @@ alphanumeric."
 
 ;; TODO add to flyspell buffer
 ;; TODO move out of keys and into somewhere else?
-(defun cic:flyspell-here ()
-  ""
-  (interactive)
+(defun cic:flyspell-word (&optional arg)
+  "Spellcheck word and start flyspell-mode.  Prefix disables
+flyspell-mode."
+  (interactive "P")
   ;; reload word list by killing ispell
   ;; TODO: do not restart if nothing has changed
   ;; (ispell-kill-ispell t)
   ;; detect prog mode first
   ;; TODO: detect if flyspell started
-  (cond ;; ((not (eq last-command 'cic:flyspell-here))
-   ;;  (ispell-word))
-   ((and (not flyspell-mode) (cic:prog-mode-p))
-    (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
-    (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
-    (cic:flyspell-init-prog))
-   ((and (not flyspell-mode) (cic:text-mode-p))
-    (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
-    (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
-    (cic:flyspell-init-text)))
-  (ispell-word)
-  ;; TODO: run async?
-  (flyspell-buffer))
+  (cond (arg
+         ;; TODO: check if flyspell is started
+         (flyspell-mode -1)
+         )
+        (t
+         (cond ;; ((not (eq last-command 'cic:flyspell-here))
+          ;;  (ispell-word))
+          ((and (not flyspell-mode) (cic:prog-mode-p))
+           (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+           (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+           (cic:flyspell-init-prog))
+          ((and (not flyspell-mode) (cic:text-mode-p))
+           (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+           (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+           (cic:flyspell-init-text)))
+         (ispell-word)
+         ;; TODO: run async?
+         (flyspell-buffer))))
 
 ;; TODO: move to somewhere more appropriate
 (setq flyspell-issue-message-flag nil)
 
+;; TODO: merge these two
 (defun cic:wordlist-current-word ()
   "Add current word to user-defined wordlist."
   (interactive)
@@ -841,7 +851,25 @@ alphanumeric."
       (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
       (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
       (ispell-kill-ispell t)
-      (cic:flyspell-here)
+      (cic:flyspell-word)
+      ;; reset word list
+      (message (concat "Successfully added " word " to list!")))))
+
+(defun cic:wordlist-current-word-no-flyspell ()
+  "Add current word to user-defined wordlist."
+  (interactive)
+  (let ((word (thing-at-point 'word)))
+    (when word
+      (with-current-file cic:user-wordlist
+        (goto-char (point-max))
+        (insert (concat "\n" word "\n"))
+        (flush-lines "^\\s-*$" (point-min) (point-max))
+        (sort-lines nil (point-min) (point-max))
+        (save-buffer))
+      (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
+      (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
+      (ispell-kill-ispell t)
+      ;; (cic:flyspell-word)
       ;; reset word list
       (message (concat "Successfully added " word " to list!")))))
 

@@ -49,69 +49,71 @@
   ;; "Some standard keys bound to super."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "s-[")        'cic:previous-buffer-same-mode)
-            (define-key map (kbd "s-]")        'cic:next-buffer-same-mode)
+            (define-key map (kbd "s-[")          'cic:previous-buffer-same-mode)
+            (define-key map (kbd "s-]")          'cic:next-buffer-same-mode)
             ;; great for scanning
-            (define-key map (kbd "s-}")        'cic:next-file-dired-pagedown)
-            (define-key map (kbd "s-{")        'cic:previous-file-dired-pageup)
+            (define-key map (kbd "s-}")          'cic:next-file-dired-pagedown)
+            (define-key map (kbd "s-{")          'cic:previous-file-dired-pageup)
             ;; org keys
             ;; TODO: using for something else now
             ;; (define-key map (kbd "s-<return>") 'cic:org-insert-two-level)
-            (define-key map (kbd "s-%")        'cic:query-replace-case-sensitive)
-            (define-key map (kbd "s-*")        'cic:recalculate)
-            (define-key map (kbd "s-=")        (lambda () (interactive) (what-cursor-position t)))
-            (define-key map (kbd "s-a a")      'apropos)
-            (define-key map (kbd "s-a s-a")    'apropos)
+            (define-key map (kbd "s-%")          'cic:query-replace-case-sensitive)
+            (define-key map (kbd "s-*")          'cic:recalculate)
+            (define-key map (kbd "s-=")          (lambda () (interactive) (what-cursor-position t)))
+            (define-key map (kbd "s-a a")        'apropos)
+            (define-key map (kbd "s-a s-a")      'apropos)
             ;; TODO: choose one of these
-            (define-key map (kbd "s-a c")      'apropos-command)
-            (define-key map (kbd "s-a x")      'apropos-command)
-            (define-key map (kbd "s-a v")      'apropos-value)
+            (define-key map (kbd "s-a c")        'apropos-command)
+            (define-key map (kbd "s-a x")        'apropos-command)
+            (define-key map (kbd "s-a v")        'apropos-value)
             ;; TODO: e for edit for now, e=emacs a lot for me
-            (define-key map (kbd "s-c e")      'wdired-change-to-wdired-mode)
+            (define-key map (kbd "s-c e")        'wdired-change-to-wdired-mode)
+            (define-key map (kbd "s-<return>")   'ispell-word)
+            (define-key map (kbd "s-,")          'cic:wordlist-current-word-no-flyspell)
             ;; generic emacs development
-            (define-key map (kbd "s-e b")      'cic:elisp-eval-buffer)
-            (define-key map (kbd "s-e d")      'cic:elisp-eval-call-defun)
-            (define-key map (kbd "s-e i")      'ielm)
+            (define-key map (kbd "s-e b")        'cic:elisp-eval-buffer)
+            (define-key map (kbd "s-e d")        'cic:elisp-eval-call-defun)
+            (define-key map (kbd "s-e i")        'ielm)
             ;; TODO: these aren't in line with my current scheme
-            (define-key map (kbd "s-e j")      'cic:elisp-pp-capture-buffer)
+            (define-key map (kbd "s-e j")        'cic:elisp-pp-capture-buffer)
             ;; TODO: decide on this...
-            (define-key map (kbd "s-e p")      'cic:elisp-pp-capture-buffer)
-            (define-key map (kbd "s-e m")      'cic:elisp-messages-buffer)
-            (define-key map (kbd "s-e e")      'cic:elisp-debug-on-error)
-            (define-key map (kbd "s-e s")      'cic:elisp-scratch-buffer)
-            (define-key map (kbd "s-f w")      'cic:search-word-other-window)
+            (define-key map (kbd "s-e p")        'cic:elisp-pp-capture-buffer)
+            (define-key map (kbd "s-e m")        'cic:elisp-messages-buffer)
+            (define-key map (kbd "s-e e")        'cic:elisp-debug-on-error)
+            (define-key map (kbd "s-e s")        'cic:elisp-scratch-buffer)
+            (define-key map (kbd "s-f w")        'cic:search-word-other-window)
             ;; h==help
             ;; TODO: these badly need a menu
-            (define-key map (kbd "s-h a")      'info-apropos)
-            (define-key map (kbd "s-h f")      'find-function)
+            (define-key map (kbd "s-h a")        'info-apropos)
+            (define-key map (kbd "s-h f")        'find-function)
             ;; put c-u to just go to front of manual
-            (define-key map (kbd "s-h e")      'info-lookup-symbol)
-            (define-key map (kbd "s-h k")      'find-function-on-key)
-            (define-key map (kbd "s-h l")      'find-library)
-            (define-key map (kbd "s-h o")      'cic:help-org)
-            (define-key map (kbd "s-h r")      'cic:help-elisp)
+            (define-key map (kbd "s-h e")        'info-lookup-symbol)
+            (define-key map (kbd "s-h k")        'find-function-on-key)
+            (define-key map (kbd "s-h l")        'find-library)
+            (define-key map (kbd "s-h o")        'cic:help-org)
+            (define-key map (kbd "s-h r")        'cic:help-elisp)
             ;; TODO better name/key for this u neq v
-            (define-key map (kbd "s-h u")      'apropos-value)
-            (define-key map (kbd "s-h v")      'find-variable)
+            (define-key map (kbd "s-h u")        'apropos-value)
+            (define-key map (kbd "s-h v")        'find-variable)
             ;; m==system manager
-            (define-key map (kbd "s-m p")      'cic:create-password-insert)
-            (define-key map (kbd "s-m M-p")    'cic:create-password-insert-select)
+            (define-key map (kbd "s-m p")        'cic:create-password-insert)
+            (define-key map (kbd "s-m M-p")      'cic:create-password-insert-select)
             ;; (define-key map (kbd "s-v")        'cic:yank-primary)
             ;; j==jump
             ;; O == Open, meaning I'm Opening Outside of emacs
-            (define-key map (kbd "s-o c")      'cic:browse-url-at-point-conkeror)
-            (define-key map (kbd "s-o f")      'cic:browse-url-at-point-firefox)
-            (define-key map (kbd "s-o g")      'cic:browse-url-at-point-gnome-web)
-            (define-key map (kbd "s-o w")      'cic:browse-url-at-point-w3m)
+            (define-key map (kbd "s-o c")        'cic:browse-url-at-point-conkeror)
+            (define-key map (kbd "s-o f")        'cic:browse-url-at-point-firefox)
+            (define-key map (kbd "s-o g")        'cic:browse-url-at-point-gnome-web)
+            (define-key map (kbd "s-o w")        'cic:browse-url-at-point-w3m)
             ;; TODO: move this
-            (define-key map (kbd "s-p p s")    (lambda () (interactive) (profiler-start 'cpu)))
-            (define-key map (kbd "s-p p r")    'profiler-report)
+            (define-key map (kbd "s-p p s")      (lambda () (interactive) (profiler-start 'cpu)))
+            (define-key map (kbd "s-p p r")      'profiler-report)
             ;; TODO: move this
-            (define-key map (kbd "H-;")        'cic:ansi-term-localhost-popup)
+            (define-key map (kbd "H-;")          'cic:ansi-term-localhost-popup)
             ;; decide alternate key for this....
             ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
-            (define-key map (kbd "s-c 1")      'cic:ansi-term-ipython)
-            (define-key map (kbd "s-c 2")      'cic:ansi-term-sage)
+            (define-key map (kbd "s-c 1")        'cic:ansi-term-ipython)
+            (define-key map (kbd "s-c 2")        'cic:ansi-term-sage)
             ;; view
             ;; requires??? changing becaus s-v used for other things
             ;; (define-key map (kbd "s-v l") 'hl-line-mode)
@@ -119,7 +121,7 @@
             ;; zap up to char
             ;; TODO: something else here due to other keys I'm trying
             ;; TODO: decide if I want to toggle global default value or ???
-            (define-key map (kbd "s-5")        'toggle-case-fold-search)
+            (define-key map (kbd "s-5")          'toggle-case-fold-search)
             ;; (cic:toggle-variable case-fold-search
             ;;  "Case fold search enabled."
             ;;  "Case fold search disabled."))
@@ -144,8 +146,8 @@
             (define-key map (kbd "H-(")          'cic:org-end-of-prev-heading)
             (define-key map (kbd "H-}")          'cic:next-file-dired)
             (define-key map (kbd "H-{")          'cic:previous-file-dired)
-            (define-key map (kbd "H-$")          'cic:flyspell-here)
-            (define-key map (kbd "H-<return>")   'cic:flyspell-here)
+            (define-key map (kbd "H-$")          'cic:flyspell-word)
+            (define-key map (kbd "H-<return>")   'cic:flyspell-word)
             (define-key map (kbd "H-S-<return>") 'flyspell-goto-next-error)
             (define-key map (kbd "H-,")          'cic:wordlist-current-word)
             (define-key map (kbd "H-\\")         'indent-sexp)
