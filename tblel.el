@@ -113,7 +113,6 @@ along with a #+TBLEL line."
                           ;; TODO: change to org-meta-line, in keyword-face for convienience right now
                           '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . font-lock-comment-face))))
 
-
 (add-hook 'org-mode-hook 'tblel-setup)
 
 ;; a nice generic sum function, sum all sumable solumns

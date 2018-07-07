@@ -155,7 +155,7 @@
             (define-key map (kbd "H-B")          'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
-            (define-key map (kbd "H-g")          'cic:kill-transient-windows)
+            (define-key map (kbd "H-k")          'cic:kill-transient-windows)
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-v")          'cic:toggle-media)
@@ -237,9 +237,9 @@
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
             ;; other cool keys
-            (define-key map (kbd "H-0") 'cic:text-scale-neutral)
+            ;; (define-key map (kbd "H-0") 'cic:text-scale-neutral)
             (define-key map (kbd "H--") 'text-scale-decrease)
-            (define-key map (kbd "H-=") 'text-scale-increase)
+            (define-key map (kbd "H-=") 'cic:text-scale-neutral)
             (define-key map (kbd "H-+") 'text-scale-increase)
             ;; TODO: decided this was better used for other things
             ;; (define-key map (kbd "H-<return>") 'buffer-menu)

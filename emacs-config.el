@@ -90,13 +90,15 @@
 (add-to-list 'initial-frame-alist
              ;; '(font . "DejaVu Sans Mono-7")
              ;; '(font . "Liberation Mono-8")
-             '(font . "Droid Sans Mono-8")
+             ;; '(font . "Droid Sans Mono-8")
+	     '(font . "Noto Sans Mono CJK JP Regular-7")
              ;; '(font . "Anonymous-8")
              )
 (add-to-list 'default-frame-alist
              ;; '(font . "DejaVu Sans Mono-7")
              ;; '(font . "Liberation Mono-8")
-             '(font . "Droid Sans Mono-8")
+             ;; '(font . "Droid Sans Mono-8")
+	     '(font . "Noto Sans Mono CJK JP Regular-7")
              ;; '(font . "Anonymous-8")
              )
 ;; this fixes many coding problems I used to have
