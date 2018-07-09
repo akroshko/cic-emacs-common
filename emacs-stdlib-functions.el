@@ -1360,14 +1360,16 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                     (setq line-found t)))
                 (when line-found
                   (beginning-of-line)
-                  (kill-line)))
+                  (kill-line)
+                  (setq kill-ring (cdr kill-ring))))
                ((string-match ":END:" (cic:get-current-line))
                 (setq line-found nil)
                 (save-excursion
                   (forward-line)
                   (when (and (not (eobp)) (string-match "^\\s-*$" (cic:get-current-line)))
                     (beginning-of-line)
-                    (kill-line))))))))))
+                    (kill-line)
+                    (setq kill-ring (cdr kill-ring)))))))))))
 
 ;; https://stackoverflow.com/questions/4870704/appending-characters-to-the-end-of-each-line-in-emacs
 ;; create key for this and clean up language
