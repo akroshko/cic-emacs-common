@@ -124,6 +124,10 @@
 ;; run for when starting without server
 (cic:configure-modeline-color)
 
+;; this seems like a nice default on all systems
+(setq default-scroll-bar-width 10)
+(setq-default indicate-buffer-boundaries '((t . left)))
+
 ;; TODO: more intuitive percentage
 (setcar mode-line-position
         '(:eval (format "%4.1f%%%%" (/ (point) 0.01 (point-max)))))

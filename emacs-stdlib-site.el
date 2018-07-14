@@ -312,7 +312,7 @@ TODO broken, provided a diff cleanup function too!"
                    ;; TODO: maybe???
                    (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                    (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
-                   (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
+                   ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
                    (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                                (interactive)
@@ -402,13 +402,13 @@ TODO broken, provided a diff cleanup function too!"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company mode
 ;; TODO: reenable
-(requiring-package (company)
-  (global-company-mode)
-  (company-quickhelp-mode 1)
-  ;; (add-hook 'after-init-hook 'global-company-mode)
-  ;; TODO: for now
-  ;; (define-key company-quickhelp-mode-map (kbd "s-q")  company-quickhelp-manual-begin)
-  )
+;; (requiring-package (company)
+;;   (global-company-mode)
+;;   (company-quickhelp-mode 1)
+;;   ;; (add-hook 'after-init-hook 'global-company-mode)
+;;   ;; TODO: for now
+;;   ;; (define-key company-quickhelp-mode-map (kbd "s-q")  company-quickhelp-manual-begin)
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; conkeror
@@ -829,7 +829,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; TODO: figure this
   ;; (define-key python-mode-map (kbd "M-[") 'python-indent-shift-left)
   ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
-  (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
+  ;; (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
   ;; (define-key python-mode-map (kbd "s-x") 'cic:current-compile)
   (define-key python-mode-map (kbd "s-x c") 'cic:check-python)
   (defun cic:check-python ()
