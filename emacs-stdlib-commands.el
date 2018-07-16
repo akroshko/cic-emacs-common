@@ -194,6 +194,7 @@ TODO: incomplete but still useful right now"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands
+;; hello
 
 (defun cic:browse-url-at-point-conkeror ()
   "Find the URL at point and browse in the conkeror web browser."
@@ -1171,5 +1172,15 @@ and date.  Behaviour based on org-insert-heading."
   (interactive)
   (split-window-below)
   (windmove-down))
+
+(defun cic:comment-header ()
+  (interactive)
+  (unless (save-excursion
+          (beginning-of-line)
+          (looking-at "[[:space:]]*$"))
+    (end-of-line)
+    (insert "\n"))
+  (beginning-of-line)
+  (insert (s-repeat 80 (s-trim-full comment-start))))
 
 (provide 'emacs-stdlib-commands)

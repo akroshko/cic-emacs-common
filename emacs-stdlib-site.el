@@ -719,9 +719,13 @@ TODO broken, provided a diff cleanup function too!"
     (requiring-package (paredit-menu)))
   ;; change keys around for easy navigation of parenthesis
   ;; XXXX: change capitalization keys
+  ;; TODO: move these elsewhere
   (global-set-key (kbd "M-C") 'capitalize-word)
   (global-set-key (kbd "M-L") 'downcase-word)
-  (global-set-key (kbd "M-U") 'upcase-word))
+  (global-set-key (kbd "M-U") 'upcase-word)
+  ;; paredit-mode keys map
+  ;; TODO: add something for paredit-comment-dwim
+  (define-key paredit-mode-map (kbd "M-;") 'comment-dwim-line))
 
 (requiring-package (eldoc)
   ;; if not already loaded
