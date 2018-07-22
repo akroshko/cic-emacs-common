@@ -814,11 +814,10 @@ TODO: use string-key to select a string"
                                    (setq index-count (1+ index-count))
                                    thelist))
                                lst)))
-    (setq select-alist (append select-alist (list (list "-" "cancel" 'cancel))))
-    (cic:select-nested-alist (lambda (e)
-                               (setq selected e))
-                             select-alist
-                             header-message)))
+    (cic:select-alist select-alist
+                      header-message
+                      (lambda (e)
+                        (setq selected e)))))
 
 (defun cic:select-list-item-default-index (lst &optional string-key default-value)
   "Select a list item from LST.
@@ -837,12 +836,12 @@ TODO: document more"
                                    thelist))
                                lst)))
 
-    (if default-value
-        (setq select-alist (append select-alist (list (list "0" (concat "default " default-value) 'default) (list "-" "cancel" 'cancel))))
-      (setq select-alist (append select-alist (list (list "0" "default" 'default) (list "-" "cancel" 'cancel)))))
-    (cic:select-nested-alist (lambda (e)
-                           (setq selected e))
-                         select-alist)))
+    (when default-value
+        (setq select-alist (append select-alist (list (list "0" (concat "default " default-value) 'default)))))
+    (cic:select-alist select-alist
+                      ""
+                      (lambda (e)
+                        (setq selected e)))))
 
 (defun replace-nonprintable (str)
   "Replace non-printable characters with blanks in STR.
@@ -1036,6 +1035,7 @@ think openssl is find for this purpose."
           (t
            (let ((new-password "")
                  (new-password-char))
+             ;; TODO: should probably just make one go at this and then truncate or take random substring
              (dotimes (n char-num)
                ;; get a random number
                (setq new-password-char nil)
@@ -1046,7 +1046,11 @@ think openssl is find for this purpose."
                    (setq new-password (concat new-password (substring char-set new-password-char (1+ new-password-char)))))))
              new-password)))))
 
-(defun cic:select-nested-alist (&optional command filter-alists header-message) ;;  filter-alist-first)
+(when nil
+  (cic:select-alist '(("g" . ("galaxy" "file://galaxy"))
+                      ("h" . ("help" "file://help")))
+                    "Test: " 'identity))
+(defun cic:select-alist (&optional filter-alists header-message command) ;;  filter-alist-first)
   "Allows user to select from an alist.
 TODO: I don't actually use the nested function and I think this
 can be greatly simplified."
@@ -1054,57 +1058,33 @@ can be greatly simplified."
   (interactive)
   ;; get keys until alist is exhausted
   (let ((minibuffer-prompt "")
-        (key-press nil)
+        key-press
         (current-alist filter-alists)
-        ;; (current-alist-index filter-alist-first)
-        ;; (continue-filter t)
-        (continue t)
-        (escape-action nil)
-        (inner-alist nil)
-        (inner-selected)
-        (selected)
-        (selected-text))
+        canceled
+        selected)
     ;; keep reading input while there are inner alists
-    (while continue
-      ;; read input
-      ;; initialise variables
-      (if header-message
-          (setq minibuffer-prompt (concat header-message "\n") )
-        (setq minibuffer-prompt ""))
-      ;; TODO do I want this?
-      (setq escape-action nil)
-      (dolist (search-key current-alist)
-        (setq minibuffer-prompt (concat minibuffer-prompt
-                                        (concat "(" (car search-key) ") " (cadr search-key) "\n"))))
-      ;; read a key
-      (setq key-press (make-string 1 (read-key minibuffer-prompt)))
-      ;; test for valid keypress, inner-selection is nil if not valid
-      (setq inner-selection (assoc key-press current-alist))
-      ;; use input, decide if alist is in fact an inner alist
-      (cond ((not inner-selection)
-             ;; continue at same level
-             )
-            ((not (cic:nested-alist-maybe inner-selection))
-             ;; bottomed out, don't continue
-             ;; select alist
-             (setq selected (caddr inner-selection))
-             (setq selected-text (cadr inner-selection))
-             (setq continue nil))
-            (t
-             ;; a list was selected, go down a level
-             (setq current-alist (elt (cdr inner-selection) 1)))))
-    (apply command (cic:symbol-to-string-or-list selected))))
-
-(defun cic:nested-alist-maybe (maybe-nested)
-  "XXXX: A helper function that may not be required."
-  (and
-   (listp (cddr maybe-nested))
-   (listp (caddr maybe-nested))))
-   ;; (listp ())))
-   ;; is the second element a nested list
-   ;; (listp (car (cdr maybe-nested)))))
-   ;; ;; is the first element of the second also a list?
-   ;; (listp (cdr (car (cdr maybe-nested))))))
+    ;; read input
+    ;; initialise variables
+    (if header-message
+        (setq minibuffer-prompt (concat header-message "\n") )
+      (setq minibuffer-prompt ""))
+    ;; TODO do I want this?
+    (dolist (search-key current-alist)
+      (setq minibuffer-prompt (concat minibuffer-prompt
+                                      (concat "(" (car search-key) ") " (cadr search-key) "\n"))))
+    (setq minibuffer-prompt (concat minibuffer-prompt "(-) cancel" ))
+    ;; read a key
+    ;; TODO: have way of escaping
+    (setq key-press (read-key minibuffer-prompt))
+    (when (or (equal key-press 45) (equal key-press 3) (equal key-press 7))
+      (setq canceled t))
+    (setq key-press (make-string 1 key-press))
+    ;; test for valid keypress, inner-selection is nil if not valid
+    (setq inner-selection (assoc key-press current-alist))
+    ;; use input, decide if alist is in fact an inner alist
+    (setq selected (caddr inner-selection))
+    (unless canceled
+      (apply command (cic:symbol-to-string-or-list selected)))))
 
 (defun cic:org-insert-indent-list-item ()
   "Insert a list item, open and indent properly.

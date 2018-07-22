@@ -313,6 +313,7 @@ TODO broken, provided a diff cleanup function too!"
                    (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                    (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
                    ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
+                   (define-key TeX-mode-map (kbd "C-c C-b") 'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
                    (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
                                                                (interactive)
