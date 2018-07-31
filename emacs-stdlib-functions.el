@@ -1574,6 +1574,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (set-frame-position (selected-frame) 0 0)
   (cic:x-force-maximized))
 
+(defun create-frame-other-window-maximized-focus ()
+  (interactive)
+  (select-frame-set-input-focus (make-frame-command))
+  (set-frame-position (selected-frame) 0 0)
+  (cic:x-force-maximized))
+
 (defun create-frame-here ()
   (interactive)
   (select-frame (make-frame-command))
