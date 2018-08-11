@@ -1568,21 +1568,26 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 (global-set-key (kbd "S-<prior>") 'beginning-of-buffer)
 (global-set-key (kbd "S-<next>" ) 'end-of-buffer)
 
-(defun create-frame-other-window-maximized ()
+(defun create-frame-other-window-maximized (&optional name)
   (interactive)
   (select-frame (make-frame-command))
   (set-frame-position (selected-frame) 0 0)
   (cic:x-force-maximized))
 
-(defun create-frame-other-window-maximized-focus ()
+(defun create-frame-other-window-maximized-focus (&optional name)
   (interactive)
   (select-frame-set-input-focus (make-frame-command))
   (set-frame-position (selected-frame) 0 0)
   (cic:x-force-maximized))
 
-(defun create-frame-here ()
+(defun create-frame-here (&optional frame-name)
   (interactive)
-  (select-frame (make-frame-command))
+  (cond (frame-name
+         (if (display-graphic-p)
+             (make-frame (list (cons 'name frame-name)))
+           (select-frame (make-frame (list (cons name frame-name))))))
+        (t
+          (select-frame (make-frame-command))))
   (cic:x-force-maximized))
 
 (defun cic:hl-line-mode-or-disable-visuals (&optional arg)

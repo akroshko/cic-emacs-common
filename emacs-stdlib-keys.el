@@ -187,9 +187,9 @@
   (emacs-stdlib-keys-non-org-mode t)
   (defun cic:disable-emacs-stdlib-keys-non-org-mode ()
     (emacs-stdlib-keys-non-org-mode 0))
-  (add-hook 'org-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode))
-
-
+  (add-hook 'org-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode)
+  ;; TODO: make this function more universal?
+  (add-hook 'special-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode))
 
 (defun cic:stdlib-keys-image-mode-setup-hook ()
   ;; TODO: which other ones?

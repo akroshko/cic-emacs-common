@@ -1045,6 +1045,11 @@ and date.  Behaviour based on org-insert-heading."
 (defun cic:kill-transient-windows (&optional arg)
   "Kill all transient windows."
   (interactive "P")
+  ;; kill transient frames first
+  (dolist (frame (frame-list))
+    (let ((the-frame-name (substring-no-properties (cdr (assoc 'name (frame-parameters frame))))))
+      (when (or (equal the-frame-name "attachment-find") (equal the-frame-name  "capture"))
+        (delete-frame frame))))
   (if arg
       (and cic:kill-transient-windows-undo (set-window-configuration cic:kill-transient-windows-undo))
     ;; loop over window

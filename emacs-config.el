@@ -421,7 +421,7 @@ read only."
         ;; TODO: add seperator...
         org-todo-keywords    '((sequence "NOTE(!@)"
                                          "REFILE(!@)"
-                                         ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;
                                          "TODO(!@)"
                                          "NEXT(!@)"
                                          "INPROGRESS(!@)"
@@ -435,13 +435,13 @@ read only."
         ;; TODO: probably want a slightly different color contrast for note
         org-todo-keyword-faces '(("NOTE"             . (:foreground "yellow"      :background "dark green" :weight bold))
                                  ("REFILE"           . (:foreground "red"         :background "cyan"       :weight bold))
-                                 ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;
                                  ("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
                                  ("INPROGRESS"       . (:foreground "magenta"     :background "gold"       :weight bold))
                                  ("PRIORITY"         . (:foreground "light blue"  :background "red"        :weight bold))
                                  ("WAITING"          . (:foreground "magenta"     :background "gold"       :weight bold))
-                                 ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;
                                  ("DONE"             . (:foreground "dark orange" :background "blue"       :weight bold))
                                  ("DUPLICATE"        . (:foreground "yellow"      :background "blue"       :weight bold))
                                  ("CANT"             . (:foreground "yellow"      :background "blue"       :weight bold))
@@ -461,9 +461,10 @@ read only."
         org-cycle-level-after-item/entry-creation nil)
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
-    (let ((the-buffer-file-name (buffer-file-name)))
-      (unless (and the-buffer-file-name (string-match "-log.*\\.org" the-buffer-file-name))
-        (org-display-inline-images))))
+    (when (eq major-mode 'org-mode)
+      (let ((the-buffer-file-name (buffer-file-name)))
+        (unless (and the-buffer-file-name (string-match "-log.*\\.org" the-buffer-file-name))
+          (org-display-inline-images)))))
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()
   ;;   (font-lock-add-keywords 'org-mode
@@ -474,15 +475,10 @@ read only."
   ;;       server does not have this...
   ;; Disable inline images by default, then toggle them on in a hook
   (setq org-startup-with-inline-images nil)
-  (setq org-image-actual-width 400)
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 64))
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 128))
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 400))
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 480))
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 640))
-  ;; (add-to-list 'safe-local-variable-values '(org-image-actual-width . 800))
+  (setq org-image-actual-width 128)
+  ;; this allows the file local variable org-image-actual-width to take effect
   (put 'org-image-actual-width 'safe-local-variable 'integerp)
-  (add-hook 'org-mode-hook 'org-image-enable)
+  (add-hook 'hack-local-variables-hook 'org-image-enable)
   ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
     (let ((the-buffer-file-name (buffer-file-name)))

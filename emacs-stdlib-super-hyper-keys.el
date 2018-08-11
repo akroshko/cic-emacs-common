@@ -159,6 +159,8 @@
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-v")          'cic:toggle-media)
+            (define-key map (kbd "s-g s-g")      'cic:toggle-media)
+            (define-key map (kbd "s-g g")        'cic:toggle-media)
             ;; (define-key map (kbd "H-k")          'cic:delete-window)
             ;; TODO: temporary while I build new muscle memory
             ;; (define-key map (kbd "H-0")          'cic:delete-window)
