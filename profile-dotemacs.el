@@ -208,5 +208,4 @@ grayed out.")
    percentage
    (car timings) (nth 1 timings) (nth 2 timings)))
 
-
 ;; profile-dotemacs.el ends here
