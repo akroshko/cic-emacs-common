@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180627
+;; Version: 20180824
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -167,8 +167,9 @@ TODO broken, provided a diff cleanup function too!"
                    (setq TeX-view-program-list
                          ;; TODO: how to maximize by default
                          '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
-                           ;; ???
-                           ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))))
+                           ;; TODO: disable evince for now
+                           ;; ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))
+                           ))
                    (setq TeX-view-program-selection
                          '((output-dvi "DVI Viewer")
                            (output-pdf "zathura")
@@ -176,10 +177,14 @@ TODO broken, provided a diff cleanup function too!"
                    (defun cic:view-alternate ()
                      (interactive)
                      (let ((TeX-view-program-selection '((output-dvi "DVI Viewer")
-                                                         (output-pdf "Evince")
+                                                         ;; (output-pdf "Evince")
                                                          (output-html "HTML Viewer"))))
                        (TeX-view)))
-                   (define-key TeX-mode-map (kbd "C-c M-v") 'cic:view-alternate)
+                   ;; TODO: a decision must be made which is most convienient
+                   (define-key TeX-mode-map (kbd "C-c M-v")   'cic:view-alternate)
+                   (define-key TeX-mode-map (kbd "s-c v")     'TeX-view)
+                   (define-key TeX-mode-map (kbd "s-c s-v")   'TeX-view)
+                   (define-key TeX-mode-map (kbd "s-c M-s-v") 'cic:view-alternate)
                    (defun cic:reftex-reference ()
                      (interactive)
                      (let ((reftex-refstyle "\\ref"))
@@ -266,13 +271,11 @@ TODO broken, provided a diff cleanup function too!"
                                  (goto-char (point-max))))
                            (message "Process buffer doesn't exist!!!")))))
                    (defun cic:any-errors-in-process-buffer (process-buffer)
-                     (with-current-buffer process-buffer
-                       (save-excursion
-                         (goto-char (point-min))
-                         (> (length (delq nil (mapcar (lambda (e)
-                                                        (when (eq (car e) 'error)
-                                                          t))
-                                                      TeX-error-list))) 0))))
+                     (with-current-buffer-min process-buffer
+                                              (> (length (remove-if-not (lambda (e)
+                                                                          (when (eq (car e) 'error)
+                                                                            t))
+                                                                        TeX-error-list)) 0)))
                    (defun cic:switch-to-latex-buffer ()
                      (interactive)
                      (if cic:latex-buffer
@@ -311,8 +314,10 @@ TODO broken, provided a diff cleanup function too!"
                    (cic:add-to-alist 'TeX-command-list "LaTeXdraft" "%`%l%(mode) -draftmode %' %t" 'TeX-run-TeX nil '(latex-mode doctex-mode) :help "Run LaTeX in draft mode.")
                    ;; TODO: maybe???
                    (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
-                   (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
+                   ;; TODO: better master command?
+                   ;; (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
                    ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
+                   (define-key TeX-mode-map (kbd "s-c b")   'cic:current-compile)
                    (define-key TeX-mode-map (kbd "C-c C-b") 'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
                    (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
@@ -357,8 +362,8 @@ TODO broken, provided a diff cleanup function too!"
 ;; clippy
 ;; TODO: replace with something less silly
 (requiring-package (clippy)
-  ;; TODO: experimental
-  (global-set-key (kbd "M-,") 'clippy-describe-function)
+  ;; TODO: goofy, but put to something else
+  (global-set-key (kbd "M-'") 'clippy-describe-function)
   ;; (global-set-key (kbd "M-h") 'clippy-describe-function)
   (global-set-key (kbd "M-h") 'cic:clippy-describe)
   (defvar cic:clippy-last-show nil
@@ -412,12 +417,19 @@ TODO broken, provided a diff cleanup function too!"
 ;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; conkeror
-(autoload 'conkeror-minor-mode "conkeror-minor-mode")
-; (add-hook 'js-mode-hook 'conkeror-minor-mode)
-(add-hook 'js-mode-hook (lambda ()
-                          (when (string-match "conkeror" (buffer-file-name))
-                            (conkeror-minor-mode 1))))
+;; conkeror and javascript
+
+(requiring-package (js)
+  (autoload 'conkeror-minor-mode "conkeror-minor-mode")
+                                        ; (add-hook 'js-mode-hook 'conkeror-minor-mode)
+  (add-hook 'js-mode-hook (lambda ()
+                            (when (string-match "conkeror" (buffer-file-name))
+                              (conkeror-minor-mode 1))))
+  (defun cic:js-mode-disable-electic-indent ()
+    ;; TODO: electric-indent-just-newline would be nice
+    (electric-indent-local-mode 0))
+  (add-hook 'js-mode-hook 'cic:js-mode-disable-electic-indent)
+  (add-to-list 'auto-mode-alist '("\\.jsx$" . js-mode)))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; dired-sort
@@ -430,7 +442,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; this sexp adds a LOT to load time and I don't use emms much right now
   ;; minimal does not need it
   (requiring-package (emms-setup)
-    (require 'emms-info-libtag)
+    ;; (require 'emms-info-libtag)
     (emms-all)
     (emms-default-players)
     (requiring-package (emms-mark)
@@ -439,8 +451,23 @@ TODO broken, provided a diff cleanup function too!"
       )
     (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
     (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
-    (setq emms-info-function '(emms-info-libtag))
+    ;; (setq emms-info-function '(emms-info-libtag))
     (setq emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
+    ;; track description
+    (defun cic:emms-full-track-description (track)
+      "Return a description of track that includes filename.
+This is useful with a lot of unsorted music because sometimes
+filenames are ambiguous and sometimes metadata is ambiguous."
+      (let ((artist (emms-track-get track 'info-artist))
+        (title  (emms-track-get track 'info-title)))
+        (cond
+         ((and artist title)
+          (concat (substring (concat artist " - " title "                                                                                ") 0 80) " || " (emms-track-simple-description track)))
+         (title
+          (concat (substring (concat title "                                                                                " 0 80)) " || " (emms-track-simple-description track)))
+         (t
+          (emms-track-simple-description track)))))
+    (setq emms-track-description-function 'cic:emms-full-track-description)
     ;; XXXX: redefine for my computers running Debian in 2018+, take out -c option
     (defun emms-volume-amixer-change (amount)
       "Change amixer master volume by AMOUNT."
@@ -463,11 +490,12 @@ TODO broken, provided a diff cleanup function too!"
     (delq 'emms-player-vlc emms-player-list)
     (delq 'emms-player-vlc-playlist emms-player-list)
     (pushnew 'emms-player-mpg321-custom emms-player-list))
-    ;; (requiring-package (emms-player-mpv)
-    ;;   (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
-    ;;   (delq 'emms-player-mpv emms-player-list)
-    ;;   (pushnew 'emms-player-mpv emms-player-list))
-    )
+  ;; (requiring-package (emms-player-mpv)
+  ;;   (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
+  ;;   (delq 'emms-player-mpv emms-player-list)
+  ;;   (pushnew 'emms-player-mpv emms-player-list))
+
+  )
 
 (requiring-package (flyspell)
   ;; TODO: change this if I need it
@@ -797,6 +825,10 @@ TODO broken, provided a diff cleanup function too!"
          (char ?/)
          (zero-or-more not-newline)
          eol)))
+  (defun cic:json-mode-disable-electric-indent ()
+    ;; TODO: electric-indent-just-newline would be nice
+    (electric-indent-local-mode 0))
+  (add-hook 'json-mode-hook 'cic:json-mode-disable-electric-indent)
   ;; TODO: make sure this does not grow list indefinitely as I reload this file
   ;; TODO: using warning rather than comment because comments are not valid vanilla json syntax
   (add-to-list 'json-font-lock-keywords-1 (list cic:json-mode-comment-re 1 font-lock-warning-face)))
@@ -840,9 +872,8 @@ TODO broken, provided a diff cleanup function too!"
   (defun cic:check-python ()
     (interactive)
     (when (buffer-live-p (get-buffer "*cic-python-check*"))
-      (with-current-buffer "*cic-python-check*"
-        (erase-buffer)
-        (goto-char (point-min))))
+      (with-current-buffer-erase "*cic-python-check*"
+                                 (goto-char (point-min))))
     (let ((return-code (call-process "python" nil "*cic-python-check*" nil "-m" "py_compile" (buffer-file-name))))
       (if (equal return-code 0)
           (message "Syntax check passed!!!")
@@ -947,7 +978,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; XXXX: obviously this is specific to a particular installation
   ;; TODO: maybe have a load log warning thing
   ;; find latest installed sage and add to load path
-  (let ((sagedir (car (reverse (sort (delq nil (mapcar (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt"))) 'string<)))))
+  (let ((sagedir (car (reverse (sort (remove-if-not (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt")) 'string<)))))
     (add-to-list 'load-path (concat "/opt/" sagedir "/local/share/emacs/site-lisp/sage-mode"))
     ;; TODO: I will need to make my own sage version
     (if (featurep 'sage)
@@ -966,7 +997,8 @@ TODO broken, provided a diff cleanup function too!"
     ;; installation with the preview package.
     ;; Also consider running (customize-group 'sage) to see more options.
     )
-  (define-key python-mode-map (kbd "C-c C-v") nil))
+  ;; (define-key python-mode-map (kbd "C-c C-v") nil)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rainbow
@@ -1078,6 +1110,7 @@ TODO broken, provided a diff cleanup function too!"
                          benchmark-init
                          biblio
                          capture
+                         centered-cursor-mode
                          clippy
                          company
                          ;; company-arduino
@@ -1090,6 +1123,7 @@ TODO broken, provided a diff cleanup function too!"
                          csv-mode
                          cython-mode
                          dash
+                         diff-hl
                          dired-avfs
                          dired-hacks-utils
                          dired-icon
@@ -1112,6 +1146,8 @@ TODO broken, provided a diff cleanup function too!"
                          ;; fuzzy-match
                          gh-md
                          ghub
+                         git-timemachine
+                         gited
                          ;; git-commit
                          gnuplot
                          gnuplot-mode
@@ -1153,6 +1189,7 @@ TODO broken, provided a diff cleanup function too!"
                          spice-mode
                          ssh-config-mode
                          ssh-tunnels
+                         systemd
                          tracwiki-mode
                          twittering-mode
                          ;; vline

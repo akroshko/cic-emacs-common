@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180703
+;; Version: 20180827
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -51,9 +51,8 @@ TODO: flag to not use timestamp"
   (let ((message-string (concat "-- " (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
-    (save-excursion (with-current-buffer (get-buffer-create buffer)
-                      (goto-char (point-max))
-                      (insert (concat message-string "\n"))))))
+    (save-excursion (with-current-buffer-max (get-buffer-create buffer)
+                                             (insert (concat message-string "\n"))))))
 
 (defun cic:mpp-echo (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
@@ -64,8 +63,7 @@ TODO: flag to not use timestamp"
          (message-string (concat (cic:time-stamp) "\n" raw-message-string)))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
-    (save-excursion (with-current-buffer (get-buffer-create buffer)
-                      (goto-char (point-max))
+    (save-excursion (with-current-buffer-max (get-buffer-create buffer)
                       (insert (concat message-string "\n"))))
     (message raw-message-string)))
 
@@ -237,7 +235,7 @@ TODO: Currently actually prefix search, do I want an exact search?"
 
 (defun cic:org-table-to-lisp-no-separators ()
   "Convert the org-table to lisp and eliminate seperators."
-  (delq nil (mapcar (lambda (x) (if (eq x 'hline) nil x)) (org-table-to-lisp))))
+  (remove-if-not (lambda (x) (if (eq x 'hline) nil x)) (org-table-to-lisp)))
 
 (defun cic:org-table-last-row ()
   "Goto the last row of the next table in the buffer.."
@@ -506,10 +504,25 @@ with-current-buffer."
      ,@body))
 
 (defmacro with-current-buffer-min (buffer-or-name &rest body)
-  "Like with-current-buffer but always go to point-min."
+  "Like with-current-buffer but always go to point min."
   `(save-excursion
      (set-buffer ,buffer-or-name)
      (goto-char (point-min))
+     ,@body))
+
+(defmacro with-current-buffer-max (buffer-or-name &rest body)
+  "Like with-current-buffer but always go to point max."
+  `(save-excursion
+     (set-buffer ,buffer-or-name)
+     (goto-char (point-max))
+     ,@body))
+
+(defmacro with-current-buffer-erase (buffer-or-name &rest body)
+  "Like with-current-buffer but always erase it."
+  `(save-excursion
+     (set-buffer ,buffer-or-name)
+     (setq buffer-read-only nil)
+     (erase-buffer)
      ,@body))
 
 (defmacro with-current-file (filename &rest body)
@@ -540,6 +553,15 @@ Uses with-filename-filter."
      (goto-char (point-min))
      ,@body))
 
+(defmacro with-current-file-max (filename &rest body)
+  "Like with-current-file, but always go to point max."
+  (declare (indent 1) ;; (debug t)
+           )
+  `(save-excursion
+     (set-buffer (find-file-noselect (with-filename-filter ,filename)))
+     (goto-char (point-max))
+     ,@body))
+
 (defmacro with-current-file-org-table (filename table-name &rest body)
   "Like with-current-file, but find TABLE-NAME."
   (declare (indent 1) ;; (debug t)
@@ -568,15 +590,13 @@ return cdr of OBJECT."
 ; http://www.emacswiki.org/emacs/ElispCookbook#toc20
 (defun cic:string-integer-p (string)
   "Check if STRING is an integer."
-  (if (string-match "\\`[-+]?[0-9]+\\'" string)
-      t
-    nil))
+  (when (string-match "\\`[-+]?[0-9]+\\'" string)
+      t))
 
 (defun cic:string-float-p (string)
   "Check if STRING is a floating point number."
-  (if (string-match "\\`[-+]?[0-9]+\\.[0-9]*\\'" string)
-      t
-    nil))
+  (when (string-match "\\`[-+]?[0-9]+\\.[0-9]*\\'" string)
+      t))
 
 ;; XXXX: why does this work?
 (defun cic:zip (&rest streams)
@@ -666,16 +686,17 @@ LINE."
 
 (defun cic:list-files (path)
   "List files in PATH."
-  (cic:filter-excise (lambda (e)
+  (remove-if-not (lambda (e)
                    (not (file-directory-p (cic:join-paths path e))))
                      (directory-files path)))
 
 ;; TODO: option to take out dot directories?
 (defun cic:list-directories (path)
   "List directories in PATH.  Gets rid of . and .."
-  (let ((the-dirs (cic:filter-excise (lambda (e)
+  (let ((the-dirs (remove-if-not (lambda (e)
                                        (file-directory-p (cic:join-paths path e)))
-                                     (directory-files path))))
+                                 (directory-files path))))
+    ;; TODO: do one operation using pattern matching
     (cl-remove ".." (cl-remove "." the-dirs :test #'string=) :test #'string=)))
 
 (defun cic:find-file-goto-line (filename &optional line)
@@ -895,12 +916,6 @@ current line at point."
                  (with-temp-buffer
                    (insert-file-contents filename)
                    (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n"))))
-
-;; http://emacswiki.org/emacs/ElispCookbook#toc39
-(defun cic:filter-excise (condp lst)
-  "Remove any elements that do not meet CONDP."
-  (delq nil
-        (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; filesystem helper functions
@@ -1267,8 +1282,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 (goto-char (point-min))
                 (insert (concat "* (from " current-filename ") :refiled:\n"))))
             (setq new-subtree (buffer-substring (point-min) (point-max))))
-          (with-current-file destination-file
-            (goto-char (point-max))
+          (with-current-file-max destination-file
             (when (not (= (current-column) 0))
               (insert "\n"))
             (insert new-subtree))))))
@@ -1306,8 +1320,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                (setq end-of-region (region-end))
                (setq region-to-move (buffer-substring beg-of-region end-of-region))
                (delete-region beg-of-region end-of-region)
-               (with-current-file (cic:get-filename-meta destination-file)
-                 (goto-char (point-min))
+               (with-current-file-min (cic:get-filename-meta destination-file)
                  (if (ignore-errors (cic:org-find-headline current-toplevel-tree))
                      (goto-char (org-end-of-subtree))
                    (progn
@@ -1580,15 +1593,22 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (set-frame-position (selected-frame) 0 0)
   (cic:x-force-maximized))
 
+;; TODO: need to test this on non-graphical display
 (defun create-frame-here (&optional frame-name)
+  ""
   (interactive)
-  (cond (frame-name
-         (if (display-graphic-p)
-             (make-frame (list (cons 'name frame-name)))
-           (select-frame (make-frame (list (cons name frame-name))))))
-        (t
-          (select-frame (make-frame-command))))
-  (cic:x-force-maximized))
+  (let (new-frame)
+    (cond (frame-name
+           (if (display-graphic-p)
+               (setq new-frame (make-frame (list (cons 'name frame-name))))
+             (progn
+               (setq new-frame (make-frame (list (cons name frame-name))))
+               (select-frame new-frame))))
+          (t
+           (setq new-frame (make-frame-command))
+           (select-frame new-frame)))
+    (cic:x-force-maximized)
+    new-frame))
 
 (defun cic:hl-line-mode-or-disable-visuals (&optional arg)
   "Turn off any visuals that other functions might have put on."
@@ -1626,10 +1646,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: needs a better name
 (defun cic:create-open-paste-collection ()
   (interactive)
-  (with-current-buffer-create "*Collection*"
+  (with-current-buffer-create-min "*Collection*"
     ;; TODO: possibly clear buffer (can I select)
     ;;       do I really want to add current one first
-    (goto-char (point-min))
     (x-clipboard-yank))
   (cic:create-or-select-frame-displaying-buffer "*Collection*")
   ;; TODO: decide on whether I want to grab focus or not when pasting
@@ -1829,8 +1848,7 @@ TODO: do something else (like copy whole line) if no region?"
          (apt-show-output (shell-command-to-string (concat "apt-cache show " the-symbol)))
          (current-window (get-buffer-window))
          (the-buffer (pop-to-buffer "*apt show*")))
-    (with-current-buffer the-buffer
-      (erase-buffer)
+    (with-current-buffer-erase the-buffer
       (insert apt-show-output)
       (goto-char (point-min)))
     (select-window current-window)))

@@ -94,8 +94,8 @@
             ;; TODO: interferes with prior/next keys in terminal mode
             ;; (define-key map (kbd "M-[")      'cic:decrease-indent)
             ;; (define-key map (kbd "M-]")      'cic:increase-indent)
-            (define-key map (kbd "M-'")      'dabbrev-expand)
             (define-key map (kbd "M-/")      'dabbrev-expand)
+            (define-key map (kbd "M-,")      'cic:x-force-maximized)
             (define-key map (kbd "M-=")      'cic:count-words-region-or-buffer)
             ;; (define-key map (kbd "M-?")      'isearch-backward)
             (define-key map (kbd "C-\\")     'cic:whack-whitespace)

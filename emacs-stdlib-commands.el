@@ -843,8 +843,7 @@ flyspell-mode."
   (interactive)
   (let ((word (thing-at-point 'word)))
     (when word
-      (with-current-file cic:user-wordlist
-        (goto-char (point-max))
+      (with-current-file-max cic:user-wordlist
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
@@ -861,8 +860,7 @@ flyspell-mode."
   (interactive)
   (let ((word (thing-at-point 'word)))
     (when word
-      (with-current-file cic:user-wordlist
-        (goto-char (point-max))
+      (with-current-file-max cic:user-wordlist
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
@@ -1048,7 +1046,7 @@ and date.  Behaviour based on org-insert-heading."
   ;; kill transient frames first
   (dolist (frame (frame-list))
     (let ((the-frame-name (substring-no-properties (cdr (assoc 'name (frame-parameters frame))))))
-      (when (or (equal the-frame-name "attachment-find") (equal the-frame-name  "capture"))
+      (when (or (equal the-frame-name "attachment-find") (equal the-frame-name  "capture") (equal the-frame-name  "emms"))
         (delete-frame frame))))
   (if arg
       (and cic:kill-transient-windows-undo (set-window-configuration cic:kill-transient-windows-undo))
@@ -1058,9 +1056,10 @@ and date.  Behaviour based on org-insert-heading."
       (dolist (window (window-list))
         ;; get window name
         (let ((buffer-name (buffer-name (window-buffer window))))
-          (when (and (starts-with buffer-name "*")
-                     (ends-with   buffer-name "*")
-                     (not (string-match "scratch" buffer-name)))
+          (when (or (and (starts-with buffer-name "*")
+                         (ends-with   buffer-name "*")
+                         (not (string-match "scratch" buffer-name)))
+                    (starts-with buffer-name " *http"))
             (delete-window window)
             (setq window-deleted t))
           (when (starts-with buffer-name "*Python check:")
