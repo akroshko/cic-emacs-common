@@ -667,6 +667,7 @@ alphanumeric."
   (let ((select-list (list
                       (list '18anl      "18 character alphanumeric lowercase")
                       (list '18anlsuff  "18 character alphanumeric lowercase with 2 character suffix.")
+                      (list '10anl      "10 character alphanumeric lowercase")
                       (list '24l        "24 character alphabet lowercase")
                       (list '24anl      "24 character alphanumeric lowercase")
                       (list '18anp      "18 character alphanumeric with punctuation")
@@ -686,6 +687,8 @@ alphanumeric."
            (insert (cic:create-password cic:password-characters-Alphanum-punct 12)))
           ((eq selected '18anlsuff)
            (insert (concat (cic:create-password cic:password-characters-alphanum-lower 18) "Q.")))
+          ((eq selected '10anl)
+           (insert (concat (cic:create-password cic:password-characters-alphanum-lower 10))))
           ((eq selected '18anp)
            (insert (cic:create-password cic:password-characters-Alphanum-punct 18)))
           ((eq selected '24anl)

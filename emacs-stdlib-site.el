@@ -79,7 +79,8 @@ TODO broken, provided a diff cleanup function too!"
   ;; TODO: find another thing to run executable-interpret
   (define-key sh-mode-map (kbd "C-c C-x") nil)
   ;; my aliases often have
-  (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?=")))
+  (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?="))
+  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys
@@ -1145,7 +1146,7 @@ filenames are ambiguous and sometimes metadata is ambiguous."
                          free-keys
                          ;; fuzzy-match
                          gh-md
-                         ghub
+                         ;; ghub
                          git-timemachine
                          gited
                          ;; git-commit
