@@ -90,7 +90,8 @@
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
             ;; TODO: replace
-            (define-key map (kbd "M-l")      'cic:goto-previous-mark)
+            ;; TODO: made this a global key
+            ;; (define-key map (kbd "M-l")      'cic:goto-previous-mark)
             ;; TODO: interferes with prior/next keys in terminal mode
             ;; (define-key map (kbd "M-[")      'cic:decrease-indent)
             ;; (define-key map (kbd "M-]")      'cic:increase-indent)

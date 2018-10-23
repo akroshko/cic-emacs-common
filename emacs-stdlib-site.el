@@ -184,6 +184,9 @@ TODO broken, provided a diff cleanup function too!"
                    ;; TODO: a decision must be made which is most convienient
                    (define-key TeX-mode-map (kbd "C-c M-v")   'cic:view-alternate)
                    (define-key TeX-mode-map (kbd "s-c v")     'TeX-view)
+                   ;; TODO: replace elsewhere too
+                   (define-key TeX-mode-map (kbd "s-c s-c")   'TeX-view)
+                   (define-key TeX-mode-map (kbd "s-c c")     'TeX-view)
                    (define-key TeX-mode-map (kbd "s-c s-v")   'TeX-view)
                    (define-key TeX-mode-map (kbd "s-c M-s-v") 'cic:view-alternate)
                    (defun cic:reftex-reference ()
@@ -319,6 +322,7 @@ TODO broken, provided a diff cleanup function too!"
                    ;; (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
                    ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                    (define-key TeX-mode-map (kbd "s-c b")   'cic:current-compile)
+                   (define-key TeX-mode-map (kbd "s-c f")   'cic:current-compile-full)
                    (define-key TeX-mode-map (kbd "C-c C-b") 'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
                    (define-key TeX-mode-map (kbd "s-B")     '(lambda ()
@@ -488,6 +492,7 @@ filenames are ambiguous and sometimes metadata is ambiguous."
       "mpg321" "--gain" "10")
     (delq 'emms-player-mpv emms-player-list)
     (delq 'emms-player-mpg321-custom emms-player-list)
+    ;; TODO: do not delete?
     (delq 'emms-player-vlc emms-player-list)
     (delq 'emms-player-vlc-playlist emms-player-list)
     (pushnew 'emms-player-mpg321-custom emms-player-list))
@@ -1161,6 +1166,7 @@ filenames are ambiguous and sometimes metadata is ambiguous."
                          jumplist
                          ;; lacarte
                          latex-extra
+                         lua-mode
                          ;; magit
                          markdown-mode
                          math-symbol-lists

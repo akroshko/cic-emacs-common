@@ -149,6 +149,13 @@ this for every line."
       (setq str (replace-match "" t t str))))
   str)
 
+(defun s-trim-leading-dashes (str)
+  "Strip leading dashes off of STR."
+  (when (stringp str)
+    (while (string-match "^-" str)
+      (setq str (replace-match "" t t str))))
+  str)
+
 (defun cic:full-string-p (thing-or-string)
   "Determine if something is nil or an empty string."
   (if (or (not thing-or-string) (equal (s-trim-full thing-or-string) ""))
@@ -183,6 +190,7 @@ string."
       (cic:string-to-float str)
     0))
 
+;; TODO: there is a directory-list-recursively (or similar...)
 ;; http://www.emacswiki.org/emacs/ElispCookbook#toc59
 (defun cic:walk-path (dir action)
   "Walk DIR executing ACTION with arugments (dir file)"
@@ -1377,6 +1385,13 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (forward-line -1)))
 ;; TODO: for now
 (global-set-key (kbd "H-c")     'cic:current-clean)
+
+(defun cic:current-compile-full (&optional arg)
+  "Full compile in one command (eventually split off helper functions)."
+  (interactive "P")
+  (if arg
+      (cic:current-compile '(64))
+    (cic:current-compile '(16))))
 
 ;; TODO: make this work with other things
 (defun cic:current-compile (&optional arg)
