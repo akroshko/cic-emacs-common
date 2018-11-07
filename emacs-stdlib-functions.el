@@ -220,13 +220,13 @@ string."
 (defun cic:org-find-checkbox (name)
   "Find a particular checkbox with text NAME in BUFFER.
 TODO: Currently prefix search, do I want an exact search?"
-  (search-forward-regexp (concat cic:emacs-stdlib-checkbox-regexp name))
+  (re-search-forward (concat cic:emacs-stdlib-checkbox-regexp name))
   (move-beginning-of-line 1))
 
 (defun cic:org-find-list-item (name)
   "Find a particular list item with text NAME in BUFFER.
 TODO: Currently actually prefix search, do I want an exact search?"
-  (search-forward-regexp (concat cic:emacs-stdlib-list-exact-regexp name))
+  (re-search-forward (concat cic:emacs-stdlib-list-exact-regexp name))
   (move-beginning-of-line 1))
 
 (defun cic:org-find-table (&optional count)
@@ -827,7 +827,7 @@ strings. Leave alone if already a string or list of strings"
          "1")
         (t
          (char-to-string (1+ (string-to-char ch))))))
-;; (cic:select-list-item (list "hello" "jaws"))
+;; (cic:select-list-item (list "item1" "item2"))
 (defun cic:select-list-item (lst &optional string-key header-message)
   "Select a string from a list of strings LST using alphabet then number keys.
 TODO: use string-key to select a string"
@@ -1084,7 +1084,11 @@ can be greatly simplified."
         key-press
         (current-alist filter-alists)
         canceled
-        selected)
+        selected
+        minibuffer-line
+        minibuffer-select
+        minibuffer-cancel
+        (count 0))
     ;; keep reading input while there are inner alists
     ;; read input
     ;; initialise variables
@@ -1093,9 +1097,23 @@ can be greatly simplified."
       (setq minibuffer-prompt ""))
     ;; TODO do I want this?
     (dolist (search-key current-alist)
+      (setq minibuffer-select (concat "(" (car search-key) ")"))
+      ;; TODO: this needs a bit more
+      ;; (put-text-property 0 (length minibuffer-select) 'face 'bold minibuffer-select)
+      (setq minibuffer-line (concat minibuffer-select " " (cadr search-key)))
+      ;; TODO: I like these colors for now, although something a bit more subtle is fine
+      (if (= (mod count 2) 1)
+          (put-text-property 0 (length minibuffer-line) 'face '(:background "light gray") minibuffer-line)
+        (put-text-property 0 (length minibuffer-line) 'face '(:background "light sky blue") minibuffer-line))
       (setq minibuffer-prompt (concat minibuffer-prompt
-                                      (concat "(" (car search-key) ") " (cadr search-key) "\n"))))
-    (setq minibuffer-prompt (concat minibuffer-prompt "(-) cancel" ))
+                                      (concat minibuffer-line "\n")))
+      (setq count (1+ count)))
+    (setq minibuffer-cancel "(-) cancel")
+    ;; TODO: will need to define face
+    ;; :bold t
+    ;; '(:background "dark gray" :foreground "red")
+    (put-text-property 0 (length minibuffer-cancel) 'face '(:background "khaki2") minibuffer-cancel)
+    (setq minibuffer-prompt (concat minibuffer-prompt minibuffer-cancel))
     ;; read a key
     ;; TODO: have way of escaping
     (setq key-press (read-key minibuffer-prompt))
@@ -1135,10 +1153,11 @@ TODO: used for checklists, do I need this?
       t))
 (add-hook 'org-metareturn-hook 'cic:org-insert-new-list)
 
+;; TODO: change name of this function
 (defun cic:uid-64 ()
-  "Create an 11 character (>64bit) unique ID."
-  ;; TODO: change to uid-11 to relect it may not quite be 64 bit
-  (cic:create-password "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_" 11))
+  "Create an 11 character unique ID (about 56 bits of randomness)."
+  ;; XXXX: this is meant to be easily searchable and human enterable, it is not cryptographically secure!
+  (cic:create-password "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" 11))
 
 (defun browse-url-conkeror (url &rest args)
   "Browse a url in the Conkeror web browser."

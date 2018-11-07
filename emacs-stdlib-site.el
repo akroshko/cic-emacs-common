@@ -441,68 +441,6 @@ TODO broken, provided a diff cleanup function too!"
 ;; (requiring-package (dired-sort)
 ;;   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; emms
-(unless cic:emacs-minimal
-  ;; this sexp adds a LOT to load time and I don't use emms much right now
-  ;; minimal does not need it
-  (requiring-package (emms-setup)
-    ;; (require 'emms-info-libtag)
-    (emms-all)
-    (emms-default-players)
-    (requiring-package (emms-mark)
-      ;; TODO: always says no first track
-      ;; (setq emms-playlist-default-major-mode 'emms-mark-mode)
-      )
-    (global-set-key (kbd "C-c +") 'emms-volume-mode-plus)
-    (global-set-key (kbd "C-c -") 'emms-volume-mode-minus)
-    ;; (setq emms-info-function '(emms-info-libtag))
-    (setq emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
-    ;; track description
-    (defun cic:emms-full-track-description (track)
-      "Return a description of track that includes filename.
-This is useful with a lot of unsorted music because sometimes
-filenames are ambiguous and sometimes metadata is ambiguous."
-      (let ((artist (emms-track-get track 'info-artist))
-        (title  (emms-track-get track 'info-title)))
-        (cond
-         ((and artist title)
-          (concat (substring (concat artist " - " title "                                                                                ") 0 80) " || " (emms-track-simple-description track)))
-         (title
-          (concat (substring (concat title "                                                                                " 0 80)) " || " (emms-track-simple-description track)))
-         (t
-          (emms-track-simple-description track)))))
-    (setq emms-track-description-function 'cic:emms-full-track-description)
-    ;; XXXX: redefine for my computers running Debian in 2018+, take out -c option
-    (defun emms-volume-amixer-change (amount)
-      "Change amixer master volume by AMOUNT."
-      (message "Playback channels: %s"
-               (with-temp-buffer
-                 (when (zerop
-                        (call-process "amixer" nil (current-buffer) nil
-                                      ;; "-c"
-                                      ;; (format "%d" emms-volume-amixer-card)
-                                      "sset" emms-volume-amixer-control
-                                      (format "%d%%%s" (abs amount)
-                                              (if (< amount 0) "-" "+"))))
-                   (if (re-search-backward "\\[\\([0-9]+%\\)\\]" nil t)
-                       (match-string 1))))))
-    (define-emms-simple-player mpg321-custom '(file url)
-      (emms-player-simple-regexp "mp3" "mp2")
-      "mpg321" "--gain" "10")
-    (delq 'emms-player-mpv emms-player-list)
-    (delq 'emms-player-mpg321-custom emms-player-list)
-    ;; TODO: do not delete?
-    (delq 'emms-player-vlc emms-player-list)
-    (delq 'emms-player-vlc-playlist emms-player-list)
-    (pushnew 'emms-player-mpg321-custom emms-player-list))
-  ;; (requiring-package (emms-player-mpv)
-  ;;   (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
-  ;;   (delq 'emms-player-mpv emms-player-list)
-  ;;   (pushnew 'emms-player-mpv emms-player-list))
-
-  )
-
 (requiring-package (flyspell)
   ;; TODO: change this if I need it
   (setq flyspell-auto-correct-binding nil))
@@ -1136,7 +1074,7 @@ filenames are ambiguous and sometimes metadata is ambiguous."
                          dired-rainbow
                          eimp
                          eldoc
-                         emms
+                         ;; emms
                          ;; emms-player-mpv
                          epl
                          ess
