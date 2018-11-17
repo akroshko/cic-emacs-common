@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180617
+;; Version: 20181109
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -206,6 +206,7 @@ read only."
 (setq x-select-enable-primary t
       x-select-enable-clipboard t
       x-gtk-use-system-tooltips nil
+      kill-do-not-save-duplicates t
       select-active-regions nil)
 ;; TODO: file modes... do I want this somewhere else?
 (auto-compression-mode 1)
