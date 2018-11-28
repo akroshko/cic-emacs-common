@@ -155,7 +155,8 @@
             (define-key map (kbd "H-B")          'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
-            (define-key map (kbd "H-k")          'cic:kill-transient-windows)
+            ;; XXXX: better than H-k with my key remaps, avoids accidently pressing C-k and killing lines
+            (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-v")          'cic:toggle-media)
@@ -168,8 +169,6 @@
             (define-key map (kbd "H-l")          'cic:delete-window-below)
             ;; TODO: decide on k... using other things right now...
             ;; (define-key map (kbd "H-K")          'cic:delete-frame)
-            ;; TODO: temporary while I build new muscle memory
-            (define-key map (kbd "H-x")          'save-buffer)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)
