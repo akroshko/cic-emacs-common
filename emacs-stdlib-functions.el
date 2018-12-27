@@ -124,6 +124,13 @@ this for every line."
       (setq str (replace-match "" t t str))))
   str)
 
+;; TODO: move this to appropriate place
+(defun cic:trim-uid-org-link (str)
+  "Trim out uid from org-link."
+  (if (stringp str)
+      (replace-regexp-in-string "=[A-Z0-9]\\{11\\}=$" "" str)
+    str))
+
 (defun cic:trim-after-double-colon (str)
   "Strip everything after and including a double colon in STR."
   (when (stringp str)
@@ -1380,16 +1387,16 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                     (setq line-found t)))
                 (when line-found
                   (beginning-of-line)
-                  (kill-line)
-                  (setq kill-ring (cdr kill-ring))))
+                  (let (kill-ring)
+                    (kill-line))))
                ((string-match ":END:" (cic:get-current-line))
                 (setq line-found nil)
                 (save-excursion
                   (forward-line)
                   (when (and (not (eobp)) (string-match "^\\s-*$" (cic:get-current-line)))
                     (beginning-of-line)
-                    (kill-line)
-                    (setq kill-ring (cdr kill-ring)))))))))))
+                    (let (kill-ring)
+                      (kill-line)))))))))))
 
 ;; https://stackoverflow.com/questions/4870704/appending-characters-to-the-end-of-each-line-in-emacs
 ;; create key for this and clean up language
@@ -1402,8 +1409,8 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (end-of-line)
     (insert str)
     (forward-line -1)))
-;; TODO: for now
-(global-set-key (kbd "H-c")     'cic:current-clean)
+;; TODO: do I want this? now
+;; (global-set-key (kbd "H-c")     'cic:current-clean)
 
 (defun cic:current-compile-full (&optional arg)
   "Full compile in one command (eventually split off helper functions)."
@@ -1748,10 +1755,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (interactive)
   (if (region-active-p)
       (call-interactively 'count-words-region)
-    (progn
-      (save-excursion
-        (mark-whole-buffer)
-        (call-interactively 'count-words-region)))))
+    (save-excursion
+      (mark-whole-buffer)
+      (call-interactively 'count-words-region))))
 
 (defun cic:kill-region-only-active (beg end &optional region)
   "Kill region only if active.

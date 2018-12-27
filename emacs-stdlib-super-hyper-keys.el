@@ -95,6 +95,7 @@
             ;; TODO better name/key for this u neq v
             (define-key map (kbd "s-h u")        'apropos-value)
             (define-key map (kbd "s-h v")        'find-variable)
+            (define-key map (kbd "s-j p")        'cic:elisp-pp-capture-buffer)
             ;; m==system manager
             (define-key map (kbd "s-m p")        'cic:create-password-insert)
             (define-key map (kbd "s-m M-p")      'cic:create-password-insert-select)
@@ -160,6 +161,8 @@
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-v")          'cic:toggle-media)
+            (define-key map (kbd "H-z")          'scroll-down-command)
+            (define-key map (kbd "H-x")          'scroll-up-command)
             (define-key map (kbd "s-g s-g")      'cic:toggle-media)
             (define-key map (kbd "s-g g")        'cic:toggle-media)
             ;; (define-key map (kbd "H-k")          'cic:delete-window)

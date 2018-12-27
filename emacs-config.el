@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20181109
+;; Version: 20181205
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -46,27 +46,26 @@
 (setq warning-minimum-level :error)
 
 (unless (fboundp 'requiring-package)
-    (defvar load-errors-p nil
-      "Whether or not there were errors loading on startup.")
-    (defmacro* requiring-package ((package &key error-if-fail) &rest forms)
-      "Require package but log error instead terminating load."
-      `(catch 'requiring-package-fail
-         (progn
-           (condition-case error-string
-               (progn
-                 (require ',package)
-                 ,@forms)
-             (error
-              (let ((msg (format  "Failed to load package %s "
-                                  (symbol-name ',package))))
-                (setq load-errors-p t)
-                (with-current-buffer (get-buffer-create "*Load log*")
-                  (insert msg "\n")
-                  (insert (format "The error was: %s\n" error-string)))
-                (if ,error-if-fail
-                    (error msg)
-                  (throw 'requiring-package-fail nil))))))))
-    (put 'requiring-package 'lisp-indent-function 1))
+  (defvar load-errors-p nil
+    "Whether or not there were errors loading on startup.")
+  (defmacro* requiring-package ((package &key error-if-fail) &rest forms)
+    "Require package but log error instead terminating load."
+    `(catch 'requiring-package-fail
+       (condition-case error-string
+           (progn
+             (require ',package)
+             ,@forms)
+         (error
+          (let ((msg (format  "Failed to load package %s "
+                              (symbol-name ',package))))
+            (setq load-errors-p t)
+            (with-current-buffer (get-buffer-create "*Load log*")
+              (insert msg "\n")
+              (insert (format "The error was: %s\n" error-string)))
+            (if ,error-if-fail
+                (error msg)
+              (throw 'requiring-package-fail nil)))))))
+  (put 'requiring-package 'lisp-indent-function 1))
 
 ;; TODO: is this the best place
 ;; (defun cic:init-crypt ()
@@ -207,6 +206,7 @@ read only."
       x-select-enable-clipboard t
       x-gtk-use-system-tooltips nil
       kill-do-not-save-duplicates t
+      history-delete-duplicates t
       select-active-regions nil)
 ;; TODO: file modes... do I want this somewhere else?
 (auto-compression-mode 1)
@@ -459,7 +459,12 @@ read only."
         org-ctrl-k-protect-subtree nil
         org-cycle-global-at-bob t
         org-fontify-whole-heading-line t
-        org-cycle-level-after-item/entry-creation nil)
+        org-cycle-level-after-item/entry-creation nil
+        org-ellipsis "➤➤➤"
+        ;; org-ellipsis "⤵"
+        ;; org-ellipsis "▼"
+        )
+
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
     (when (eq major-mode 'org-mode)
@@ -563,8 +568,9 @@ read only."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; winner-mode
 (requiring-package (winner)
-  (define-key winner-mode-map (kbd "M-9") 'winner-undo)
-  (define-key winner-mode-map (kbd "M-0") 'winner-redo)
+  ;; TODO: no, not anymore
+  ;; (define-key winner-mode-map (kbd "M-9") 'winner-undo)
+  ;; (define-key winner-mode-map (kbd "M-0") 'winner-redo)
   (winner-mode 1))
 
 ;; TODO: if I eval-buffer this buffer, I get vc-mode back
@@ -598,5 +604,37 @@ read only."
     (if (region-active-p)
         (ps-print-region (region-beginning) (region-end))
       (ps-print-region (point-min) (point-max)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; modeline
+(defvar cic:already-added-modeline
+  nil
+  "Indicate whether additional modeline indicators have already
+  been added.")
+
+(defvar cic:modeline-dirty
+  nil
+  "Indicate whether modeline is abnormal.")
+
+(unless cic:already-added-modeline
+  ;; mode-line-stuff
+  (unless (some 'identity (mapcar (lambda (e) (ignore-errors (string-match "case:" e))) mode-line-format))
+    (setq-default mode-line-format (append mode-line-format (list
+                                                             '(:eval (cond ((get-buffer "*Load log*")
+                                                                            (set-face-background 'mode-line "#ff0000")
+                                                                            (setq cic:modeline-dirty t)
+                                                                            "load:ERR")
+                                                                           (t
+                                                                            (when cic:modeline-dirty
+                                                                              (cic:configure-modeline-color)
+                                                                              (setq cic:modeline-dirty nil))
+                                                                            "load:OK ")))
+                                                             "case:"
+                                                             '(:eval (if case-fold-search
+                                                                         "insensitive "
+                                                                       (propertize "sensitive   " 'font-lock-face '(:foreground "yellow"))))))))
+  ;; XXXX remove for debugging the above....
+  (setq cic:already-added-modeline t))
 
 (provide 'emacs-config)

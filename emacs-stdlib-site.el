@@ -167,7 +167,7 @@ TODO broken, provided a diff cleanup function too!"
                    (add-hook 'TeX-mode-hook 'cic:latex-disable-electic-indent)
                    (setq TeX-view-program-list
                          ;; TODO: how to maximize by default
-                         '(("zathura" ("nohup zathura-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
+                         '(("zathura" ("nohup zathura-tex-local.sh %o" (mode-io-correlate " --synctex-forward %n:0:%b --synctex-editor-command=\"launch-emacsclient noframe +%{line} %{input}\"")) "zathura")
                            ;; TODO: disable evince for now
                            ;; ("Evince" ("evince" (mode-io-correlate " -i %(outpage)") " %o"))
                            ))
@@ -321,7 +321,6 @@ TODO broken, provided a diff cleanup function too!"
                    ;; TODO: better master command?
                    ;; (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
                    ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
-                   (define-key TeX-mode-map (kbd "s-c b")   'cic:current-compile)
                    (define-key TeX-mode-map (kbd "s-c f")   'cic:current-compile-full)
                    (define-key TeX-mode-map (kbd "C-c C-b") 'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
@@ -376,14 +375,13 @@ TODO broken, provided a diff cleanup function too!"
   (defun cic:clippy-describe ()
     (interactive)
     (if (eq last-command 'cic:clippy-describe)
-        (progn
-          (if (eq cic:clippy-last-show 'function)
-              (progn
-                (call-interactively 'clippy-describe-variable)
-                (setq cic:clippy-last-show 'variable))
+        (if (eq cic:clippy-last-show 'function)
             (progn
-              (call-interactively 'clippy-describe-function)
-              (setq cic:clippy-last-show 'function))))
+              (call-interactively 'clippy-describe-variable)
+              (setq cic:clippy-last-show 'variable))
+          (progn
+            (call-interactively 'clippy-describe-function)
+            (setq cic:clippy-last-show 'function)))
       (progn
         (call-interactively 'clippy-describe-function)
         (setq cic:clippy-last-show 'function))))
@@ -894,22 +892,20 @@ TODO broken, provided a diff cleanup function too!"
   (defun python-detect-interpreter ()
     ;; read first line for shebang
     (condition-case nil
-        (progn
-          (save-excursion
-            (goto-char (point-min))
-            (let ((theline (cic:get-current-line)))
-              (cond ((string-match "sage.*python"  theline)
-                     (progn
-                       (setq-local python-shell-interpreter "sage")
-                       (setq-local python-shell-interpreter-args "-python -i")))
-                    ;; XXXX: match sage without Python
-                    ((string-match "sage"  theline)
-                     (setq-local python-shell-interpreter "sage")
-                     (setq-local python-shell-interpreter-args ""))
-                    ;; default is just default built-in python
-                    (t
-                     (setq-local python-shell-interpreter "python")
-                     (setq-local python-shell-interpreter-args "-i"))))))
+        (save-excursion
+          (goto-char (point-min))
+          (let ((theline (cic:get-current-line)))
+            (cond ((string-match "sage.*python"  theline)
+                   (setq-local python-shell-interpreter "sage")
+                   (setq-local python-shell-interpreter-args "-python -i"))
+                  ;; XXXX: match sage without Python
+                  ((string-match "sage"  theline)
+                   (setq-local python-shell-interpreter "sage")
+                   (setq-local python-shell-interpreter-args ""))
+                  ;; default is just default built-in python
+                  (t
+                   (setq-local python-shell-interpreter "python")
+                   (setq-local python-shell-interpreter-args "-i")))))
       (error (message "Error setting up inferior process!!!"))))
   ;; add the hook to detect interpretor
   (add-hook 'python-mode-hook 'python-detect-interpreter)

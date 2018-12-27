@@ -234,7 +234,7 @@ TODO: incomplete but still useful right now"
 (defun cic:url-at-point-or-line (&optional current-line)
   "Find the URL at point and return.  Find the url in
 CURRENT-LINE if specified."
-  (let ((url (cic:trim-after-double-colon (thing-at-point 'url))))
+  (let ((url (cic:trim-uid-org-link (cic:trim-after-double-colon (thing-at-point 'url)))))
     (unless url
       (unless current-line
         (setq current-line (cic:get-current-line)))
@@ -418,8 +418,7 @@ TODO: Often called from .emacs so should handle errors well."
             (save-buffer))
           (shell-command (concat "chmod +x " temp-filename))
           (ansi-term temp-filename))
-      (progn
-        (message "No screen sessions found!!!")))))
+      (message "No screen sessions found!!!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; toggle
@@ -672,6 +671,7 @@ alphanumeric."
                       (list '24anl      "24 character alphanumeric lowercase")
                       (list '18anp      "18 character alphanumeric with punctuation")
                       (list '12anp      "12 character alphanumeric with punctuation")
+                      (list '15an       "15 character alphanumeric")
                       (list '8anp       "8 character alphanumeric with punctuation")))
         selected)
     (cond ((eq select t)
@@ -695,6 +695,8 @@ alphanumeric."
            (insert (cic:create-password cic:password-characters-alphanum-lower 24)))
           ((eq selected '24l)
            (insert (cic:create-password cic:password-characters-alpha-lower 24)))
+          ((eq selected '15an)
+           (insert (cic:create-password cic:password-characters-Alphanum 15)))
           (t
            (insert (cic:create-password cic:password-characters-alphanum-lower 18))))))
 
@@ -772,15 +774,13 @@ alphanumeric."
 (defun cic:next-window-frame ()
   (interactive)
   (condition-case error-string
-      (progn
-        (windmove-right))
+      (windmove-right)
     (error
      (other-frame 1))))
 (defun cic:prev-window-frame ()
   (interactive)
   (condition-case error-string
-      (progn
-        (windmove-left))
+      (windmove-left)
     (error
      (other-frame -1))))
 (defun cic:text-scale-neutral ()
@@ -1117,16 +1117,16 @@ and date.  Behaviour based on org-insert-heading."
         ((and (org-on-heading-p) (= (org-outline-level) cic:org-meta-level))
          (if cic:org-meta-moving-up
              (org-promote)
-           (progn
-             (org-toggle-item nil))))
+           (org-toggle-item nil)))
         ;; demote if unequal
         ((and (org-on-heading-p) (< (org-outline-level) cic:org-meta-level))
          (org-demote)
          (setq cic:org-meta-moving-up nil)))
   (end-of-line))
 
-;; TODO: move keys somewhere better
-(define-key org-mode-map (kbd "H-j") 'cic:org-meta-content-cycle)
+;; TODO: move keys somewhere better, decide...
+;; TODO: been overridden by something else
+;; (define-key org-mode-map (kbd "H-j") 'cic:org-meta-content-cycle)
 ;; TODO: make better once I decide? show all children
 ;; TODO: functions too
 ;; don't use this?
@@ -1147,8 +1147,7 @@ and date.  Behaviour based on org-insert-heading."
   (interactive)
   (if (and (eq last-command 'cic:org-open-last-tree) (not (org-at-heading-p)))
       ;; assume already opened for now
-      (progn
-        (ignore-errors (outline-up-heading 5)))
+      (ignore-errors (outline-up-heading 5))
     (progn
       (goto-char (point-max))
       (org-back-to-heading)

@@ -111,7 +111,7 @@
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)
             ;; (global-set-key (kbd "C-x C-k") 'kill-region)
             ;; TODO: disable swap point and mark, make something better
-            (define-key map (kbd "C-x C-x")   (lambda (interactive)))
+            ;; (define-key map (kbd "C-x C-x")   (lambda (interactive)))
             (define-key map (kbd "C-x C-SPC") (lambda (interactive)))
             (define-key map (kbd "C-x M-c")  'cic:save-buffers-kill-emacs)
             (define-key map (kbd "C-x C-b")  'buffer-menu)
@@ -181,8 +181,8 @@
   (define-minor-mode emacs-stdlib-keys-non-org-mode
     :global t
     :keymap (let ((map (make-sparse-keymap)))
-              ;; TODO: insert if not on beginnng of line
-              (define-key map (kbd "C-<return>") 'cic:comment-header)
+              ;; TODO: insert if not on beginnng of line, make this something different
+              ;; (define-key map (kbd "C-<return>") 'cic:comment-header)
               (define-key map (kbd "M-<return>") 'indent-new-comment-line)
               map))
   (emacs-stdlib-keys-non-org-mode t)
