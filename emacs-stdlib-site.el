@@ -80,7 +80,10 @@ TODO broken, provided a diff cleanup function too!"
   (define-key sh-mode-map (kbd "C-c C-x") nil)
   ;; my aliases often have
   (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?="))
-  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1))))
+  ;; XXXX: why did Emacs 25 feel the need to make this annoying mode default
+  (remove-hook 'sh-mode-hook 'sh-electric-here-document-mode)
+  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1)))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys
