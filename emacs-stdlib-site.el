@@ -56,7 +56,7 @@
   (define-key Man-mode-map (kbd ",") 'scroll-down)
   (define-key Man-mode-map (kbd "b") 'scroll-down))
 
-(setq browse-url-browser-function 'browse-url-conkeror
+(setq browse-url-browser-function 'cic:browse-url-conkeror
       browse-url-generic-program "conkeror")
 (add-to-list 'command-switch-alist '("diff" . command-line-diff))
 (defun command-line-diff (switch)

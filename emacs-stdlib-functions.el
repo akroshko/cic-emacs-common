@@ -1166,7 +1166,7 @@ TODO: used for checklists, do I need this?
   ;; XXXX: this is meant to be easily searchable and human enterable, it is not cryptographically secure!
   (cic:create-password "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" 11))
 
-(defun browse-url-conkeror (url &rest args)
+(defun cic:browse-url-conkeror (url &rest args)
   "Browse a url in the Conkeror web browser."
   (let ((browse-url-generic-program "conkeror"))
     (browse-url-generic url)))
