@@ -890,7 +890,7 @@ TODO broken, provided a diff cleanup function too!"
     (define-key python-mode-map (kbd "C-c h") 'python-fulldoc-at-point))
 
   (defun python-shell-get-or-create-process--non-interactive (orig-fun &rest args)
-    (apply orig-fun (list (python-shell-parse-command) nil nil)))
+    (funcall orig-fun (python-shell-parse-command) nil nil))
 
   (defun python-detect-interpreter ()
     ;; read first line for shebang
@@ -921,8 +921,8 @@ TODO broken, provided a diff cleanup function too!"
   ;; XXXX: obviously this is specific to a particular installation
   ;; TODO: maybe have a load log warning thing
   ;; find latest installed sage and add to load path
-  (let ((sagedir (car (reverse (sort (remove-if-not (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt")) 'string<)))))
-    (add-to-list 'load-path (concat "/opt/" sagedir "/local/share/emacs/site-lisp/sage-mode"))
+  (let ((sagedir (car (reverse (sort (remove-if-not (lambda (s) (when (string-match "sage-.*" s) s)) (directory-files "/opt" t)) 'string<)))))
+    (add-to-list 'load-path (concat sagedir "/local/share/emacs/site-lisp/sage-mode"))
     ;; TODO: I will need to make my own sage version
     (if (featurep 'sage)
         (requiring-package (sage)
@@ -931,7 +931,7 @@ TODO broken, provided a diff cleanup function too!"
           (add-to-list 'auto-mode-alist '("\\.sage$" . python-mode))
           (add-to-list 'auto-mode-alist '("\\.spyx$" . python-mode)))
       (message "Sage not found so not loaded!"))
-    (setq sage-command (concat "/opt/" sagedir "/sage"))
+    (setq sage-command (concat sagedir "/sage"))
     ;; If you want sage-view to typeset all your output and display plot()
     ;; commands inline, uncomment the following line and configure sage-view:
     ;; (add-hook 'sage-startup-after-prompt-hook 'sage-view)
@@ -1072,7 +1072,7 @@ TODO broken, provided a diff cleanup function too!"
                          dired-icon
                          dired-rainbow
                          eimp
-                         eldoc
+                         ;; eldoc
                          ;; emms
                          ;; emms-player-mpv
                          epl
@@ -1118,7 +1118,7 @@ TODO broken, provided a diff cleanup function too!"
                          paredit-menu
                          peep-dired
                          pos-tip
-                         prolog
+                         ;; prolog
                          ;; pythonic
                          rainbow-delimiters
                          readline-complete
@@ -1149,13 +1149,16 @@ TODO broken, provided a diff cleanup function too!"
   (let ((failed nil))
     (dolist (package cic:package-list)
       ;; package-built-in-p something else to check?
-      (unless (cic:package-installed-manager-p package)
-        ;; there are sometimes errors, catch them
-        (condition-case error-string
-            (package-install package)
-          (error (progn
-                   (setq filed t)
-                   (message (concat "Failed to install package: " (symbol-name package) " ")))))))
+      (let ((package-found (cic:package-installed-manager-p package)))
+        (cond ((not package-found)
+               ;; there are sometimes errors, catch them
+               (condition-case error-string
+                   (package-install package)
+                 (error (progn
+                          (setq filed t)
+                          (message (concat "Failed to install package: " (symbol-name package)))))))
+              (t
+               (message (concat "The package: " (symbol-name package) " already found as " (pp-to-string package-found)))))))
     (when failed
       (message "Some packages failed to install!"))))
 ;; error-string

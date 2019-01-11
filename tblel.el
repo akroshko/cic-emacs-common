@@ -282,7 +282,6 @@ into the last row."
                                  (format-seconds "%m:%.2s" total-work)
                                  (format-seconds "%m:%.2s" total-total)))))))
 
-;; XXXX: moved and renamed from github.com/akroshko/emacs-stdlib/emacs-stdlib-functions.el
 (defun tblel-time-string-to-seconds (s)
   "Convert a string HH:MM:SS to a number of seconds."
   ;;XXXX: get second time when multiple (allows good summaries)

@@ -819,12 +819,20 @@ if not possible."
 
 (defun cic:symbol-to-string-or-list (maybe-string-list)
   "Dereference a symbol to (presumably) a string or list of
-strings. Leave alone if already a string or list of strings"
+strings. Leave alone if already a string or list of strings.
+TODO: this is a messed up function I can probably delete
+"
   (let (new-string-list)
     (if (symbolp maybe-string-list)
         (setq new-string-list (symbol-value maybe-string-list))
       (setq new-string-list maybe-string-list))
     (cic:ensure-list new-string-list)))
+
+(defun cic:symbol-value (maybe-symbol)
+  "Dereference a symbol to it's value."
+  (if (symbolp maybe-symbol)
+      (symbol-value maybe-string-list)
+    (setq new-string-list maybe-symbol)))
 
 (defun increment-char (ch)
   "Not perfect, need better way sometimes to select file..."
@@ -1077,7 +1085,7 @@ think openssl is find for this purpose."
              new-password)))))
 
 (when nil
-  (cic:select-alist '(("g" . ("galaxy" "file://galaxy"))
+  (cic:select-alist '(("g" . ("galaxy" (list "file://galaxy" "test") ))
                       ("h" . ("help" "file://help")))
                     "Test: " 'identity))
 (defun cic:select-alist (&optional filter-alists header-message command) ;;  filter-alist-first)
@@ -1132,7 +1140,7 @@ can be greatly simplified."
     ;; use input, decide if alist is in fact an inner alist
     (setq selected (caddr inner-selection))
     (unless canceled
-      (apply command (cic:symbol-to-string-or-list selected)))))
+      (funcall command (cic:symbol-value selected)))))
 
 (defun cic:org-insert-indent-list-item ()
   "Insert a list item, open and indent properly.
