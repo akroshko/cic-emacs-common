@@ -198,7 +198,8 @@ read only."
     (buffer-disable-undo)
     (fundamental-mode)))
 (add-hook 'find-file-hooks 'cic:large-file-read-only-hook)
-(ffap-bindings)
+;; TODO: conflicts with ido and C-x d, and much more!
+;; (ffap-bindings)
 ;; set an appropriate tmp directory
 ;; XXXX: this directory might have to be explicitely created
 (setq temporary-file-directory "~/.emacs.d/tmp/")

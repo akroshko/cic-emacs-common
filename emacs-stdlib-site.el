@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20180824
+;; Version: 20190129
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -78,12 +78,15 @@ TODO broken, provided a diff cleanup function too!"
 (requiring-package (sh-script)
   ;; TODO: find another thing to run executable-interpret
   (define-key sh-mode-map (kbd "C-c C-x") nil)
+  ;; TOOD: remap to something better
+  (define-key sh-mode-map (kbd "M-q") (lambda ()
+                                        (interactive)
+                                        (message "M-q disabled in shell mode!")))
   ;; my aliases often have
   (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?="))
   ;; XXXX: why did Emacs 25 feel the need to make this annoying mode default
   (remove-hook 'sh-mode-hook 'sh-electric-here-document-mode)
-  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1)))
-  )
+  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys
@@ -720,26 +723,28 @@ TODO broken, provided a diff cleanup function too!"
 ;; TODO ffap
 ;; TODO good completion for org-mode
 ;; XXXX: keeping things fast for now
-;; (setq ido-enable-flex-matching t)
 (when cic:ido-enable
   ;; TODO: want option for flex matching all the time
   (setq ido-enable-flex-matching t)
   ;; XXXX: if t many things like describe-function is slow
   (setq ido-everywhere nil)
   (requiring-package (ido)
-    (require 'cic-ido-hacks)
-    (requiring-package (ido-completing-read+)
-      ;; TODO: add any others
-      ;; TODO: change to ido-completing-read+
-      ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
-      (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
+    ;; TODO: does this need to be here
+    (requiring-package (cic-ido-hacks))
+    ;; TOOD: possibly reenable without ido-ubiquitous-mode
+    ;; (requiring-package (ido-completing-read+)
+    ;;   ;; TODO: add any others
+    ;;   ;; TODO: change to ido-completing-read+
+    ;;   ;; (setq ido-ubiquitous-command-overrides '((disable prefix "org-capture")))
+    ;;   (add-to-list 'ido-cr+-function-blacklist "org-capture.*"))
     (set-face-foreground 'ido-only-match "DarkGreen")
     (set-face-attribute  'ido-only-match nil :weight 'bold)
     ;; TODO: below here de-commented
     (ido-mode t)
     ;; TODO: change to ido-completing-read+
-    (ido-ubiquitous-mode t)
-    (ido-hacks-mode t)
+    ;; (ido-ubiquitous-mode t)
+    (requiring-package (cic-ido-hacks)
+      (ido-hacks-mode t))
     ;; much faster performance than ido-vertical than, especially for describe-function
     ;; no compatible with ido-hacks because it overrides ido-decorations
     ;; https://www.emacswiki.org/emacs/InteractivelyDoThings#toc24
@@ -752,7 +757,6 @@ TODO broken, provided a diff cleanup function too!"
       (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
       (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
     (add-hook 'ido-setup-hook 'ido-define-keys)
-
     (setq ido-max-prospects 50)))
 
 (requiring-package (image+)

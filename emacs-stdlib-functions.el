@@ -67,6 +67,20 @@ TODO: flag to not use timestamp"
                       (insert (concat message-string "\n"))))
     (message raw-message-string)))
 
+;; (mpp-table '(("1" "2" "3") ("1" "2" "3")))
+(defun mpp-table (obj)
+  "Turn a list of lists into an org-table and pretty print."
+  (with-temp-buffer
+    (dolist (row obj)
+      (dolist (column row)
+        (insert "| ")
+        (insert (pp-to-string column))
+        (insert " "))
+      (insert "|\n"))
+    (point-min)
+    (org-table-align)
+    (mpp (buffer-string))))
+
 ;; XXXX: this could cause issues with debugging if function is made more complex
 (when (not (fboundp 'cic:find-file-meta))
   (defun cic:find-file-meta (arg filename &optional wildcards)
@@ -196,6 +210,13 @@ string."
   (if (cic:is-not-empty-string-nil str)
       (cic:string-to-float str)
     0))
+
+(defun subseq-short (seq start &optional end)
+  "Take subsequence froma sequence that is possibly too short."
+  (let ((length-seq (length seq)))
+    (if (< length-seq end)
+        (subseq seq start length-seq)
+      (subseq seq start end))))
 
 ;; TODO: there is a directory-list-recursively (or similar...)
 ;; http://www.emacswiki.org/emacs/ElispCookbook#toc59
