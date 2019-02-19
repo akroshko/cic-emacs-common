@@ -1004,12 +1004,12 @@ Abstraction level is too high."
   (if (stringp (car location))
       (progn
         (find-file (car location))
-        (when (eq major-mode 'org-mode)
+        (when (derived-mode-p 'org-mode)
           (org-cycle '(64)))
         (goto-char (cadr location)))
     (progn
       (switch-to-buffer (car location))
-      (when (eq major-mode 'org-mode)
+      (when (derived-mode-p 'org-mode)
         (org-cycle '(64)))
       (goto-char (cadr location)))))
 
@@ -1045,8 +1045,8 @@ XXXX: Not currently used or tested."
 ;; current filename
 (defun cic:get-current-filename ()
   "Get the current filename based on context."
-  (cond ((eq major-mode 'dired-mode)
-         (file-name-nondirectory (dired-file-name-at-point)))
+  (cond ((derived-mode-p 'dired-mode)
+         (file-name-nondirectory (cic:dired-filename-at-point)))
         (t
          (file-name-nondirectory (buffer-file-name)))))
 
@@ -1296,7 +1296,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   ;; TODO: do I want this to be more general than org-file
   ;; TODO: make sure destination file is an org-file
   ;; TODO: maybe just check if destination file is symbol
-  (unless (or (not (eq major-mode 'org-mode)) (not destination-file) (eq destination-file 'cancel))
+  (unless (or (not (derived-mode-p 'org-mode)) (not destination-file) (eq destination-file 'cancel))
     (let (region-to-move
           (beg-of-region (region-beginning))
           (end-of-region (region-end))
@@ -1349,12 +1349,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
             (when (not (= (current-column) 0))
               (insert "\n"))
             (insert new-subtree))))))
-  (when (not (eq major-mode 'org-mode))
+  (when (not (derived-mode-p 'org-mode))
     (message "Refile only works in org-mode!")))
 
 (defun cic:org-refile-subtree-preserve-structure (destination-file)
   "Refile and preserve structure."
-  (unless (or (not (eq major-mode 'org-mode)) (not destination-file) (eq destination-file 'cancel))
+  (unless (or (not (derived-mode-p 'org-mode)) (not destination-file) (eq destination-file 'cancel))
     (cond ((region-active-p)
            (message "Cannot refile while region is active!!!"))
           ((/= (org-outline-level) 2)
@@ -1403,7 +1403,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   ;; XXXX: lightly tested, be sure to diff before committing for now
   (interactive)
   (let ((line-found nil))
-   (when (eq major-mode 'org-mode)
+   (when (derived-mode-p 'org-mode)
      (save-excursion
        (goto-char (point-min))
        (while (not (eobp))
@@ -1453,7 +1453,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   "Just see how my document is doing."
   ;; TODO: maybe enable disabling images
   (interactive "P")
-  (cond ((eq major-mode 'latex-mode)
+  (cond ((derived-mode-p 'latex-mode)
          (cond ((equal arg '(4))
                 (let ((full-filename (buffer-file-name)))
                   ;; TODO: need current compile but wait?
@@ -1490,7 +1490,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
                   (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > ~/cic-vcs-phd/phdthesis/includeonly.tex")))
                 (TeX-command "LaTeX" 'TeX-master-file nil))))
-        ((eq major-mode 'python-mode)
+        ((derived-mode-p 'python-mode)
          ;; TODO: use some beter configuration
          ;; XXXX: pyflakes can't easily ignore common design decision I make
          ;; (python-check (concat "pyflakes " (buffer-file-name)))
@@ -1593,7 +1593,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 ;; TODO: clean this out, other things capture it now...
 (defun cic:current-build ()
   (interactive)
-  (cond ((eq major-mode 'latex-mode)
+  (cond ((derived-mode-p 'latex-mode)
          ;; needs latex-extra package
          ;; TODO: clean first?
          ;; TODO: does not get set by appropriate advice
@@ -1617,12 +1617,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;;         (message "No active process! Reloading anyways!")
 
          )
-        ((eq major-mode 'markdown-mode)
+        ((derived-mode-p 'markdown-mode)
          (gh-md-export-buffer))))
 
 (defun cic:current-clean ()
   (interactive)
-  (cond ((eq major-mode 'latex-mode)
+  (cond ((derived-mode-p 'latex-mode)
          (TeX-command "Clean All" 'TeX-master-file nil)
          (sit-for 0.5)
          (message "Cleaned!!!"))))
@@ -1845,11 +1845,11 @@ TODO: do something else (like copy whole line) if no region?"
 
 (defun cic:toggle-media ()
   (interactive)
-  (cond ((eq major-mode 'org-mode)
+  (cond ((derived-mode-p 'org-mode)
          (org-toggle-inline-images))
-        ((eq major-mode 'dired-mode)
+        ((derived-mode-p 'dired-mode)
          nil)
-        ((eq major-mode 'wdired-mode)
+        ((derived-mode-p 'wdired-mode)
          nil))
   (message "Media toggled!"))
 
@@ -1922,5 +1922,8 @@ TODO: do something else (like copy whole line) if no region?"
       (goto-char (point-min)))
     (select-window current-window)))
 (global-set-key (kbd "s-m a") 'cic:apt-show)
+
+(defun cic:dired-filename-at-point ()
+  (expand-file-name (dired-file-name-at-point)))
 
 (provide 'emacs-stdlib-functions)

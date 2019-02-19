@@ -104,7 +104,7 @@ TODO: incomplete but still useful right now"
 
 (defun cic:org-todo (arg)
   (interactive "P")
-  (cond ((eq major-mode 'org-agenda-mode)
+  (cond ((derived-mode-p 'org-agenda-mode)
          (when (cic:org-at-todo-p)
            (org-agenda-todo arg)))
         (t
@@ -588,7 +588,7 @@ whether it is active or inactive.  And whether it is in line or
 character mode, indicating whether it can be a normal buffer or
 not."
   (interactive)
-  (when (eq major-mode 'term-mode)
+  (when (derived-mode-p 'term-mode)
     (if (term-in-char-mode)
         (progn
           (term-line-mode)
@@ -893,7 +893,7 @@ flyspell-mode."
                                                       "YYYYMMDDTHHMMSS"
                                                       "YYYYMMDD"))))
     ;; TODO: handle comments
-    (when (eq major-mode 'org-mode)
+    (when (derived-mode-p 'org-mode)
       ;; TODO: insert appropriate heading
       (org-insert-heading))
     (insert the-time-string)))
@@ -932,7 +932,7 @@ and date.  Behaviour based on org-insert-heading."
            (setq the-end (point))
            (setq cic:insert-current-time-last-bounds (list the-beg the-end)))
           (t
-           (when (eq major-mode 'org-mode)
+           (when (derived-mode-p 'org-mode)
              (org-insert-heading))
            (setq the-beg (point))
            (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
@@ -947,7 +947,7 @@ inserts date. Create an org-mode heading with the current time
 and date.  Behaviour based on org-insert-heading."
   (interactive "P")
   ;; TODO: decide if I want this
-  (when (eq major-mode 'org-mode)
+  (when (derived-mode-p 'org-mode)
     (org-insert-heading))
   (let ((time (current-time)))
     (if arg
@@ -1019,7 +1019,7 @@ and date.  Behaviour based on org-insert-heading."
 (defun cic:outline (&optional arg)
   "Show a mode-specific outline."
   (interactive "P")
-  (cond ((eq major-mode 'latex-mode)
+  (cond ((derived-mode-p 'latex-mode)
          (if (get-buffer-window "*toc*" t)
              (save-excursion
                (select-window (get-buffer-window "*toc*" t))
@@ -1035,7 +1035,7 @@ and date.  Behaviour based on org-insert-heading."
                  (reftex-toc-max-level 3)
                (reftex-toc-max-level 2))
              (reftex-toc-rescan))))
-        ((eq major-mode 'reftex-toc-mode)
+        ((derived-mode-p 'reftex-toc-mode)
          (delete-window))
         (t
          (call-interactively 'imenu))))

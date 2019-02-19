@@ -469,7 +469,7 @@ read only."
 
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
-    (when (eq major-mode 'org-mode)
+    (when (derived-mode-p 'org-mode)
       (let ((the-buffer-file-name (buffer-file-name)))
         (unless (and the-buffer-file-name (string-match "-log.*\\.org" the-buffer-file-name))
           (org-display-inline-images)))))

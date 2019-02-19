@@ -194,7 +194,7 @@
 
 (defun cic:stdlib-keys-image-mode-setup-hook ()
   ;; TODO: which other ones?
-  (when (eq major-mode 'image-mode)
+  (when (derived-mode-p 'image-mode)
     (emacs-stdlib-keys-non-image-mode 0)))
 (add-hook 'find-file-hook 'cic:stdlib-keys-image-mode-setup-hook)
 
