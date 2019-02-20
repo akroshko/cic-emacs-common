@@ -1005,12 +1005,12 @@ Abstraction level is too high."
       (progn
         (find-file (car location))
         (when (derived-mode-p 'org-mode)
-          (org-cycle '(64)))
+          (org-show-all))
         (goto-char (cadr location)))
     (progn
       (switch-to-buffer (car location))
       (when (derived-mode-p 'org-mode)
-        (org-cycle '(64)))
+        (org-show-all))
       (goto-char (cadr location)))))
 
 

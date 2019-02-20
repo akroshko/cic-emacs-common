@@ -397,7 +397,7 @@ read only."
   ;; (define-key org-mode-map (kbd "C-j")          ')
   ;; TOOD: probably want something a bit different
   ;;       generally won't work
-  ;; (define-key org-mode-map (kbd "M-o M-o") (lambda (&optional arg) (interactive "P") (org-cycle '(64))))
+  ;; (define-key org-mode-map (kbd "M-o M-o") 'org-show-all)
   ;; TODO: add more things..... to jump between invisible and visible....
   (define-key org-mode-map (kbd "M-o") 'org-toggle-link-display)
   (requiring-package (org-compat)

@@ -221,10 +221,11 @@ TODO: incomplete but still useful right now"
         (browse-url-generic-args    '("--temp-profile")))
     (browse-url-generic (cic:url-at-point-or-line 'url))))
 
-(defun cic:browse-url-at-point-gnome-web ()
-  "Find the URL at point and browse in the Firefox web browser."
-  (interactive)
-  (browse-url-epiphany (cic:url-at-point-or-line 'url)))
+;; TODO: remove
+;; (defun cic:browse-url-at-point-gnome-web ()
+;;   "Find the URL at point and browse in the Firefox web browser."
+;;   (interactive)
+;;   (browse-url-epiphany (cic:url-at-point-or-line 'url)))
 
 (defun cic:browse-url-at-point-w3m ()
   "Find the URL at point and browse in the w3m web browser."

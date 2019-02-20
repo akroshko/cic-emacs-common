@@ -104,7 +104,7 @@
             ;; O == Open, meaning I'm Opening Outside of emacs
             (define-key map (kbd "s-o c")        'cic:browse-url-at-point-conkeror)
             (define-key map (kbd "s-o f")        'cic:browse-url-at-point-firefox)
-            (define-key map (kbd "s-o g")        'cic:browse-url-at-point-gnome-web)
+            (define-key map (kbd "s-o g")        'cic:browse-url-at-point-chromium)
             (define-key map (kbd "s-o w")        'cic:browse-url-at-point-w3m)
             ;; TODO: move this
             (define-key map (kbd "s-p p s")      (lambda () (interactive) (profiler-start 'cpu)))
