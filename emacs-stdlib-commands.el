@@ -267,7 +267,7 @@ Effect of motion is to go to previous."
   (interactive)
   (unless motion
     (setq motion 1))
-  (let ((current-filename (buffer-file-name))
+  (let ((current-filename buffer-file-name)
         (keep-going t)
         next-filename)
     (save-current-buffer
@@ -649,10 +649,10 @@ similar languages."
   (interactive "P")
   (let (filename)
     (if arg
-        (setq filename (buffer-file-name))
+        (setq filename buffer-file-name)
       (setq filename (if (equal major-mode 'dired-mode)
                          (expand-file-name default-directory)
-                       (file-name-nondirectory (buffer-file-name))))
+                       (file-name-nondirectory buffer-file-name)))
       )
     (when filename
       (kill-new filename)

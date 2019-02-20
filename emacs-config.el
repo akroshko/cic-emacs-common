@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20181205
+;; Version: 20190219
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -314,8 +314,10 @@ read only."
   ;; XXXX: I do not want link targets editable
   (setq wdired-allow-to-redirect-links nil))
 
-(add-hook 'package-menu-mode-hook '(lambda ()  (hl-line-mode 1)))
-(add-hook 'occur-mode-hook '(lambda ()  (hl-line-mode 1)))
+(add-hook 'package-menu-mode-hook 'cic:init-hl-line-mode)
+(add-hook 'occur-mode-hook 'cic:init-hl-line-mode)
+(defun cic:init-hl-line-mode ()
+    (hl-line-mode 1))
 (requiring-package (ispell)
   (setq ispell-program-name "aspell"
         ;; I do really write in Canadian, except for all the z's I use
@@ -470,9 +472,8 @@ read only."
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
     (when (derived-mode-p 'org-mode)
-      (let ((the-buffer-file-name (buffer-file-name)))
-        (unless (and the-buffer-file-name (string-match "-log.*\\.org" the-buffer-file-name))
-          (org-display-inline-images)))))
+      (unless (and buffer-file-name (string-match "-log.*\\.org" buffer-file-name))
+        (org-display-inline-images))))
   ;; TODO: change to something good
   ;; (defun org-list-highlight-setup ()
   ;;   (font-lock-add-keywords 'org-mode
@@ -489,33 +490,31 @@ read only."
   (add-hook 'hack-local-variables-hook 'org-image-enable)
   ;; literal hyperlinks setup
   (defun org-literal-hyperlinks-setup ()
-    (let ((the-buffer-file-name (buffer-file-name)))
-      (unless (and the-buffer-file-name (string-match "help\\.org" the-buffer-file-name))
-        (org-remove-from-invisibility-spec '(org-link))
-        (org-restart-font-lock))))
+    (unless (and buffer-file-name (string-match "help\\.org" buffer-file-name))
+      (org-remove-from-invisibility-spec '(org-link))
+      (org-restart-font-lock)))
   ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
   (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   ;; (setq org-log-done 'time)
   ;; (setq org-log-done 'note)
   ;; most recent notes is always at the top
   (setq org-reverse-note-order t)
-  (setq org-agenda-dim-blocked-tasks t)
-  ;; show 7 days by default
-  (setq org-agenda-span 10)
-  ;; how many days early a deadline item will appear
-  (setq org-deadline-warning-days 0)
-  ;; show days with no tasks, so "free days" can be seen
-  (setq org-agenda-show-all-dates t)
-  ;; deadlines that are completed will not show up
-  (setq org-agenda-skip-deadline-if-done t)
-  ;; scheduled events will not show up
-  (setq org-agenda-skip-scheduled-if-done t)
-  ;; always begin on current day
-  (setq org-agenda-start-on-weekday nil)
-  ;; org-agenda custom commands, see above newartisans.com link
-  ;; keyboard shortcuts for day-agenda, week-agenda, 21-day agenda
-  (setq org-agenda-custom-commands
-        '(("w" "Agenda for 21 days" agenda "" ((org-agenda-span 21)))))
+  (setq org-agenda-dim-blocked-tasks t
+        ;; show 10 days by default
+        org-agenda-span 10
+        org-deadline-warning-days 0
+        ;; how many days early a deadline item will appear
+        ;; show days with no tasks, so "free days" can be seen
+        org-agenda-show-all-dates t
+        ;; deadlines that are completed will not show up
+        org-agenda-skip-deadline-if-done t
+        ;; scheduled events will not show up
+        org-agenda-skip-scheduled-if-done t
+        ;; always begin on current day
+        org-agenda-start-on-weekday nil
+        ;; org-agenda custom commands, see above newartisans.com link
+        ;; keyboard shortcuts for day-agenda, week-agenda, 21-day agenda
+        org-agenda-custom-commands '(("w" "Agenda for 21 days" agenda "" ((org-agenda-span 21)))))
   (add-hook 'org-capture-mode-hook
             'delete-other-windows))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

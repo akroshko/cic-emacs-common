@@ -668,7 +668,7 @@ TODO: Make formatting an option so more universal."
   (when (not (cic:org-headline-p))
     (org-forward-element))
   (let (headline-position-list)
-    (do-org-headlines (buffer-file-name) headline subtree
+    (do-org-headlines buffer-file-name headline subtree
                       (setq headline-position-list (append headline-position-list (list (point)))))
     (goto-char (car (last headline-position-list)))))
 
@@ -1048,7 +1048,7 @@ XXXX: Not currently used or tested."
   (cond ((derived-mode-p 'dired-mode)
          (file-name-nondirectory (cic:dired-filename-at-point)))
         (t
-         (file-name-nondirectory (buffer-file-name)))))
+         (file-name-nondirectory buffer-file-name))))
 
 ;; from https://github.com/jimm/elisp/blob/master/emacs.el
 ;; http://en.wikipedia.org/wiki/Password_strength
@@ -1300,7 +1300,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (let (region-to-move
           (beg-of-region (region-beginning))
           (end-of-region (region-end))
-          (current-filename (cic:current-grouppath (buffer-file-name)))
+          (current-filename (cic:current-grouppath buffer-file-name))
           new-subtree
           (check-input-char 13))
       ;; ask about location
@@ -1361,7 +1361,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
            (message "Must be at level 2 heading to refile!!!"))
           (t
            (let (new-subtree
-                 (current-filename (cic:current-grouppath (buffer-file-name)))
+                 (current-filename (cic:current-grouppath buffer-file-name))
                  (current-toplevel-tree (save-excursion (cic:goto-previous-heading-level 1)
                                                         (org-back-to-heading)
                                                         (s-trim-full-no-properties (org-get-heading))))
@@ -1455,7 +1455,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (interactive "P")
   (cond ((derived-mode-p 'latex-mode)
          (cond ((equal arg '(4))
-                (let ((full-filename (buffer-file-name)))
+                (let ((full-filename buffer-file-name))
                   ;; TODO: need current compile but wait?
                   ;; recursive call to compile
                   (cic:current-compile nil)
@@ -1468,7 +1468,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                ((equal arg '(16))
                 (cic:current-compile 'full))
                ((equal arg '(64))
-                (let ((full-filename (buffer-file-name)))
+                (let ((full-filename buffer-file-name))
                   ;; TODO: need current compile but wait?
                   ;; recursive call to compile
                   (cic:current-compile 'full)
@@ -1488,12 +1488,12 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 ;; (setq auto-revert-verbose nil)
                 ;; get includeonly working
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
-                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base (buffer-file-name)) "}\" > ~/cic-vcs-phd/phdthesis/includeonly.tex")))
+                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base buffer-file-name) "}\" > ~/cic-vcs-phd/phdthesis/includeonly.tex")))
                 (TeX-command "LaTeX" 'TeX-master-file nil))))
         ((derived-mode-p 'python-mode)
          ;; TODO: use some beter configuration
          ;; XXXX: pyflakes can't easily ignore common design decision I make
-         ;; (python-check (concat "pyflakes " (buffer-file-name)))
+         ;; (python-check (concat "pyflakes " buffer-file-name))
          ;; TODO: do I want this...
          ;; (flycheck-buffer)
          ;; TODO: better customization
@@ -1508,14 +1508,14 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;;             sometimes add paths is good before importing on experimental setups,
          ;;             requiring whitespace around operators does not allows intuitive grouping of expressions
          ;;             I like to comment blocks out so wrong and unexpected indentation will always be found
-         (python-check (concat "flake8 --ignore=E114,E116,E122,E124,E127,E201,E221,E222,E225,E226,E231,E241,E251,E261,E266,E302,E305,E401,F401,E402,F402,E403,F403,E405,F405,E501 " (buffer-file-name))))))
+         (python-check (concat "flake8 --ignore=E114,E116,E122,E124,E127,E201,E221,E222,E225,E226,E231,E241,E251,E261,E266,E302,E305,E401,F401,E402,F402,E403,F403,E405,F405,E501 " buffer-file-name)))))
 
 (defun first-latex-compile-process-sentinel (process event)
   (mpp (concat "First: " event))
   (when (equal event "finished\n")
     ;; call next
     (mpp "first sentinel")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (TeX-command "BibTeX" 'TeX-master-file nil)
       (let ((active-process (with-current-file full-filename
                               (TeX-active-process))))
@@ -1528,7 +1528,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (when (equal event "finished\n")
     ;; call next
     (mpp "second sentinel")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (cic:current-compile nil)
       (let ((active-process (with-current-file full-filename
                               (TeX-active-process))))
@@ -1540,7 +1540,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (mpp (concat "Third: " event))
   (when (equal event "finished\n")
     (mpp "third sentinel")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (cic:current-compile nil))))
 
 (defun first-latex-full-compile-process-sentinel (process event)
@@ -1548,7 +1548,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (when (equal event "finished\n")
     ;; call next
     (mpp "first sentinel multi-")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (TeX-command "BibTeX" 'TeX-master-file nil)
       (let ((active-process (with-current-file full-filename
                               (TeX-active-process))))
@@ -1561,7 +1561,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (when (equal event "finished\n")
     ;; call next
     (mpp "second sentinel multi-")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (cic:current-compile 'full)
       (let ((active-process (with-current-file full-filename
                               (TeX-active-process))))
@@ -1573,7 +1573,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
   (mpp (concat "Third multi-: " event))
   (when (equal event "finished\n")
     (mpp "third sentinel multi-")
-    (let ((full-filename (buffer-file-name)))
+    (let ((full-filename buffer-file-name))
       (cic:current-compile 'full)
       (let ((active-process (with-current-file full-filename
                               (TeX-active-process))))
@@ -1597,9 +1597,9 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;; needs latex-extra package
          ;; TODO: clean first?
          ;; TODO: does not get set by appropriate advice
-         (setq cic:current-build-filename (buffer-file-name))
+         (setq cic:current-build-filename buffer-file-name)
          (call-interactively 'latex/compile-commands-until-done)
-         ;; (let ((full-filename (buffer-file-name)))
+         ;; (let ((full-filename buffer-file-name))
          ;;   (TeX-command "LatexMk" 'TeX-master-file nil)
          ;;   (let* ((current-filename (file-name-sans-extension (file-name-nondirectory full-filename)))
          ;;          (active-process (with-current-file full-filename

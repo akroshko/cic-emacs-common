@@ -86,7 +86,9 @@ TODO broken, provided a diff cleanup function too!"
   (add-to-list 'sh-assignment-regexp '(bash . "\\<\\([[:alnum:]_-]+\\)\\(\\[.+\\]\\)?\\+?="))
   ;; XXXX: why did Emacs 25 feel the need to make this annoying mode default
   (remove-hook 'sh-mode-hook 'sh-electric-here-document-mode)
-  (add-hook 'sh-mode-hook (lambda () (sh-electric-here-document-mode -1))))
+  (add-hook 'sh-mode-hook 'cic:sh-mode-disable-electric-here-document-mode)
+  (defun cic:sh-mode-disable-electric-here-document-mode ()
+    (sh-electric-here-document-mode -1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my custom elisp code and keys
@@ -262,7 +264,7 @@ TODO broken, provided a diff cleanup function too!"
                    (defun cic:switch-to-process-buffer ()
                      (interactive)
                      (let ((latex-buffer (current-buffer))
-                           (process-buffer (TeX-process-buffer-name (file-name-sans-extension (buffer-file-name))))
+                           (process-buffer (TeX-process-buffer-name (file-name-sans-extension buffer-file-name)))
                            (tex-help-window nil))
                        ;; if a window called tex-help is open, just go to next
                        (walk-windows (lambda (w)
@@ -311,7 +313,7 @@ TODO broken, provided a diff cleanup function too!"
                        ret))
                    (advice-add 'TeX-BibTeX-sentinel :around #'TeX-BibTeX-sentinel-bibtex-always-successful)
                    (defun TeX-LaTeX-current-build-filename (orig-fun &rest args)
-                     (setq cic:current-build-filename (buffer-file-name))
+                     (setq cic:current-build-filename buffer-file-name)
                      (apply orig-fun args))
                    (advice-add 'TeX-command-master :around #'TeX-LaTeX-current-build-filename)
                    (advice-add 'TeX-command        :around #'TeX-LaTeX-current-build-filename)
@@ -353,7 +355,7 @@ TODO broken, provided a diff cleanup function too!"
   ;; only enable annotate for read-only files
   (add-hook 'find-file-hook 'cic:annotate-enable)
   (defun cic:annotate-enable ()
-    (when (string-match "\\.ro\\." buffer-file-name)
+    (when (and buffer-file-name (string-match "\\.ro\\." buffer-file-name))
       (annotate-mode)))
   (defun annotate--remove-annotation-property--inhibit-readonly (orig-fun &rest args)
     (let ((old-buffer-read-only buffer-read-only))
@@ -431,13 +433,15 @@ TODO broken, provided a diff cleanup function too!"
 (requiring-package (js)
   (autoload 'conkeror-minor-mode "conkeror-minor-mode")
                                         ; (add-hook 'js-mode-hook 'conkeror-minor-mode)
-  (add-hook 'js-mode-hook (lambda ()
-                            (when (string-match "conkeror" (buffer-file-name))
-                              (conkeror-minor-mode 1))))
+  (add-hook 'js-mode-hook 'cic:js-init-conkeror-minor-mode)
+  (defun cic:js-init-conkeror-minor-mode ()
+    (when (and buffer-file-name (string-match "conkeror" buffer-file-name))
+      (conkeror-minor-mode 1)))
+  (add-hook 'js-mode-hook 'cic:js-mode-disable-electic-indent)
   (defun cic:js-mode-disable-electic-indent ()
     ;; TODO: electric-indent-just-newline would be nice
     (electric-indent-local-mode 0))
-  (add-hook 'js-mode-hook 'cic:js-mode-disable-electic-indent)
+
   (add-to-list 'auto-mode-alist '("\\.jsx$" . js-mode)))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -793,12 +797,13 @@ TODO broken, provided a diff cleanup function too!"
 ;; org-bullets
 ;; TODO: really slows stuff down
 (requiring-package (org-bullets)
-  (add-hook 'org-mode-hook (lambda ()
-                             ;; for my emacs-otlb package, want to put this somewhere else maybe?
-                             ;; cuts an n=1 test from 55s to 4-7s
-                             ;; TODO: where else do I want to kill org-bullets?
-                             (unless  (and (buffer-file-name) (string-match "pedestrian-log.*\\.org" (buffer-file-name)))
-                               (org-bullets-mode 1)))))
+  (add-hook 'org-mode-hook 'cic:org-bullets-mode-init)
+  (defun cic:org-bullets-mode-init ()
+    ;; for my emacs-otlb package, want to put this somewhere else maybe?
+    ;; cuts an n=1 test from 55s to 4-7s
+    ;; TODO: where else do I want to kill org-bullets?
+    (unless (or (derived-mode-p 'org-writing-mode) (and buffer-file-name (string-match "pedestrian-log.*\\.org" buffer-file-name)))
+      (org-bullets-mode 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; pos-tip
@@ -823,7 +828,7 @@ TODO broken, provided a diff cleanup function too!"
     (when (buffer-live-p (get-buffer "*cic-python-check*"))
       (with-current-buffer-erase "*cic-python-check*"
                                  (goto-char (point-min))))
-    (let ((return-code (call-process "python" nil "*cic-python-check*" nil "-m" "py_compile" (buffer-file-name))))
+    (let ((return-code (call-process "python" nil "*cic-python-check*" nil "-m" "py_compile" buffer-file-name)))
       (if (equal return-code 0)
           (message "Syntax check passed!!!")
         ;; TODO: flash if failed...
@@ -966,8 +971,12 @@ TODO broken, provided a diff cleanup function too!"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; slime
 (requiring-package (slime)
-  (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
-  (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+  (add-hook 'lisp-mode-hook 'cic:init-slime-mode)
+  (defun cic:init-slime-mode ()
+    (slime-mode t))
+  (add-hook 'inferior-lisp-mode-hook 'cic:init-inferior-slime-mode)
+  (defun cic:init-inferior-slime-mode ()
+    (inferior-slime-mode t))
   ;; Optionally, specify the lisp program you are using. Default is "lisp"
   (setq inferior-lisp-program "sbcl"))
 
@@ -1017,7 +1026,11 @@ TODO broken, provided a diff cleanup function too!"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vline
-(add-hook 'calendar-mode-hook (lambda () (setq cursor-type 'box) (hl-line-mode) (vline-mode)))
+(add-hook 'calendar-mode-hook 'cic:calendar-init-highlight)
+(defun cic:calendar-init-highlight ()
+  (setq cursor-type 'box)
+  (hl-line-mode)
+  (vline-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some nice packages I like
