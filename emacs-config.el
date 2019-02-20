@@ -467,6 +467,8 @@ read only."
         org-ellipsis "➤➤➤"
         ;; org-ellipsis "⤵"
         ;; org-ellipsis "▼"
+        ;; TODO: this seems appealing but messages up any words with an unscore
+        ;; org-pretty-entities t
         )
 
   ;; TODO: not sure why this works, if it works, and if I still need it
