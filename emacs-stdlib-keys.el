@@ -181,11 +181,15 @@
   (define-minor-mode emacs-stdlib-keys-non-org-mode
     :global t
     :keymap (let ((map (make-sparse-keymap)))
-              ;; TODO: insert if not on beginnng of line, make this something different
-              ;; (define-key map (kbd "C-<return>") 'cic:comment-header)
+              (define-key map (kbd "C-<return>") 'cic:comment-new-line-no-split)
               (define-key map (kbd "M-<return>") 'indent-new-comment-line)
               map))
   (emacs-stdlib-keys-non-org-mode t)
+  (defun cic:comment-new-line-no-split ()
+    (interactive)
+    (end-of-line)
+    (insert "\n")
+    (comment-dwim nil))
   (defun cic:disable-emacs-stdlib-keys-non-org-mode ()
     (emacs-stdlib-keys-non-org-mode 0))
   (add-hook 'org-mode-hook 'cic:disable-emacs-stdlib-keys-non-org-mode)

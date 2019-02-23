@@ -51,8 +51,8 @@ TODO: flag to not use timestamp"
   (let ((message-string (concat "-- " (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
-    (save-excursion (with-current-buffer-max (get-buffer-create buffer)
-                                             (insert (concat message-string "\n"))))))
+    (with-current-buffer-max (get-buffer-create buffer)
+                             (insert (concat message-string "\n")))))
 
 (defun cic:mpp-echo (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
@@ -63,8 +63,8 @@ TODO: flag to not use timestamp"
          (message-string (concat (cic:time-stamp) "\n" raw-message-string)))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
-    (save-excursion (with-current-buffer-max (get-buffer-create buffer)
-                      (insert (concat message-string "\n"))))
+    (with-current-buffer-max (get-buffer-create buffer)
+                             (insert (concat message-string "\n")))
     (message raw-message-string)))
 
 ;; (mpp-table '(("1" "2" "3") ("1" "2" "3")))
@@ -570,6 +570,19 @@ with-filename-filter."
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      ,@body))
 
+(defmacro with-current-file-transient (filename &rest body)
+  "Execute BODY with FILENAME as buffer.  Close the file if it
+does not already exist Uses with-filename-filter."
+  (declare (indent 1) ;; (debug t)
+           )
+  `(save-excursion
+     (let ((already-existing-buffer (get-file-buffer ,filename))
+           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+       (set-buffer current-file-buffer)
+       ,@body
+       (unless already-existing-buffer
+         (kill-buffer current-file-buffer)))))
+
 (defmacro with-current-file-headline (filename headline &rest body)
   "Execute BODY with FILENAME as buffer after finding HEADLINE.
 Uses with-filename-filter."
@@ -589,6 +602,19 @@ Uses with-filename-filter."
      (goto-char (point-min))
      ,@body))
 
+(defmacro with-current-file-transient-min (filename &rest body)
+  "Like with-current-file, but always go to point-min."
+  (declare (indent 1) ;; (debug t)
+           )
+  `(save-excursion
+     (let ((already-existing-buffer (get-file-buffer ,filename))
+           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+       (set-buffer current-file-buffer)
+       (goto-char (point-min))
+       ,@body
+       (unless already-existing-buffer
+         (kill-buffer current-file-buffer)))))
+
 (defmacro with-current-file-max (filename &rest body)
   "Like with-current-file, but always go to point max."
   (declare (indent 1) ;; (debug t)
@@ -597,6 +623,19 @@ Uses with-filename-filter."
      (set-buffer (find-file-noselect (with-filename-filter ,filename)))
      (goto-char (point-max))
      ,@body))
+
+(defmacro with-current-file-transient-max (filename &rest body)
+  "Like with-current-file, but always go to point max."
+  (declare (indent 1) ;; (debug t)
+           )
+  `(save-excursion
+     (let ((already-existing-buffer (get-file-buffer ,filename))
+           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+       (set-buffer current-file-buffer)
+       (goto-char (point-max))
+       ,@body
+       (unless already-existing-buffer
+         (kill-buffer current-file-buffer)))))
 
 (defmacro with-current-file-org-table (filename table-name &rest body)
   "Like with-current-file, but find TABLE-NAME."
@@ -1397,6 +1436,19 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
              ;; TODO: save-buffers once this is a stable function
              )))))
 
+(defun cic:goto-previous-heading-level (level)
+  ;; goto the open heading level
+  (org-back-to-heading)
+  (beginning-of-line)
+  (setq heading-level
+        (org-outline-level))
+  (setq move-heading-level
+        (- heading-level
+           level))
+  (when (< move-heading-level 0)
+    (setq move-heading-level 0))
+  (org-up-heading-all move-heading-level))
+
 ;; TODO: add more cases at some point, start putting more places
 (defun cic:org-kill-trailing-blank-lines ()
   "Kill trailing blanks at end of trees and after :END:"
@@ -1925,5 +1977,9 @@ TODO: do something else (like copy whole line) if no region?"
 
 (defun cic:dired-filename-at-point ()
   (expand-file-name (dired-file-name-at-point)))
+
+
+(defun cic:standard-datestamp-current-time ()
+  (format-time-string "%Y%m%dt%H%M%S" (current-time)))
 
 (provide 'emacs-stdlib-functions)

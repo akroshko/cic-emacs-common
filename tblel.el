@@ -106,12 +106,16 @@ along with a #+TBLEL line."
 (advice-add 'org-table-recalculate :before #'tblel-eval)
 (add-hook 'org-ctrl-c-ctrl-c-hook 'tblel-eval-line)
 
+(defface tblel-command-face
+  '((t (:foreground "Firebrick")))
+  "Show the tblel command.")
+
 (defun tblel-setup ()
   "Set up some things so tblel is as integrated as possible in org-table."
   ;; set up fontification
   (font-lock-add-keywords 'org-mode
                           ;; TODO: change to org-meta-line, in keyword-face for convienience right now
-                          '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . font-lock-comment-face))))
+                          '(("^\\s-+\\(#\\+TBLEL:.*\\)$" . tblel-command-face))))
 
 (add-hook 'org-mode-hook 'tblel-setup)
 

@@ -88,16 +88,16 @@
 ;; Regular" that comes up with "emacs -Q" is also quite slow"
 (add-to-list 'initial-frame-alist
              ;; '(font . "DejaVu Sans Mono-7")
-             ;; '(font . "Liberation Mono-8")
+             '(font . "Liberation Mono-8")
              ;; '(font . "Droid Sans Mono-8")
-	     '(font . "Noto Sans Mono CJK JP Regular-7")
+	     ;; '(font . "Noto Sans Mono CJK JP Regular-7")
              ;; '(font . "Anonymous-8")
              )
 (add-to-list 'default-frame-alist
              ;; '(font . "DejaVu Sans Mono-7")
-             ;; '(font . "Liberation Mono-8")
+             '(font . "Liberation Mono-8")
              ;; '(font . "Droid Sans Mono-8")
-	     '(font . "Noto Sans Mono CJK JP Regular-7")
+	     ;; '(font . "Noto Sans Mono CJK JP Regular-7")
              ;; '(font . "Anonymous-8")
              )
 ;; this fixes many coding problems I used to have
@@ -440,13 +440,13 @@ read only."
         ;; TODO: probably want a slightly different color contrast for note
         org-todo-keyword-faces '(("NOTE"             . (:foreground "yellow"      :background "dark green" :weight bold))
                                  ("REFILE"           . (:foreground "red"         :background "cyan"       :weight bold))
-;;;;;;;;;;;;;;;;;;;;
+                                 ;;;;;;;;;;;;;;;;;;;;
                                  ("TODO"             . "firebrick")
                                  ("NEXT"             . "orange red")
                                  ("INPROGRESS"       . (:foreground "magenta"     :background "gold"       :weight bold))
                                  ("PRIORITY"         . (:foreground "light blue"  :background "red"        :weight bold))
                                  ("WAITING"          . (:foreground "magenta"     :background "gold"       :weight bold))
-;;;;;;;;;;;;;;;;;;;;
+                                 ;;;;;;;;;;;;;;;;;;;;
                                  ("DONE"             . (:foreground "dark orange" :background "blue"       :weight bold))
                                  ("DUPLICATE"        . (:foreground "yellow"      :background "blue"       :weight bold))
                                  ("CANT"             . (:foreground "yellow"      :background "blue"       :weight bold))
@@ -467,9 +467,9 @@ read only."
         org-ellipsis "➤➤➤"
         ;; org-ellipsis "⤵"
         ;; org-ellipsis "▼"
-        ;; TODO: this seems appealing but messages up any words with an unscore
+        ;; TODO:  seems appealing but messages up any words with an unscore
         ;; org-pretty-entities t
-        )
+        org-fontify-emphasized-text t)
 
   ;; TODO: not sure why this works, if it works, and if I still need it
   (defun org-image-enable ()
@@ -491,12 +491,15 @@ read only."
   (put 'org-image-actual-width 'safe-local-variable 'integerp)
   (add-hook 'hack-local-variables-hook 'org-image-enable)
   ;; literal hyperlinks setup
+  ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
+  (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
   (defun org-literal-hyperlinks-setup ()
     (unless (and buffer-file-name (string-match "help\\.org" buffer-file-name))
       (org-remove-from-invisibility-spec '(org-link))
       (org-restart-font-lock)))
-  ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
-  (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
+  (add-hook 'org-mode-hook 'org-indent-mode-setup)
+  (defun org-indent-mode-setup ()
+    (org-indent-mode 1))
   ;; (setq org-log-done 'time)
   ;; (setq org-log-done 'note)
   ;; most recent notes is always at the top

@@ -413,7 +413,7 @@ TODO: Often called from .emacs so should handle errors well."
           ;; TODO: there's probably a more secure way to do this than
           ;; random shell commands in temp files
           (setq temp-filename (make-temp-file "emacs-command-"))
-          (with-current-file-min temp-filename
+          (with-current-file-transient-min temp-filename
             (insert "#!/bin/bash\n")
             (insert (concat "/usr/bin/screen -R " session "\n"))
             (save-buffer))
@@ -847,7 +847,7 @@ flyspell-mode."
   (interactive)
   (let ((word (thing-at-point 'word)))
     (when word
-      (with-current-file-max cic:user-wordlist
+      (with-current-file-transient-max cic:user-wordlist
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
@@ -864,7 +864,7 @@ flyspell-mode."
   (interactive)
   (let ((word (thing-at-point 'word)))
     (when word
-      (with-current-file-max cic:user-wordlist
+      (with-current-file-transient-max cic:user-wordlist
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
@@ -993,9 +993,8 @@ and date.  Behaviour based on org-insert-heading."
     (unless (= (length (window-list)) 1)
       (ignore-errors
         (setq cic:delete-window-undo (current-window-configuration))
-        (progn
-          (windmove-down)
-          (delete-window))))))
+        (windmove-down)
+        (delete-window)))))
 
 ;; TODO: undo delete frame
 ;;       see current-frame-configuration
