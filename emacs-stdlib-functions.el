@@ -611,9 +611,11 @@ Uses with-filename-filter."
            (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
        (set-buffer current-file-buffer)
        (goto-char (point-min))
-       ,@body
-       (unless already-existing-buffer
-         (kill-buffer current-file-buffer)))))
+       (let ((the-return (progn
+                           ,@body)))
+         (unless already-existing-buffer
+           (kill-buffer current-file-buffer))
+         the-return))))
 
 (defmacro with-current-file-max (filename &rest body)
   "Like with-current-file, but always go to point max."
@@ -633,9 +635,11 @@ Uses with-filename-filter."
            (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
        (set-buffer current-file-buffer)
        (goto-char (point-max))
-       ,@body
-       (unless already-existing-buffer
-         (kill-buffer current-file-buffer)))))
+       (let ((the-return (progn
+                           ,@body)))
+         (unless already-existing-buffer
+           (kill-buffer current-file-buffer))
+         the-return))))
 
 (defmacro with-current-file-org-table (filename table-name &rest body)
   "Like with-current-file, but find TABLE-NAME."
