@@ -1,7 +1,7 @@
 ;;; emacs-stdlib-functions.el --- Standard emacs function that should
 ;;; have many uses.
 ;;
-;; Copyright (C) 2015-2018, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2015-2019, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
@@ -1328,8 +1328,8 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
 
 (defun cic:make-file-finder (f)
   "Make a command to find a particular file."
-  (let ((sym (gensym)))
-    (set sym f)
+  (lexical-let ((sym (gensym)))
+    (setq sym f)
     `(lambda ()
        (interactive)
        (find-file ,sym))))

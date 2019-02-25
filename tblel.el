@@ -1,6 +1,6 @@
 ;;; tblel.el --- Use elisp functions to calculate org-tables.
 ;;
-;; Copyright (C) 2016-2018, Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2016-2019, Andrew Kroshko, all rights reserved.
 ;;
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
