@@ -1519,7 +1519,6 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                                           (TeX-active-process))))
                     ;; (mpp active-process)
                     (when active-process
-                      (mpp "Starting...")
                       (set-process-sentinel active-process 'first-latex-compile-process-sentinel)))))
                ((equal arg '(16))
                 (cic:current-compile 'full))
@@ -1536,7 +1535,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                       (set-process-sentinel active-process 'first-latex-full-compile-process-sentinel)))))
                ;; TODO: make more universal
                ((equal arg 'full)
-                (shell-command-to-string (concat "echo \"\" > ~/cic-vcs-phd/phdthesis/includeonly.tex"))
+                (shell-command-to-string (concat "echo \"\" > ~/cic-vcs-academic/phdthesis/includeonly.tex"))
                 (TeX-command "LaTeX" 'TeX-master-file nil))
                (t
                 (save-some-buffers t)
@@ -1544,7 +1543,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                 ;; (setq auto-revert-verbose nil)
                 ;; get includeonly working
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
-                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base buffer-file-name) "}\" > ~/cic-vcs-phd/phdthesis/includeonly.tex")))
+                  (shell-command-to-string (concat "echo \"\\includeonly{" (file-name-base buffer-file-name) "}\" > ~/cic-vcs-academic/phdthesis/includeonly.tex")))
                 (TeX-command "LaTeX" 'TeX-master-file nil))))
         ((derived-mode-p 'python-mode)
          ;; TODO: use some beter configuration
