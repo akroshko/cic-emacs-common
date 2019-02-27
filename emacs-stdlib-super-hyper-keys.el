@@ -88,7 +88,8 @@
             (define-key map (kbd "s-h k")        'find-function-on-key)
             (define-key map (kbd "s-h l")        'find-library)
             (define-key map (kbd "s-h o")        'cic:help-org)
-            (define-key map (kbd "s-h r")        'cic:help-elisp)
+            ;; (define-key map (kbd "s-h r")        'cic:help-elisp)
+            (define-key map (kbd "s-h r")        'cic:help-read-select)
             (define-key map (kbd "s-h v")        'find-variable)
             (define-key map (kbd "s-j p")        'cic:elisp-pp-capture-buffer)
             ;; m==system manager

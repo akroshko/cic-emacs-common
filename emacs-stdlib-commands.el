@@ -735,6 +735,11 @@ alphanumeric."
 (defun cic:help-elisp ()
   (interactive)
   (info "elisp"))
+(defconst cic:help-list
+  '("dir" "auctex" "cl" "emacs" "elisp" "org" "sicp"))
+(defun cic:help-read-select ()
+  (interactive)
+  (info (cic:select-list-item cic:help-list)))
 (defun cic:external-collecton-buffer ()
   (interactive)
   (switch-to-buffer "*Collection*"))
