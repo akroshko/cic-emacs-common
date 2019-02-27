@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190219
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -267,6 +267,9 @@ read only."
 ;; search
 (setq search-upper-case nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; also search, but also debugging
+(setq next-error-recenter '(4))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-specific hooks, these should all be builtin to emacs
 ;; special hooks to delete trailing whitespace and clean up files
 ;; misc includes from standard emacs
@@ -314,6 +317,11 @@ read only."
   ;; XXXX: I do not want link targets editable
   (setq wdired-allow-to-redirect-links nil))
 
+(requiring-package (info)
+  ;; make info sane to navigate compared to my other programs
+  ;; will probably want more
+  (define-key Info-mode-map (kbd "b") 'Info-scroll-down))
+
 (add-hook 'package-menu-mode-hook 'cic:init-hl-line-mode)
 (add-hook 'occur-mode-hook 'cic:init-hl-line-mode)
 (defun cic:init-hl-line-mode ()
@@ -337,9 +345,6 @@ read only."
  'emacs-lisp-mode
  '(("(\\s-*\\(\\_<\\(?:\\sw\\|\\s_\\)+\\)\\_>"
     1 'font-lock-func-face)))
-;; TODO: these are not needed anymore
-;; (define-key emacs-lisp-mode-map (kbd "M-a") 'beginning-of-defun)
-;; (define-key emacs-lisp-mode-map (kbd "M-e") 'end-of-defun)
 ;; marking
 ;; should override company mode quickhelp, done elsewhere
 ;; TODO: make both work
@@ -574,9 +579,6 @@ read only."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; winner-mode
 (requiring-package (winner)
-  ;; TODO: no, not anymore
-  ;; (define-key winner-mode-map (kbd "M-9") 'winner-undo)
-  ;; (define-key winner-mode-map (kbd "M-0") 'winner-redo)
   (winner-mode 1))
 
 ;; TODO: if I eval-buffer this buffer, I get vc-mode back

@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180409
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -49,6 +49,7 @@
   ;; "Some standard keys bound to super."
   :global t
   :keymap (let ((map (make-sparse-keymap)))
+            ;; TODO swap next two groups?
             (define-key map (kbd "s-[")          'cic:previous-buffer-same-mode)
             (define-key map (kbd "s-]")          'cic:next-buffer-same-mode)
             ;; great for scanning
@@ -74,16 +75,12 @@
             (define-key map (kbd "s-e b")        'cic:elisp-eval-buffer)
             (define-key map (kbd "s-e d")        'cic:elisp-eval-call-defun)
             (define-key map (kbd "s-e i")        'ielm)
-            ;; TODO: these aren't in line with my current scheme
-            (define-key map (kbd "s-e j")        'cic:elisp-pp-capture-buffer)
-            ;; TODO: decide on this...
-            (define-key map (kbd "s-e p")        'cic:elisp-pp-capture-buffer)
             (define-key map (kbd "s-e m")        'cic:elisp-messages-buffer)
             (define-key map (kbd "s-e e")        'cic:elisp-debug-on-error)
             (define-key map (kbd "s-e s")        'cic:elisp-scratch-buffer)
             (define-key map (kbd "s-f w")        'cic:search-word-other-window)
             ;; h==help
-            ;; TODO: these badly need a menu
+            ;; TODO: these badly need a menu or cheatsheet
             (define-key map (kbd "s-h a")        'info-apropos)
             (define-key map (kbd "s-h f")        'find-function)
             ;; put c-u to just go to front of manual
@@ -92,8 +89,6 @@
             (define-key map (kbd "s-h l")        'find-library)
             (define-key map (kbd "s-h o")        'cic:help-org)
             (define-key map (kbd "s-h r")        'cic:help-elisp)
-            ;; TODO better name/key for this u neq v
-            (define-key map (kbd "s-h u")        'apropos-value)
             (define-key map (kbd "s-h v")        'find-variable)
             (define-key map (kbd "s-j p")        'cic:elisp-pp-capture-buffer)
             ;; m==system manager
@@ -115,22 +110,9 @@
             ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
             (define-key map (kbd "s-c 1")        'cic:ansi-term-ipython)
             (define-key map (kbd "s-c 2")        'cic:ansi-term-sage)
-            ;; view
-            ;; requires??? changing becaus s-v used for other things
-            ;; (define-key map (kbd "s-v l") 'hl-line-mode)
-            ;; x=fix
-            ;; zap up to char
-            ;; TODO: something else here due to other keys I'm trying
             ;; TODO: decide if I want to toggle global default value or ???
             (define-key map (kbd "s-5")          'toggle-case-fold-search)
-            ;; (cic:toggle-variable case-fold-search
-            ;;  "Case fold search enabled."
-            ;;  "Case fold search disabled."))
             ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
-            ;; zap up to char
-            ;; TODO: disabled for now due to conflict with other keys I'm trying
-            ;; (requiring-package (misc)
-            ;;   (define-key map (kbd "s-z") 'zap-up-to-char))
             map))
 
 (define-minor-mode emacs-stdlib-hyper-keys-mode
@@ -165,13 +147,7 @@
             (define-key map (kbd "H-x")          'scroll-up-command)
             (define-key map (kbd "s-g s-g")      'cic:toggle-media)
             (define-key map (kbd "s-g g")        'cic:toggle-media)
-            ;; (define-key map (kbd "H-k")          'cic:delete-window)
-            ;; TODO: temporary while I build new muscle memory
-            ;; (define-key map (kbd "H-0")          'cic:delete-window)
-            ;; TODO: keep these but maybe temporary while I build new muscle memory
             (define-key map (kbd "H-l")          'cic:delete-window-below)
-            ;; TODO: decide on k... using other things right now...
-            ;; (define-key map (kbd "H-K")          'cic:delete-frame)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)

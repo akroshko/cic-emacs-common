@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180213
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -309,22 +309,6 @@ TODO: not currently used but could be with a bit of tweaking."
     (goto-char (point-min))
     (search-forward point-word))))
 
-;; http://www.emacswiki.org/emacs/BufferLocalKeys
-(defun cic:buffer-local-set-key (key func)
-  "Set a buffer local key."
-  (interactive "KSet key on this buffer: \naCommand: ")
-  (let ((name (format "%s-magic" (buffer-name))))
-    (eval
-     `(define-minor-mode ,(intern name)
-        "Automagically built minor mode to define buffer-local keys."))
-    (let* ((mapname (format "%s-map" name))
-           (map (intern mapname)))
-      (unless (boundp (intern mapname))
-        (set map (make-sparse-keymap)))
-      (eval
-       `(define-key ,map ,key func)))
-    (funcall (intern name) t)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixup commands
 (defun cic:fix-whitespace (buffer)
@@ -370,13 +354,6 @@ TODO: Often called from .emacs so should handle errors well."
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -btoggle,fullscreen"))
 
-(defun cic:toggle-menubar ()
-  "Toggle the menubar."
-  (interactive)
-  (if menu-bar-mode
-      (menu-bar-mode -1)
-    (menu-bar-mode t)))
-
 (defun cic:whack-whitespace (arg)
   "Delete all white space from point to the next word.  With
     prefix ARG delete across newlines as well.  The only danger
@@ -416,7 +393,7 @@ TODO: Often called from .emacs so should handle errors well."
           (with-current-file-transient-min temp-filename
             (insert "#!/bin/bash\n")
             (insert (concat "/usr/bin/screen -R " session "\n"))
-            (save-buffer))
+            (basic-save-buffer))
           (shell-command (concat "chmod +x " temp-filename))
           (ansi-term temp-filename))
       (message "No screen sessions found!!!"))))
@@ -567,8 +544,8 @@ visit it."
 ;; TODO: maybe burrying an old term buffer might be better?
 (defun cic:term-exec-hook ()
   "Kill term buffers when exiting."
-  (let* ((buff (current-buffer))
-         (proc (get-buffer-process buff)))
+  (lexical-let* ((buff (current-buffer))
+                 (proc (get-buffer-process buff)))
     (set-process-sentinel
      proc
      `(lambda (process event)
@@ -851,7 +828,7 @@ flyspell-mode."
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
-        (save-buffer))
+        (basic-save-buffer))
       (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
       (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
       (ispell-kill-ispell t)
@@ -868,7 +845,7 @@ flyspell-mode."
         (insert (concat "\n" word "\n"))
         (flush-lines "^\\s-*$" (point-min) (point-max))
         (sort-lines nil (point-min) (point-max))
-        (save-buffer))
+        (basic-save-buffer))
       (shell-command "echo \"personal_ws-1.1 en 0\" > ~/.aspell.en.pws")
       (shell-command (concat "cat " cic:user-wordlist " >> ~/.aspell.en.pws"))
       (ispell-kill-ispell t)

@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180629
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -54,21 +54,14 @@
             (define-key map (kbd "S-<down>") 'cic:page-down)
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
-            (define-key map [f12]            'cic:toggle-menubar)
             ;; M- most convienient for laptop, control most convienient for touch typing
             ;; (define-key map (kbd "M-,")      'scroll-down-command)
             ;; (define-key map (kbd "M-.")      'scroll-up-command)
-            (define-key map (kbd "C-,")        'scroll-down-command)
-            (define-key map (kbd "C-.")        'scroll-up-command)
-            (define-key map (kbd "C-j")        'indent-new-comment-line)
+            (define-key map (kbd "C-,")      'scroll-down-command)
+            (define-key map (kbd "C-.")      'scroll-up-command)
+            (define-key map (kbd "C-j")      'indent-new-comment-line)
             ;; avoid accidental C-w from deleting many things
-            (define-key map (kbd "C-w")        'cic:kill-region-only-active)
-            ;; (define-key map (kbd "s-S-x")    'scroll-down-command)
-            ;; (define-key map (kbd "s-x")      'scroll-up-command)
-            ;; XXXX: lived for such a short time
-            ;; TODO: delete
-            ;; (define-key map (kbd "M-s")      'isearch-forward)
-            ;; (define-key map (kbd "M-a")      'isearch-backward)
+            (define-key map (kbd "C-w")      'cic:kill-region-only-active)
             (define-key map (kbd "M-b")      'cic:backward-symbol)
             ;; copy/yank
             (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
@@ -80,8 +73,6 @@
             (define-key map (kbd "M-g K")    'cic:window-kill-below)
             (define-key map (kbd "M-g j")    'cic:split-window-above)
             (define-key map (kbd "M-g J")    'split-window-below)
-            ;; TODO: might interfere with things?
-            ;; (define-key map (kbd "M-K")      'delete-frame)
             (define-key map (kbd "M-v")      'yank)
             (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
             ;; this is good, right? not destructive if I miss shift
@@ -110,7 +101,7 @@
             ;; steve yegge suggestion
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)
             ;; (global-set-key (kbd "C-x C-k") 'kill-region)
-            ;; TODO: disable swap point and mark, make something better
+            ;; TODO: disable swap point and mark, make something better, why did nil not work for me here?
             ;; (define-key map (kbd "C-x C-x")   (lambda (interactive)))
             (define-key map (kbd "C-x C-SPC") (lambda (interactive)))
             (define-key map (kbd "C-x M-c")  'cic:save-buffers-kill-emacs)
@@ -143,7 +134,6 @@
             ;; (define-key map (kbd "s-N") 'next-error)
             ;; (define-key map (kbd "s-P") 'previous-error)
             map))
-;; (define-key map (kbd "C-<return>") 'org-insert-heading-respect-content)
 
 ;; TODO: what other modes need this
 (define-minor-mode emacs-stdlib-keys-non-image-mode
@@ -166,14 +156,15 @@
               (define-key map (kbd "C-c a")      'org-agenda)
               (define-key map (kbd "C-c c")      'org-capture)
               ;; want key to be the same everywhere
-              (define-key map (kbd "C-c C-o") 'org-open-at-point-global)
+              (define-key map (kbd "C-c C-o")    'org-open-at-point-global)
+              (define-key map (kbd "C-<return>") 'cic:org-mode-control-return)
               map)
     ;; make org-mode calendar navigation more convienient without needing arrow keys
     ;; capitals not need
-    (define-key org-read-date-minibuffer-local-map (kbd "F") 'cic:org-calendar-forward)
-    (define-key org-read-date-minibuffer-local-map (kbd "B") 'cic:org-calendar-backward)
-    (define-key org-read-date-minibuffer-local-map (kbd "P") 'cic:org-calendar-backward-week)
-    (define-key org-read-date-minibuffer-local-map (kbd "N") 'cic:org-calendar-forward-week)
+    (define-key org-read-date-minibuffer-local-map (kbd "F")   'cic:org-calendar-forward)
+    (define-key org-read-date-minibuffer-local-map (kbd "B")   'cic:org-calendar-backward)
+    (define-key org-read-date-minibuffer-local-map (kbd "P")   'cic:org-calendar-backward-week)
+    (define-key org-read-date-minibuffer-local-map (kbd "N")   'cic:org-calendar-forward-week)
     (define-key org-read-date-minibuffer-local-map (kbd "M-F") 'cic:org-calendar-forward-month)
     (define-key org-read-date-minibuffer-local-map (kbd "M-B") 'cic:org-calendar-backward-month))
   (emacs-stdlib-keys-org-mode t)

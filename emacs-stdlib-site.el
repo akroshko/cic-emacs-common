@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20190129
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -104,18 +104,6 @@ TODO broken, provided a diff cleanup function too!"
 (setq epa-file-select-keys 'silent
       epg-gpg-program "/usr/bin/gpg2")
 (epa-file-enable)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; acejump
-;; TODO: don't use it anymore, but might at some point
-;; (requiring-package (ace-jump-mode)
-;;   ;; (global-set-key (kbd "<menu>") 'ace-jump-mode)
-;;   (global-set-key (kbd "S-SPC") 'ace-jump-mode)
-;;   (eval-after-load "ace-jump-mode"
-;;     '(ace-jump-mode-enable-mark-sync))
-;;   ;; TODO: maybe do super space for this
-;;   ;; TODO: maybe do easy
-;;   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode-pop-mark))
 
 ;; advice for tex-command-master
 (defvar cic:current-build-filename
@@ -303,9 +291,6 @@ TODO broken, provided a diff cleanup function too!"
                    ;; XXXX: specific to University of Saskatchewan thesis template
                    (eval-after-load "reftex"
                      '(add-to-list 'reftex-bibliography-commands "uofsbibliography"))
-                   ;; TODO: do I remap these to other things
-                   ;; (define-key TeX-mode-map (kbd "C-c C-b")  nil)
-                   ;; (define-key TeX-mode-map (kbd "C-c C-c")  nil)
                    (defun TeX-BibTeX-sentinel-bibtex-always-successful (orig-fun &rest args)
                      (let ((ret (apply orig-fun args)))
                        (setq TeX-command-next TeX-command-default)
@@ -328,7 +313,6 @@ TODO broken, provided a diff cleanup function too!"
                    (define-key TeX-mode-map (kbd "C-c C-c") 'align-current)
                    ;; TODO: better master command?
                    ;; (define-key TeX-mode-map (kbd "s-x s-x") 'TeX-command-master)
-                   ;; (define-key TeX-mode-map (kbd "s-b")     'cic:current-compile)
                    (define-key TeX-mode-map (kbd "s-c f")   'cic:current-compile-full)
                    (define-key TeX-mode-map (kbd "C-c C-b") 'cic:current-compile)
                    ;; TODO: want function symbol instead of lambda for this
@@ -787,13 +771,6 @@ TODO broken, provided a diff cleanup function too!"
   (add-to-list 'json-font-lock-keywords-1 (list cic:json-mode-comment-re 1 font-lock-warning-face)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; jumplist
-;; TODO: do not use this right now
-;; (requiring-package (jumplist)
-;;   (global-set-key (kbd "s-<") 'jumplist-previous)
-;;   (global-set-key (kbd "s->") 'jumplist-next))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-bullets
 ;; TODO: really slows stuff down
 (requiring-package (org-bullets)
@@ -820,8 +797,6 @@ TODO broken, provided a diff cleanup function too!"
   ;; TODO: figure this
   ;; (define-key python-mode-map (kbd "M-[") 'python-indent-shift-left)
   ;; (define-key python-mode-map (kbd "M-]") 'python-indent-shift-right)
-  ;; (define-key python-mode-map (kbd "s-b") 'cic:current-compile)
-  ;; (define-key python-mode-map (kbd "s-x") 'cic:current-compile)
   (define-key python-mode-map (kbd "s-x c") 'cic:check-python)
   (defun cic:check-python ()
     (interactive)
@@ -989,24 +964,6 @@ TODO broken, provided a diff cleanup function too!"
     (setq-local tab-width 4))
   ;; TODO: change this to recognize something once I use more sql variations
   (add-hook 'sql-mode-hook 'cic:sql-setup))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; smartscan
-;; TODO: disabling global modes that may impact performance
-;; TODO may replace with "evil" when appropriate
-;; XXXX: must be done before
-;; (setq smartscan-map
-;;       (let ((map (make-sparse-keymap)))
-;;         ;; TODO: change to something good soon
-;;         ;;       replaced with mousewheel emulation
-;;         ;; (define-key map (kbd "M-,") 'smartscan-symbol-go-backward)
-;;         ;; (define-key map (kbd "M-.") 'smartscan-symbol-go-forward)
-;;         ;; TODO: better replace
-;;         (define-key map (kbd "H-%") 'smartscan-symbol-replace)
-;;         map))
-;; (requiring-package (smartscan)
-;;   (setq smartscan-use-extended-syntax t)
-;;   (global-smartscan-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; spice-mode

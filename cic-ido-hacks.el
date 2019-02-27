@@ -7,7 +7,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Wed, Jan 03, 2018
-;; Version: 20180209
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 
 ;; This program is free software; you can redistribute it and/or modify

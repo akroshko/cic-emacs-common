@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20180827
+;; Version: 20190227
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -1436,9 +1436,8 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                  (insert "\n")
                  ;; now insert it
                  (insert region-to-move)
-                 (cic:org-kill-trailing-blank-lines)))
-             ;; TODO: save-buffers once this is a stable function
-             )))))
+                 (cic:org-kill-trailing-blank-lines)
+                 (basic-save-buffer))))))))
 
 (defun cic:goto-previous-heading-level (level)
   ;; goto the open heading level
@@ -1472,16 +1471,14 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                     (setq line-found t)))
                 (when line-found
                   (beginning-of-line)
-                  (let (kill-ring)
-                    (kill-line))))
+                  (cic:kill-line-elisp)))
                ((string-match ":END:" (cic:get-current-line))
                 (setq line-found nil)
                 (save-excursion
                   (forward-line)
                   (when (and (not (eobp)) (string-match "^\\s-*$" (cic:get-current-line)))
                     (beginning-of-line)
-                    (let (kill-ring)
-                      (kill-line)))))))))))
+                    (cic:kill-line-elisp))))))))))
 
 ;; https://stackoverflow.com/questions/4870704/appending-characters-to-the-end-of-each-line-in-emacs
 ;; create key for this and clean up language
@@ -1682,24 +1679,6 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          (sit-for 0.5)
          (message "Cleaned!!!"))))
 
-;; see https://www.emacswiki.org/emacs/HalfScrolling
-;; TODO: might have some issues with cursor-preserve-positio
-;; TODO: idea... highlight previous top/bottow on scrolling
-;; TODO: not sure I want this
-(defun cic:window-twothirds ()
-  (max 1 (/ (* 2 (1- (window-height (selected-window)))) 3)))
-
-(defun cic:scroll-up-twothirds ()
-  (interactive)
-  (scroll-up (cic:window-twothirds)))
-
-(defun cic:scroll-down-twothirds ()
-  (interactive)
-  (scroll-down (cic:window-twothirds)))
-
-;; (global-set-key [next] 'cic:scroll-up-twothirds)
-;; (global-set-key [prior] 'cic:scroll-down-twothirds)
-;; TODO: twothirds don't work with image-dired
 ;; TODO: move
 (global-set-key [prior] 'scroll-down)
 (global-set-key [next]  'scroll-up)
@@ -1984,5 +1963,20 @@ TODO: do something else (like copy whole line) if no region?"
 
 (defun cic:standard-datestamp-current-time ()
   (format-time-string "%Y%m%dt%H%M%S" (current-time)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; org-mode C-enter
+(defun cic:org-mode-control-return (&optional arg)
+  (interactive "P")
+  (when (derived-mode-p 'org-mode)
+    (cond ((org-table-p)
+           (org-table-insert-row '(4)))
+          (t
+           (org-insert-heading-respect-content)))))
+
+(defun cic:kill-line-elisp ()
+  (let (kill-ring
+        kill-whole-line)
+    (kill-line)))
 
 (provide 'emacs-stdlib-functions)
