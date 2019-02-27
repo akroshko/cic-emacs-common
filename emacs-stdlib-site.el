@@ -1017,7 +1017,7 @@ TODO broken, provided a diff cleanup function too!"
                          annotate
                          apache-mode
                          apt-sources-list
-                         ;; arduino-mode
+                         arduino-mode
                          async
                          auctex
                          auto-overlays
@@ -1114,9 +1114,7 @@ TODO broken, provided a diff cleanup function too!"
                          w3m
                          wanderlust
                          with-editor
-                         xml-rpc
-
-                         ))
+                         xml-rpc))
 
 (defun cic:install-packages ()
   (interactive)
