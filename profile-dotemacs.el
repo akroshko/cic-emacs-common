@@ -4,7 +4,7 @@
 
 ;; Author: David Engster <dengste@eml.cc>
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
-;; Version: 20190227
+;; Version: 20190228
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
