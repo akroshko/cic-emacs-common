@@ -467,6 +467,7 @@ read only."
         org-agenda-todo-ignore-deadlines t
         org-ctrl-k-protect-subtree nil
         org-cycle-global-at-bob t
+        org-cycle-include-plain-lists nil
         org-fontify-whole-heading-line t
         org-cycle-level-after-item/entry-creation nil
         org-ellipsis "➤➤➤"
