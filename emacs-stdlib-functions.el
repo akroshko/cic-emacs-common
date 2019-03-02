@@ -317,7 +317,7 @@ number."
     (setq column 1))
   (let (lisp-table
         found-row)
-    (with-current-file-org-table filename table-name
+    (with-current-file-transient-org-table filename table-name
                                  (setq lisp-table (cic:org-table-to-lisp-no-separators)))
     (do-org-table-rows filename table-name row
                        (org-table-goto-column column)
@@ -583,15 +583,21 @@ does not already exist Uses with-filename-filter."
        (unless already-existing-buffer
          (kill-buffer current-file-buffer)))))
 
-(defmacro with-current-file-headline (filename headline &rest body)
+(defmacro with-current-file-transient-headline (filename headline &rest body)
   "Execute BODY with FILENAME as buffer after finding HEADLINE.
 Uses with-filename-filter."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (set-buffer (find-file-noselect (with-filename-filter ,filename)))
+     (let (((already-existing-buffer (get-file-buffer ,filename))
+            (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))))
+     (set-buffer the-buffer)
      (cic:org-find-headline ,headline)
-     ,@body))
+     (let ((the-return (progn
+                         ,@body)))
+       (unless already-existing-buffer
+         (kill-buffer current-file-buffer))
+       the-return)))
 
 (defmacro with-current-file-min (filename &rest body)
   "Like with-current-file, but always go to point-min."
@@ -641,16 +647,22 @@ Uses with-filename-filter."
            (kill-buffer current-file-buffer))
          the-return))))
 
-(defmacro with-current-file-org-table (filename table-name &rest body)
+(defmacro with-current-file-transient-org-table (filename table-name &rest body)
   "Like with-current-file, but find TABLE-NAME."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (set-buffer (find-file-noselect (with-filename-filter ,filename)))
-     (goto-char (point-min))
-     (when (re-search-forward (concat "^\* " ,table-name "$") nil t)
-       (cic:org-find-table)
-       ,@body)))
+     (let ((already-existing-buffer (get-file-buffer ,filename))
+           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+       (set-buffer current-file-buffer)
+       (goto-char (point-min))
+       (when (re-search-forward (concat "^\* " ,table-name "$") nil t)
+         (cic:org-find-table)
+         (let ((the-return (progn
+                             ,@body)))
+           (unless already-existing-buffer
+             (kill-buffer current-file-buffer))
+           the-return)))))
 
 (defun cic:car-fallthrough (object)
   "If car-safe does not work, just return the object.  Otherwise
@@ -1361,6 +1373,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
           (setq end-of-region (region-end)))
         (setq region-to-move (buffer-substring beg-of-region end-of-region))
         (delete-region beg-of-region end-of-region)
+        ;; TODO: handle this with-current-file, do I want to jump to destination
         (with-current-file destination-file
           ;; is what I've cut a subtree
           (with-temp-buffer
@@ -1512,7 +1525,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                   ;; TODO: need current compile but wait?
                   ;; recursive call to compile
                   (cic:current-compile nil)
-                  (let ((active-process (with-current-file full-filename
+                  (let ((active-process (with-current-file-transient full-filename
                                           (TeX-active-process))))
                     ;; (mpp active-process)
                     (when active-process
@@ -1524,7 +1537,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
                   ;; TODO: need current compile but wait?
                   ;; recursive call to compile
                   (cic:current-compile 'full)
-                  (let ((active-process (with-current-file full-filename
+                  (let ((active-process (with-current-file-transient full-filename
                                           (TeX-active-process))))
                     ;; (mpp active-process)
                     (when active-process
@@ -1569,7 +1582,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (mpp "first sentinel")
     (let ((full-filename buffer-file-name))
       (TeX-command "BibTeX" 'TeX-master-file nil)
-      (let ((active-process (with-current-file full-filename
+      (let ((active-process (with-current-file-transient full-filename
                               (TeX-active-process))))
         (if active-process
             (set-process-sentinel active-process 'second-bibtex-compile-process-sentinel)
@@ -1582,7 +1595,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (mpp "second sentinel")
     (let ((full-filename buffer-file-name))
       (cic:current-compile nil)
-      (let ((active-process (with-current-file full-filename
+      (let ((active-process (with-current-file-transient full-filename
                               (TeX-active-process))))
         (if active-process
             (set-process-sentinel active-process 'third-latex-compile-process-sentinel)
@@ -1602,7 +1615,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (mpp "first sentinel multi-")
     (let ((full-filename buffer-file-name))
       (TeX-command "BibTeX" 'TeX-master-file nil)
-      (let ((active-process (with-current-file full-filename
+      (let ((active-process (with-current-file-transient full-filename
                               (TeX-active-process))))
         (if active-process
             (set-process-sentinel active-process 'second-bibtex-full-compile-process-sentinel)
@@ -1615,7 +1628,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (mpp "second sentinel multi-")
     (let ((full-filename buffer-file-name))
       (cic:current-compile 'full)
-      (let ((active-process (with-current-file full-filename
+      (let ((active-process (with-current-file-transient full-filename
                               (TeX-active-process))))
         (if active-process
             (set-process-sentinel active-process 'third-latex-full-compile-process-sentinel)
@@ -1627,7 +1640,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
     (mpp "third sentinel multi-")
     (let ((full-filename buffer-file-name))
       (cic:current-compile 'full)
-      (let ((active-process (with-current-file full-filename
+      (let ((active-process (with-current-file-transient full-filename
                               (TeX-active-process))))
         (if active-process
             (set-process-sentinel active-process 'fourth-latex-full-compile-process-sentinel)
@@ -1654,7 +1667,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;; (let ((full-filename buffer-file-name))
          ;;   (TeX-command "LatexMk" 'TeX-master-file nil)
          ;;   (let* ((current-filename (file-name-sans-extension (file-name-nondirectory full-filename)))
-         ;;          (active-process (with-current-file full-filename
+         ;;          (active-process (with-current-file-transient full-filename
          ;;                            (TeX-active-process))))
          ;;     (setq cic:current-build-filename current-filename)
          ;;     ;; TODO: how to stop this from overriding default message, move to emacs-stdlib
@@ -1928,12 +1941,8 @@ TODO: do something else (like copy whole line) if no region?"
 
 ;; (cic:capture-rxvt-scrollback "/home/akroshko/tmp/collect/urxvt-20171017103512.txt")
 (defun cic:capture-rxvt-scrollback (tmp-file)
-  ;; TODO need to close tmp-file buffer afterwards
-  ;;      need some more robust code for with-current-file and killing buffers from elisp functions
-  ;;      two find-file-noselect is stupid
-  (let ((captured-scrollback (with-current-file tmp-file
+  (let ((captured-scrollback (with-current-file-transient tmp-file
                                (buffer-substring-no-properties (point-min) (point-max)))))
-    (kill-buffer-if-not-modified (find-file-noselect tmp-file))
     ;; TODO: need safe titles and add datestring
     (with-current-buffer-create (concat "capture-urxvt-scrollback-" (format-time-string "%Y%m%d%H%M%S" (current-time)))
       (insert captured-scrollback)
