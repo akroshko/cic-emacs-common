@@ -217,11 +217,11 @@
             ;; (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
-            ;; other cool keys
+            ;; TODO: remove these
             ;; (define-key map (kbd "H-0") 'cic:text-scale-neutral)
-            (define-key map (kbd "H--") 'text-scale-decrease)
-            (define-key map (kbd "H-=") 'cic:text-scale-neutral)
-            (define-key map (kbd "H-+") 'text-scale-increase)
+            ;; (define-key map (kbd "H--") 'text-scale-decrease)
+            ;; (define-key map (kbd "H-=") 'cic:text-scale-neutral)
+            ;; (define-key map (kbd "H-+") 'text-scale-increase)
             ;; TODO: decided this was better used for other things
             ;; (define-key map (kbd "H-<return>") 'buffer-menu)
             (define-key map (kbd "H-<backspace>") 'delete-frame)

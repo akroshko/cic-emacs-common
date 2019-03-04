@@ -628,7 +628,7 @@ similar languages."
   (let (filename)
     (if arg
         (setq filename buffer-file-name)
-      (setq filename (if (equal major-mode 'dired-mode)
+      (setq filename (if (derived-mode-p 'dired-mode)
                          (expand-file-name default-directory)
                        (file-name-nondirectory buffer-file-name)))
       )

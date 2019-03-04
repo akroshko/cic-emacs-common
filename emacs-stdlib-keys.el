@@ -114,6 +114,10 @@
             ;; TODO: can probably use a more complex key
             (define-key map (kbd "s-v")      'cic:hl-line-mode-or-disable-visuals)
             (define-key map (kbd "M-g h")    'cic:hl-line-mode-or-disable-visuals)
+            ;; text size keys
+            (define-key map (kbd "C--") 'text-scale-decrease)
+            (define-key map (kbd "C-=") 'cic:text-scale-neutral)
+            (define-key map (kbd "C-+") 'text-scale-increase)
             ;; disable normal movement keys will eventually remap
             map)
   (global-unset-key (kbd "<C-down-mouse-1>"))
