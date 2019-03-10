@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20190303
+;; Version: 20190309
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -359,7 +359,7 @@ TODO broken, provided a diff cleanup function too!"
 ;; TODO: replace with something less silly
 (requiring-package (clippy)
   ;; TODO: goofy, but put to something else
-  (global-set-key (kbd "M-'") 'clippy-describe-function)
+  ;; (global-set-key (kbd "M-'") 'clippy-describe-function)
   ;; (global-set-key (kbd "M-h") 'clippy-describe-function)
   (global-set-key (kbd "M-h") 'cic:clippy-describe)
   (defvar cic:clippy-last-show nil

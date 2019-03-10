@@ -140,14 +140,12 @@
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
             ;; XXXX: better than H-k with my key remaps, avoids accidently pressing C-k and killing lines
+            ;; TODO: don't really like this, it doesn't "flow" because too long of a reach
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
-            (define-key map (kbd "H-v")          'cic:toggle-media)
             (define-key map (kbd "H-z")          'scroll-down-command)
             (define-key map (kbd "H-x")          'scroll-up-command)
-            (define-key map (kbd "s-g s-g")      'cic:toggle-media)
-            (define-key map (kbd "s-g g")        'cic:toggle-media)
             (define-key map (kbd "H-l")          'cic:delete-window-below)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
@@ -217,11 +215,6 @@
             ;; (define-key map (kbd "H-a") 'other-window)
             (define-key map (kbd "H-p") 'windmove-up)
             (define-key map (kbd "H-n") 'windmove-down)
-            ;; TODO: remove these
-            ;; (define-key map (kbd "H-0") 'cic:text-scale-neutral)
-            ;; (define-key map (kbd "H--") 'text-scale-decrease)
-            ;; (define-key map (kbd "H-=") 'cic:text-scale-neutral)
-            ;; (define-key map (kbd "H-+") 'text-scale-increase)
             ;; TODO: decided this was better used for other things
             ;; (define-key map (kbd "H-<return>") 'buffer-menu)
             (define-key map (kbd "H-<backspace>") 'delete-frame)

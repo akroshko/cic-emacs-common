@@ -851,48 +851,6 @@ if not possible."
       (string-to-number number)
     number))
 
-;; TODO: appears no longer used
-;; (defmacro with-time (time-output-p &rest exprs)
-;;   "Evaluate an org-table formula, converting all fields that look
-;; like time data to integer seconds.  If TIME-OUTPUT-P then return
-;; the result as a time value."
-;;   (list
-;;    (if time-output-p 'cic:org-time-seconds-to-string 'identity)
-;;    (cons 'progn
-;;          (mapcar
-;;           (lambda (expr)
-;;             `,(cons (car expr)
-;;                     (mapcar
-;;                      (lambda (el)
-;;                        (if (listp el)
-;;                            (list 'with-time nil el)
-;;                          (cic:org-time-string-to-seconds el)))
-;;                      (cdr expr))))
-;;           `,@exprs))))
-
-;; (defun cic:org-time-seconds-to-string (secs)
-;;   "Convert a number of seconds to a time string."
-;;   (cond ((>= secs 3600) (format-seconds "%h:%.2m:%.2s" secs))
-;;         ((>= secs 60) (format-seconds "%m:%.2s" secs))
-;;         (t (format-seconds "%s" secs))))
-
-;; (defun cic:org-time-string-to-seconds (s)
-;;   "Convert a string HH:MM:SS to a number of seconds."
-;;   (cond
-;;    ((and (stringp s)
-;;          (string-match "\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)" s))
-;;     (let ((hour (string-to-number (match-string 1 s)))
-;;           (min (string-to-number (match-string 2 s)))
-;;           (sec (string-to-number (match-string 3 s))))
-;;       (+ (* hour 3600) (* min 60) sec)))
-;;    ((and (stringp s)
-;;          (string-match "\\([0-9]+\\):\\([0-9]+\\)" s))
-;;     (let ((min (string-to-number (match-string 1 s)))
-;;           (sec (string-to-number (match-string 2 s))))
-;;       (+ (* min 60) sec)))
-;;    ((stringp s) (string-to-number s))
-;;    (t s)))
-
 (defun cic:symbol-to-string-or-list (maybe-string-list)
   "Dereference a symbol to (presumably) a string or list of
 strings. Leave alone if already a string or list of strings.
@@ -1215,7 +1173,7 @@ can be greatly simplified."
     (setq inner-selection (assoc key-press current-alist))
     ;; use input, decide if alist is in fact an inner alist
     (setq selected (caddr inner-selection))
-    (unless canceled
+    (when (and selected (not canceled))
       (funcall command (cic:symbol-value selected)))))
 
 (defun cic:org-insert-indent-list-item ()
@@ -1889,16 +1847,6 @@ TODO: do something else (like copy whole line) if no region?"
     ;; if forward-line moves point
     (when (/= (point) saved-position)
       (scroll-up 1))))
-
-(defun cic:toggle-media ()
-  (interactive)
-  (cond ((derived-mode-p 'org-mode)
-         (org-toggle-inline-images))
-        ((derived-mode-p 'dired-mode)
-         nil)
-        ((derived-mode-p 'wdired-mode)
-         nil))
-  (message "Media toggled!"))
 
 (defun org-quote-region ()
   (interactive)

@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190228
+;; Version: 20190309
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -66,17 +66,6 @@
                 (error msg)
               (throw 'requiring-package-fail nil)))))))
   (put 'requiring-package 'lisp-indent-function 1))
-
-;; TODO: is this the best place
-;; (defun cic:init-crypt ()
-;;   (interactive)
-;;   ;; XXXX: can only use built-in here
-;;   ;; (setenv "GPG_AGENT_INFO" (with-temp-buffer (insert-file-contents (cic:join-paths (getenv "GNUPGHOME") (concat "gpg-agent-info-" (system-name))))
-;;   ;;                                            (s-trim-full (elt (split-string (buffer-substring-no-properties (point-min) (point-max)) "=") 1))))
-;;   (with-temp-buffer (insert-file-contents (concat "~/.keychain/" (system-name) "-sh"))
-;;                     (let ((ssh-output (split-string (buffer-substring-no-properties (point-min) (point-max)) "=")))
-;;                       (setenv "SSH_AUTH_SOCK" (car (split-string (elt ssh-output 1) ";")))
-;;                       (setenv "SSH_AGENT_PID" (car (split-string (elt ssh-output 2) ";"))))))
 
 ;; set proper fonts, characters, and colors
 (global-font-lock-mode t)
@@ -399,12 +388,6 @@ read only."
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
   ;; remap some standard org-mode
   (define-key org-mode-map (kbd "C-S-<return>") 'org-insert-subheading)
-  ;; (define-key org-mode-map (kbd "C-j")          ')
-  ;; TOOD: probably want something a bit different
-  ;;       generally won't work
-  ;; (define-key org-mode-map (kbd "M-o M-o") 'org-show-all)
-  ;; TODO: add more things..... to jump between invisible and visible....
-  (define-key org-mode-map (kbd "M-o") 'org-toggle-link-display)
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )
@@ -431,7 +414,7 @@ read only."
         ;; TODO: add seperator...
         org-todo-keywords    '((sequence "NOTE(!@)"
                                          "REFILE(!@)"
-;;;;;;;;;;;;;;;;;;;;
+                                         ;;;;;;;;;;;;;;;;;;;;
                                          "TODO(!@)"
                                          "NEXT(!@)"
                                          "INPROGRESS(!@)"
@@ -476,20 +459,13 @@ read only."
         ;; TODO:  seems appealing but messages up any words with an unscore
         ;; org-pretty-entities t
         org-fontify-emphasized-text t)
-
-  ;; TODO: not sure why this works, if it works, and if I still need it
+  ;; TODO: not sure why this works better for much of the code I have,
+  ;;       at the very least disabling in org-mode startup is a good
+  ;;       global choice to avoid excessive load times on  large files
   (defun org-image-enable ()
-    (when (derived-mode-p 'org-mode)
-      (unless (and buffer-file-name (string-match "-log.*\\.org" buffer-file-name))
-        (org-display-inline-images))))
-  ;; TODO: change to something good
-  ;; (defun org-list-highlight-setup ()
-  ;;   (font-lock-add-keywords 'org-mode
-  ;;                           '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
-  ;;                              ;; font-lock-warning-face
-  ;;                              font-lock-keyword-face))))
-  ;; XXXX: no need to use display-graphic-p here
-  ;;       server does not have this...
+    ;; XXXX: yes this eq is on purpose, in order to let derived modes set their own behaviour
+    (when (eq major-mode 'org-mode)
+      (org-display-inline-images)))
   ;; Disable inline images by default, then toggle them on in a hook
   (setq org-startup-with-inline-images nil)
   (setq org-image-actual-width 128)
@@ -499,13 +475,24 @@ read only."
   ;; literal hyperlinks setup
   ;; (add-hook 'org-mode-hook 'org-list-highlight-setup)
   (add-hook 'org-mode-hook 'org-literal-hyperlinks-setup)
+
+  ;; TODO: change to something good
+  ;; (defun org-list-highlight-setup ()
+  ;;   (font-lock-add-keywords 'org-mode
+  ;;                           '(("^\\s-*\\(\\+ .*\\)$" . ;; org-headline-done
+  ;;                              ;; font-lock-warning-face
+  ;;                              font-lock-keyword-face))))
+  ;; XXXX: no need to use display-graphic-p here
+  ;;       server does not have this...
   (defun org-literal-hyperlinks-setup ()
     (unless (and buffer-file-name (string-match "help\\.org" buffer-file-name))
       (org-remove-from-invisibility-spec '(org-link))
       (org-restart-font-lock)))
   (add-hook 'org-mode-hook 'org-indent-mode-setup)
   (defun org-indent-mode-setup ()
-    (org-indent-mode 1))
+    ;; XXXX: yes this eq is on purpose, in order to let derived modes set their own behaviour
+    (when (eq major-mode 'org-mode)
+      (org-indent-mode 1)))
   ;; (setq org-log-done 'time)
   ;; (setq org-log-done 'note)
   ;; most recent notes is always at the top
@@ -626,6 +613,7 @@ read only."
   nil
   "Indicate whether modeline is abnormal.")
 
+;; TODO: can I delete this unless with my check?
 (unless cic:already-added-modeline
   ;; mode-line-stuff
   (unless (some 'identity (mapcar (lambda (e) (ignore-errors (string-match "case:" e))) mode-line-format))

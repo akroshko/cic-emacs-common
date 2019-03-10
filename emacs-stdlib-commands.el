@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190228
+;; Version: 20190309
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -736,10 +736,12 @@ alphanumeric."
   (interactive)
   (info "elisp"))
 (defconst cic:help-list
-  '("dir" "auctex" "cl" "emacs" "elisp" "org" "sicp"))
+  '("dir" "auctex" "cl" "(cl) Loop Facility" "emacs" "elisp" "(elisp) Regular Expressions" "org" "sicp"))
 (defun cic:help-read-select ()
   (interactive)
-  (info (cic:select-list-item cic:help-list)))
+  (let ((help-list (cic:select-list-item cic:help-list)))
+    (when help-list
+      (info help-list))))
 (defun cic:external-collecton-buffer ()
   (interactive)
   (switch-to-buffer "*Collection*"))

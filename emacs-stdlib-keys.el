@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190228
+;; Version: 20190309
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -54,11 +54,10 @@
             (define-key map (kbd "S-<down>") 'cic:page-down)
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
-            ;; M- most convienient for laptop, control most convienient for touch typing
-            ;; (define-key map (kbd "M-,")      'scroll-down-command)
-            ;; (define-key map (kbd "M-.")      'scroll-up-command)
             (define-key map (kbd "C-,")      'scroll-down-command)
             (define-key map (kbd "C-.")      'scroll-up-command)
+            ;; TODO: trialing this
+            (define-key map (kbd "M-'")      'cic:kill-transient-windows)
             (define-key map (kbd "C-j")      'indent-new-comment-line)
             ;; avoid accidental C-w from deleting many things
             (define-key map (kbd "C-w")      'cic:kill-region-only-active)
@@ -67,6 +66,7 @@
             (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
             ;;;
             (define-key map (kbd "M-e")      'other-frame)
+            ;; TODO: do I need these?
             (define-key map (kbd "M-g w")    'toggle-truncate-lines)
             (define-key map (kbd "M-g M-w")  'toggle-truncate-lines)
             (define-key map (kbd "M-g k")    'cic:window-kill-above)
@@ -75,8 +75,6 @@
             (define-key map (kbd "M-g J")    'split-window-below)
             (define-key map (kbd "M-v")      'yank)
             (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
-            ;; this is good, right? not destructive if I miss shift
-            (define-key map (kbd "M-W")      'delete-window)
             ;; move
             (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
@@ -152,6 +150,12 @@
             (define-key map (kbd "C-<down>") 'scroll-up)
             map))
 
+(define-minor-mode emacs-stdlib-keys-non-dired-mode
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "M-o")     'cic:occur-in-buffer)
+            map))
+
 (requiring-package (org)
   (define-minor-mode emacs-stdlib-keys-org-mode
     :global t
@@ -201,14 +205,14 @@
   (emacs-stdlib-keys-non-term-mode 0))
 (add-hook 'term-mode-hook 'cic:stdlib-keys-term-setup-hook)
 
+(defun cic:stdlib-keys-dired-setup-hook ()
+  (emacs-stdlib-keys-non-dired-mode 0))
+(add-hook 'dired-mode-hook 'cic:stdlib-keys-dired-setup-hook)
+
 (defun cic:stdlib-keys-minibuffer-setup-hook ()
   (emacs-stdlib-keys-mode 0)
   (emacs-stdlib-keys-org-mode 0)
-  (emacs-stdlib-keys-non-term-mode 0)
-  ;; screws up minibuffer
-  ;; (local-set-key (kbd "m-v") 'kill-ring-save-whole-word-or-region)
-  ;; (local-set-key (kbd "m-v") 'yank)
-  )
+  (emacs-stdlib-keys-non-term-mode 0))
 
 (add-hook 'minibuffer-setup-hook 'cic:stdlib-keys-minibuffer-setup-hook)
 
