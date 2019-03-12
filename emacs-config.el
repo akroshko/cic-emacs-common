@@ -584,9 +584,11 @@ read only."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; printing
 ;; https://www.emacswiki.org/emacs/CupsInEmacs
-(setq lpr-command "xpp")
-(setq ps-font-size (cons 6 6))
-(setq ps-landscape-mode nil)
+(setq lpr-command "gtklp"
+      ps-lpr-command "gtklp"
+      ;; TODO: 6 point font is nice I think
+      ps-font-size (cons 6 6)
+      ps-landscape-mode nil)
 ;; (setq ps-landscape-mode t)
 
 ;; TODO: move command later, add to key
