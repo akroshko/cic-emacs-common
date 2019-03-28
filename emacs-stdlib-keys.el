@@ -92,7 +92,7 @@
             (define-key map (kbd "C-c o")    'occur)
             (define-key map (kbd "C-c w")    'compare-windows)
             (define-key map (kbd "C-;")      'menu-bar-open)
-            (define-key map (kbd "C-h a")    'apropos)
+            (define-key map (kbd "F1 a")    'apropos)
             ;; steve yegge suggestion
             ;; (global-set-key (kbd "C-w")     'backward-kill-word)
             ;; (global-set-key (kbd "C-x C-k") 'kill-region)

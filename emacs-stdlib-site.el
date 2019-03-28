@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20190309
+;; Version: 20190328
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -219,11 +219,11 @@ TODO broken, provided a diff cleanup function too!"
                      ;; (local-set-key (kbd "H-x") 'reftex-view-crossref)
                      ;; set up references
                      ;; TODO: try these again, do I use them?
-                     (local-set-key (kbd "H-r") 'cic:reftex-reference)
-                     (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
-                     (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
-                     (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
-                     (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
+                     ;; (local-set-key (kbd "H-r") 'cic:reftex-reference)
+                     ;; (local-set-key (kbd "H-f") 'cic:reftex-reference-figure)
+                     ;; (local-set-key (kbd "H-e") 'cic:reftex-reference-equation)
+                     ;; (local-set-key (kbd "H-s") 'cic:reftex-reference-section)
+                     ;; (local-set-key (kbd "H-t") 'cic:reftex-reference-table)
                      ;; jump to process buffer
                      (local-set-key (kbd "H-o") 'cic:switch-to-process-buffer)
                      ;; init crossref and such
@@ -243,11 +243,12 @@ TODO broken, provided a diff cleanup function too!"
                    (add-hook 'reftex-toc-mode-hook     'cic:reftex-toc-init)
                    (defun cic:reftex-select-label-init ()
                      ;; sync with above?
-                     (local-set-key (kbd "H-r") 'reftex-select-quit)
-                     (local-set-key (kbd "H-f") 'reftex-select-quit)
-                     (local-set-key (kbd "H-e") 'reftex-select-quit)
-                     (local-set-key (kbd "H-s") 'reftex-select-quit)
-                     (local-set-key (kbd "H-t") 'reftex-select-quit))
+                     ;; (local-set-key (kbd "H-r") 'reftex-select-quit)
+                     ;; (local-set-key (kbd "H-f") 'reftex-select-quit)
+                     ;; (local-set-key (kbd "H-e") 'reftex-select-quit)
+                     ;; (local-set-key (kbd "H-s") 'reftex-select-quit)
+                     ;; (local-set-key (kbd "H-t") 'reftex-select-quit)
+                     )
                    ;; TODO: eventually unify these functions
                    (defun cic:switch-to-process-buffer ()
                      (interactive)
@@ -752,9 +753,15 @@ TODO broken, provided a diff cleanup function too!"
     ;; TODO: are there keys I should disable
     (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
       (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-      (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+      (define-key ido-completion-map (kbd "H-f") 'ido-next-match)
+      (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
+      (define-key ido-completion-map (kbd "H-r") 'ido-prev-match)
+      (define-key ido-completion-map (kbd "s-b") 'ido-next-match)
+      (define-key ido-completion-map (kbd "s-v") 'ido-prev-match))
     (add-hook 'ido-setup-hook 'ido-define-keys)
-    (setq ido-max-prospects 50)))
+    (setq ido-max-prospects 50)
+    ;; TODO: might change to C-b
+    (global-set-key (kbd "s-b") 'ido-switch-buffer)))
 
 (requiring-package (image+)
   (eval-after-load 'image '(require 'image+)))

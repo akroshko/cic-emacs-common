@@ -282,6 +282,14 @@ read only."
 (global-set-key (kbd "M-H-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-,")   'scroll-down-command)
 (global-set-key (kbd "C-.")   'scroll-up-command)
+(global-set-key (kbd "C-h")   'delete-char)
+(global-set-key (kbd "C-a")   nil)
+(global-set-key (kbd "C-e")   nil)
+(global-set-key (kbd "H-a")   'move-beginning-of-line)
+(global-set-key (kbd "H-e")   'move-end-of-line)
+;; disable these so I learn hyper keys
+(global-set-key (kbd "C-s")   nil)
+(global-set-key (kbd "C-r")   nil)
 ;; Unset default keys, will set these as something else eventually
 (global-set-key (kbd "C-y")   'scroll-down-command)
 (global-set-key (kbd "M-v")   nil)
@@ -290,6 +298,7 @@ read only."
 (define-key isearch-mode-map (kbd "M-H-f") 'isearch-repeat-forward)
 (define-key isearch-mode-map (kbd "H-r")   'isearch-repeat-backward)
 (define-key isearch-mode-map (kbd "M-H-r") 'isearch-repeat-backward)
+(define-key isearch-mode-map (kbd "H-y")   'isearch-yank-kill)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Calc
