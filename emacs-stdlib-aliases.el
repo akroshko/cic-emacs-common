@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20190228
+;; Version: 20190322
 ;; URL: https://github.com/akroshko/emacs-stdlib
 
 ;; This file is NOT part of GNU Emacs.
@@ -37,6 +37,7 @@
 ;;; Code:
 
 (defalias 'mpp 'cic:mpp)
+(defalias 'mpp-list 'cic:mpp-list)
 (defalias 'mpp-echo 'cic:mpp)
 (defalias 'full-string-p 'cic:full-string-p)
 (defalias 'string-to-float 'cic:string-to-float)

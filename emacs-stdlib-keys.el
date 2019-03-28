@@ -54,8 +54,6 @@
             (define-key map (kbd "S-<down>") 'cic:page-down)
             ;; remap and add some standard functionality
             (define-key map [f11]            'cic:toggle-fullscreen)
-            (define-key map (kbd "C-,")      'scroll-down-command)
-            (define-key map (kbd "C-.")      'scroll-up-command)
             ;; TODO: trialing this
             (define-key map (kbd "M-'")      'cic:kill-transient-windows)
             (define-key map (kbd "C-j")      'indent-new-comment-line)
@@ -63,7 +61,7 @@
             (define-key map (kbd "C-w")      'cic:kill-region-only-active)
             (define-key map (kbd "M-b")      'cic:backward-symbol)
             ;; copy/yank
-            (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
+            ;; (define-key map (kbd "M-c")      'kill-ring-save-whole-word-or-region)
             ;;;
             (define-key map (kbd "M-e")      'other-frame)
             ;; TODO: do I need these?
@@ -73,10 +71,9 @@
             (define-key map (kbd "M-g K")    'cic:window-kill-below)
             (define-key map (kbd "M-g j")    'cic:split-window-above)
             (define-key map (kbd "M-g J")    'split-window-below)
-            (define-key map (kbd "M-v")      'yank)
-            (define-key map (kbd "M-w")      'kill-ring-save-whole-word-or-region)
+            ;; (define-key map (kbd "M-v")      'yank)
+            ;; TODO: using this for something else, disabling fornow
             ;; move
-            (define-key map (kbd "M-f")      'forward-symbol)
             (define-key map (kbd "M-i")      'indent-for-tab-command)
             ;; TODO: replace
             ;; TODO: made this a global key

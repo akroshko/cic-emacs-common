@@ -359,8 +359,6 @@ TODO broken, provided a diff cleanup function too!"
 ;; TODO: replace with something less silly
 (requiring-package (clippy)
   ;; TODO: goofy, but put to something else
-  ;; (global-set-key (kbd "M-'") 'clippy-describe-function)
-  ;; (global-set-key (kbd "M-h") 'clippy-describe-function)
   (global-set-key (kbd "M-h") 'cic:clippy-describe)
   (defvar cic:clippy-last-show nil
     "")
@@ -435,7 +433,24 @@ TODO broken, provided a diff cleanup function too!"
 
 (requiring-package (flyspell)
   ;; TODO: change this if I need it
-  (setq flyspell-auto-correct-binding nil))
+  (setq flyspell-auto-correct-binding nil)
+  ;; see https://emacs.stackexchange.com/questions/5415/how-can-i-make-flyspell-ignore-urls/5435
+  (defun cic:flyspell-predicate ()
+    (not (thing-at-point 'url)))
+  (defun cic:flyspell-text-hook ()
+    (setq flyspell-generic-check-word-predicate 'cic:flyspell-predicate))
+  (add-hook 'org-mode-hook 'cic:flyspell-text-hook)
+  ;; (put 'text-mode 'flyspell-mode-predicate 'cic:flyspell-predicate)
+  ;; (defun flyspell-ignore-http-and-https ()
+  ;; "Function used for `flyspell-generic-check-word-predicate' to ignore stuff starting with \"http:\" or \"https:\"."
+  ;; (save-excursion
+  ;;   (forward-whitespace -1)
+  ;;   (when (looking-at " ")
+  ;;     (forward-char)
+  ;;   (not (looking-at "https:?\\b"))))
+  ;; )
+  ;; (put 'text-mode 'flyspell-mode-predicate 'flyspell-ignore-http-and-https)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; flycheck
@@ -682,12 +697,6 @@ TODO broken, provided a diff cleanup function too!"
     (enable-paredit-mode))
   (eval-after-load "paredit.el"
     (requiring-package (paredit-menu)))
-  ;; change keys around for easy navigation of parenthesis
-  ;; XXXX: change capitalization keys
-  ;; TODO: move these elsewhere
-  (global-set-key (kbd "M-C") 'capitalize-word)
-  (global-set-key (kbd "M-L") 'downcase-word)
-  (global-set-key (kbd "M-U") 'upcase-word)
   ;; paredit-mode keys map
   ;; TODO: add something for paredit-comment-dwim
   (define-key paredit-mode-map (kbd "M-;") 'comment-dwim-line))

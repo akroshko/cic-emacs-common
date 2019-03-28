@@ -48,11 +48,26 @@
 time-stamp in the message.
 XXXX: not adding cic: prefix before this function is called so often in adhoc code
 TODO: flag to not use timestamp"
-  (let ((message-string (concat "-- " (cic:time-stamp) "\n" (with-output-to-string (princ value)))))
+  (let ((message-string (concat "-- " (cic:time-stamp-verbose) "\n" (with-output-to-string (princ value)))))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
     (with-current-buffer-max (get-buffer-create buffer)
                              (insert (concat message-string "\n")))))
+
+(defun cic:mpp-list (value &optional buffer)
+  "Pretty print a message to a particular buffer and include a
+time-stamp in the message.
+XXXX: not adding cic: prefix before this function is called so often in adhoc code
+TODO: flag to not use timestamp"
+  (let ((message-string (concat "-- " (cic:time-stamp-verbose) "\n")))
+    (unless buffer
+      (setq buffer (get-buffer-create "*PPCapture*")))
+    (with-current-buffer-max (get-buffer-create buffer)
+                             (insert (concat message-string "\n"))
+                             (dolist (e value)
+                               (insert (with-output-to-string (princ e)))
+                               ;; this is extreme for a seperator but it prevents confuction
+                               (insert "\n----------------------------------------\n")))))
 
 (defun cic:mpp-echo (value &optional buffer)
   "Pretty print a message to a particular buffer and include a
@@ -60,7 +75,7 @@ time-stamp in the message.  Echo in minibuffer area as well.
 XXXX: not adding cic: prefix before this function is called so often in adhoc code
 TODO: flag to not use timestamp"
   (let* ((raw-message-string (with-output-to-string (princ value)))
-         (message-string (concat (cic:time-stamp) "\n" raw-message-string)))
+         (message-string (concat (cic:time-stamp-verbose) "\n" raw-message-string)))
     (unless buffer
       (setq buffer (get-buffer-create "*PPCapture*")))
     (with-current-buffer-max (get-buffer-create buffer)
@@ -99,7 +114,7 @@ TODO: flag to not use timestamp"
     "A get file function that is often replaced with something else in my special setups"
     filename))
 
-(defun cic:time-stamp ()
+(defun cic:time-stamp-verbose ()
   "Create a time-stamp."
   (format-time-string "%H:%M:%S" (current-time)))
 
@@ -1647,7 +1662,7 @@ ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
          ;;                               (lambda (process event)
          ;;                                 ;; reload liberally, event when failed
          ;;                                 (when (or (equal event "finished\n") (string-match "exited abnormally" event))
-         ;;                                   (start-process "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))
+         ;;                                   (cic:start-process-message "xpdf reload" nil "xpdf" "-remote" cic:current-build-filename "-reload"))
          ;;                                 (message "Finished compiling and reloading xpdf! Type `C-c C-l' to see results!")))
          ;;       (progn
          ;;         (message "No active process! Reloading anyways!")
@@ -1907,9 +1922,7 @@ TODO: do something else (like copy whole line) if no region?"
     ;; TODO: need safe titles and add datestring
     (with-current-buffer-create (concat "capture-urxvt-scrollback-" (format-time-string "%Y%m%d%H%M%S" (current-time)))
       (insert captured-scrollback)
-      (goto-char (point-max))
-      ;; TODO: format a bit better because html is stupid
-      )))
+      (goto-char (point-max)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; apt
@@ -1931,8 +1944,15 @@ TODO: do something else (like copy whole line) if no region?"
   (expand-file-name (dired-file-name-at-point)))
 
 
-(defun cic:standard-datestamp-current-time ()
-  (format-time-string "%Y%m%dt%H%M%S" (current-time)))
+(defun cic:standard-datestamp-current-time (&optional the-time)
+  (unless the-time
+    (setq the-time (current-time)))
+  (format-time-string "%Y%m%dt%H%M%S" the-time))
+
+(defun cic:standard-datestamp-current-time-short (&optional the-time)
+  (unless the-time
+    (setq the-time (current-time)))
+  (format-time-string "%Y%m%d" the-time))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode C-enter
@@ -1942,13 +1962,34 @@ TODO: do something else (like copy whole line) if no region?"
     (cond ((org-table-p)
            (org-table-insert-row '(4)))
           (t
-           (org-insert-heading-respect-content)))))
+           (cond ((eq real-last-command 'cic:org-mode-control-return)
+                  (cond ((string-match "\\* [0-9]\\{8\\}t[0-9]\\{6\\}" (cic:get-current-line))
+                         (let (kill-ring
+                               kill-ring-yank-pointer
+                               (save-interprogram-paste-before-kill nil)
+                               (interprogram-cut-function nil))
+                           (backward-kill-word 1))
+                         (insert (cic:standard-datestamp-current-time-short)))
+                        ((string-match "\\* [0-9]\\{8\\}" (cic:get-current-line))
+                         (let (kill-ring
+                               kill-ring-yank-pointer
+                               (save-interprogram-paste-before-kill nil)
+                               (interprogram-cut-function nil))
+                           (backward-kill-word 1)))
+                        (t
+                         (insert (cic:standard-datestamp-current-time)))))
+                 (t
+                  (org-insert-heading-respect-content)
+                  (insert (cic:standard-datestamp-current-time))))))))
 
 (defun cic:kill-line-elisp ()
+  "Kill a line in elisp without modifying kill-ring."
   (let (kill-ring
-        kill-whole-line)
+        kill-whole-line
+        kill-ring-yank-pointer
+        (save-interprogram-paste-before-kill nil)
+        (interprogram-cut-function nil))
     (kill-line)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org mode commands
@@ -2125,6 +2166,23 @@ TODO: incomplete but still useful right now"
   ;; TODO: find better way
   (let ((browse-url-generic-program "chromium")
         (browse-url-generic-args    '("--temp-profile")))
+    (browse-url-generic (cic:url-at-point-or-line 'url))))
+
+(defun cic:browse-url-at-point-google-chrome ()
+  "Find the URL at point and browse in the Google Chrome web browser."
+  (interactive)
+  ;; XXXX: may not be best way, but prevents based on prevening firefox from closing when I restart emacs
+  ;; TODO: find better way
+  (let ((browse-url-generic-program "google-chrome")
+        (browse-url-generic-args    '("--temp-profile")))
+    (browse-url-generic (cic:url-at-point-or-line 'url))))
+
+(defun cic:browse-url-at-point-pale-moon ()
+  "Find the URL at point and browse in the Pale Moon web browser."
+  (interactive)
+  ;; XXXX: may not be best way, but prevents based on prevening firefox from closing when I restart emacs
+  ;; TODO: find better way
+  (let ((browse-url-generic-program "palemoon"))
     (browse-url-generic (cic:url-at-point-or-line 'url))))
 
 ;; TODO: remove
@@ -2532,15 +2590,18 @@ similar languages."
   "Copy the current buffer file name to the clipboard."
   (interactive "P")
   (let (filename)
-    (if arg
-        (setq filename buffer-file-name)
-      (setq filename (if (derived-mode-p 'dired-mode)
-                         (expand-file-name default-directory)
-                       (file-name-nondirectory buffer-file-name)))
-      )
-    (when filename
-      (kill-new filename)
-      (message "Copied buffer file name '%s' to the clipboard." filename))))
+    (cond ((derived-mode-p 'Info-mode)
+           (Info-copy-current-node-name))
+          (t
+           (if arg
+               (setq filename buffer-file-name)
+             (setq filename (if (derived-mode-p 'dired-mode)
+                                (expand-file-name default-directory)
+                              (file-name-nondirectory buffer-file-name)))
+             )
+           (when filename
+             (kill-new filename)
+             (message "Copied buffer file name '%s' to the clipboard." filename))))))
 
 (defun cic:create-password-insert (&optional arg select)
   "When ARG is given, select a random password type and insert
@@ -2773,13 +2834,12 @@ flyspell-mode."
          (the-time-string (cic:select-list-item (list (format-time-string "%a %b %d, %Y %H:%M:%S" the-current-time)
                                                       (format-time-string "%a %b %d, %Y" the-current-time)
                                                       (format-time-string "%Y%m%d%H%M%S" the-current-time)
-                                                      (format-time-string "%Y%m%d" the-current-time)
-                                                      (format-time-string "%Y%m%dT%H%M%S" the-current-time)
+                                                      (cic:standard-datestamp-current-time-short the-current-time)
+                                                      (cic:standard-datestamp-current-time the-current-time)
                                                       (concat (format-time-string "%a %b %d, %Y" the-current-time) " HH:MM:SS")
                                                       "DAY MON DD, YYYY XX:XX:XX"
                                                       "DAY MON DD, YYYY"
-                                                      (concat (format-time-string "%Y%m%d" the-current-time)  "HHMMSS")
-                                                      (concat (format-time-string "%Y%m%dT" the-current-time) "HHMMSS")
+                                                      (concat (cic:standard-datestamp-current-time-short the-current-time) "HHMMSS")
                                                       "YYYYMMDDHHMMSS"
                                                       "YYYYMMDDTHHMMSS"
                                                       "YYYYMMDD"))))
@@ -2815,7 +2875,7 @@ and date.  Behaviour based on org-insert-heading."
                   (insert (format-time-string "%Y%m%d%H%M%S"))
                   (setq cic:insert-current-time-last-type 2))
                  ((equal cic:insert-current-time-last-type 2)
-                  (insert (format-time-string "%Y%m%dT%H%M%S"))
+                  (insert (cic:standard-datestamp-current-time))
                   (setq cic:insert-current-time-last-type 3))
                  ((equal cic:insert-current-time-last-type 3)
                   (insert (format-time-string "%a %b %d, %Y %H:%M:%S"))
@@ -2842,8 +2902,8 @@ and date.  Behaviour based on org-insert-heading."
     (org-insert-heading))
   (let ((time (current-time)))
     (if arg
-        (insert (format-time-string "%Y%m%d" time))
-      (insert (format-time-string "%Y%m%d%H%M%S" time)))))
+        (insert (cic:standard-datestamp-current-time-short time))
+      (insert (cic:standard-datestamp-current-time time)))))
 
 ;; https://stackoverflow.com/questions/5346107/emacs-case-sensitive-replace-string
 (defun cic:query-replace-case-sensitive ()
@@ -3078,5 +3138,15 @@ and date.  Behaviour based on org-insert-heading."
     (insert "\n"))
   (beginning-of-line)
   (insert (s-repeat 80 (s-trim-full comment-start))))
+
+(defun cic:start-process-message (&rest args)
+  "The start-process function, but display a message in the minibuffer giving the command run."
+  (let ((quoted-command-args (mapcar (lambda (e)
+                                       (if (string-match " "  e)
+                                           (concat "\"" (replace-regexp-in-string "\"" "\\\"" e) "\"")
+                                         e))
+                                     (subseq args 2))))
+    (message (mapconcat 'identity (append (list "Running command:" ) quoted-command-args) " "))
+    (apply 'start-process args)))
 
 (provide 'emacs-stdlib-functions)

@@ -105,14 +105,13 @@
             ;; TODO: move this
             (define-key map (kbd "s-p p s")      (lambda () (interactive) (profiler-start 'cpu)))
             (define-key map (kbd "s-p p r")      'profiler-report)
-            ;; TODO: move this
-            (define-key map (kbd "H-;")          'cic:ansi-term-localhost-popup)
             ;; decide alternate key for this....
             ;; (define-key map (kbd "M-0")        'cic:ansi-term-localhost)
             (define-key map (kbd "s-c 1")        'cic:ansi-term-ipython)
             (define-key map (kbd "s-c 2")        'cic:ansi-term-sage)
             ;; TODO: decide if I want to toggle global default value or ???
             (define-key map (kbd "s-5")          'toggle-case-fold-search)
+            (define-key map (kbd "s-0")          'cic:copy-file-name-to-clipboard)
             ;; (define-key map (kbd "s-x w") 'cic:fix-whitespace)
             map))
 
@@ -139,14 +138,22 @@
             (define-key map (kbd "H-B")          'cic:switch-buffer-new-window-below)
             (define-key map (kbd "H-SPC")        'ido-switch-buffer)
             (define-key map (kbd "H-S-SPC")      'cic:switch-buffer-new-window-below)
+            (define-key map (kbd "H-;")          'cic:ansi-term-localhost-popup)
+            ;; standard keys
+            (define-key map (kbd "H-x")          'cic:kill-region-only-active)
             ;; XXXX: better than H-k with my key remaps, avoids accidently pressing C-k and killing lines
             ;; TODO: don't really like this, it doesn't "flow" because too long of a reach
             (define-key map (kbd "H-g")          'cic:kill-transient-windows)
             (define-key map (kbd "s-.")          'cic:cycle-with-last-buffer)
             (define-key map (kbd "H-m")          'cic:term-toggle-modes)
             (define-key map (kbd "H-z")          'scroll-down-command)
-            (define-key map (kbd "H-x")          'scroll-up-command)
-            (define-key map (kbd "H-l")          'cic:delete-window-below)
+            ;; (define-key map (kbd "H-x")          'scroll-up-command)
+            ;; TODO: never used, will remove this soon
+            ;; (define-key map (kbd "H-l")          'cic:delete-window-below)
+            (define-key map (kbd "H-l")          'downcase-word)
+            (define-key map (kbd "H-u")          'upcase-word)
+            ;; TODO: alternative for this one
+            ;; (define-key map (kbd "H-c")          'capitalize-word)
             (define-key map (kbd "H-y")          'cic:copy-file-name-to-clipboard)
             ;; universal align
             (define-key map (kbd "H-q")          'align-current)

@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190309
+;; Version: 20190320
 ;; URL: https://github.com/akroshko/emacs-stdlib
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -267,8 +267,32 @@ read only."
       bibtex-field-delimiters 'double-quotes
       bibtex-text-indentation 17
       bibtex-contline-indentation 19)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; calc
+;; global keys
+;; unset the facemenu key
+(global-set-key (kbd "M-o")   nil)
+(global-set-key (kbd "M-f")   'forward-symbol)
+(global-set-key (kbd "M-w")   'other-window)
+(global-set-key (kbd "H-c")   'kill-ring-save-whole-word-or-region)
+(global-set-key (kbd "H-v")   'yank)
+(global-set-key (kbd "H-f")   'isearch-forward)
+(global-set-key (kbd "M-H-f") 'isearch-forward-regexp)
+(global-set-key (kbd "H-r")   'isearch-backward)
+(global-set-key (kbd "M-H-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-,")   'scroll-down-command)
+(global-set-key (kbd "C-.")   'scroll-up-command)
+;; Unset default keys, will set these as something else eventually
+(global-set-key (kbd "C-y")   'scroll-down-command)
+(global-set-key (kbd "M-v")   nil)
+(global-set-key (kbd "C-w")   nil)
+(define-key isearch-mode-map (kbd "H-f")   'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "M-H-f") 'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "H-r")   'isearch-repeat-backward)
+(define-key isearch-mode-map (kbd "M-H-r") 'isearch-repeat-backward)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Calc
 (setq calc-multiplication-has-precedence nil)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
@@ -340,11 +364,6 @@ read only."
 (define-key emacs-lisp-mode-map (kbd "C-x C-h") 'mark-defun)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; facemenu
-;; unset the facemenu key
-(define-key global-map "\M-o" nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ido
 (setq cic:ido-enable t)
 (when cic:ido-enable
@@ -388,6 +407,8 @@ read only."
   (add-to-list 'auto-mode-alist '("\\.org\\.archive" . org-mode))
   ;; remap some standard org-mode
   (define-key org-mode-map (kbd "C-S-<return>") 'org-insert-subheading)
+  (define-key org-mode-map (kbd "C-,") 'scroll-down-command)
+  (define-key org-mode-map (kbd "C-.") 'scroll-up-command)
   (requiring-package (org-compat)
     ;; this one may only be necessary if exists
     )
@@ -407,8 +428,10 @@ read only."
                              ("asymptote" . asy)
                              ("dot"       . fundamental)))
   (setq org-fontify-quote-and-verse-blocks t)
-  (set-face-foreground 'org-block "#483d8b") ;; not too bad
-  (set-face-foreground 'org-quote "#ff1493") ;; pinkish, even better
+  (set-face-foreground 'org-block "dark slate blue") ;; not too bad
+  (set-face-foreground 'org-quote "deep pink") ;; pinkish, even better
+  (set-face-foreground 'org-code "deep pink") ;; pinkish, even better
+  (set-face-background 'org-code "light blue")
   ;; (set-face-foreground 'org-quote "#8b6508") ;; yellowish, would be great for BEGIN_QUOTE
   (setq org-archive-location "%s.archive::"
         ;; TODO: add seperator...
@@ -593,6 +616,7 @@ read only."
 
 ;; TODO: move command later, add to key
 ;; TODO: h==hardcopy for now, reevaluate later
+;; TODO: make something else
 (global-set-key (kbd "s-c h") 'print-landscape-region)
 (defun print-landscape ()
   (interactive)

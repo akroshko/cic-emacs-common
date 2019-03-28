@@ -110,6 +110,7 @@ along with a #+TBLEL line."
   '((t (:foreground "Firebrick")))
   "Show the tblel command.")
 
+;; TODO: add better fontification for this so it works in other modes
 (defun tblel-setup ()
   "Set up some things so tblel is as integrated as possible in org-table."
   ;; set up fontification
