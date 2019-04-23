@@ -1,14 +1,14 @@
 ;;; cic-ido-hacks.el --- Put more IDO in your IDO, with additional ido-decorations.
 
-;; Copyright (C) 2018 Andrew Kroshko, all rights reserved.
+;; Copyright (C) 2018-2019 Andrew Kroshko, all rights reserved.
 ;; Copyright (C) 2009 Andreas Politz
 ;; Copyright (C) 2011-2013  Scott Jaderholm
 
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Wed, Jan 03, 2018
-;; Version: 20190228
-;; URL: https://github.com/akroshko/emacs-stdlib
+;; Version: 20190412
+;; URL: https://github.com/akroshko/cic-emacs-common
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ argument is a function (which ido can't handle)."
            (symbolp collection)
            inherit-input-method
            (and (symbolp this-command)
-               (eq (get this-command 'ido) 'ignore)))
+                (eq (get this-command 'ido) 'ignore)))
 
       ad-do-it
     ;; copied from ido-completing-read

@@ -5,7 +5,7 @@
 ;; Author: David Engster <dengste@eml.cc>
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Version: 20190228
-;; URL: https://github.com/akroshko/emacs-stdlib
+;; URL: https://github.com/akroshko/cic-emacs-common
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;

@@ -6,7 +6,7 @@
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu June 2, 2015
 ;; Version: 20190228
-;; URL: https://github.com/akroshko/emacs-stdlib
+;; URL: https://github.com/akroshko/cic-emacs-common
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
@@ -82,8 +82,8 @@ along with a #+TBLEL line."
           (back-to-indentation))
         ;; TODO: just evaluating a single lisp function, want more and
         ;; want to check error before nuking current table
-        (setq lisp-table (copy-tree (org-table-to-lisp)))
-        (setq original-lisp-table (copy-tree (cic:org-table-to-lisp-no-separators)))
+        (setq lisp-table          (copy-tree (org-table-to-lisp))
+              original-lisp-table (copy-tree (cic:org-table-to-lisp-no-separators)))
         ;; XXXX: found it essential to send copy-tree of lisp-table to
         ;; function, stops many subtle bugs
         (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table) (copy-tree original-lisp-table)))
@@ -154,8 +154,8 @@ three."
       (when (and (not (equal count 0))
                  (or (cic:string-float-p (elt row 1))
                      (cic:string-integer-p (elt row 1)))
-             (setq sum1 (+ sum1 (string-to-number (elt row 1))))))
-      (when (not (equal count 0))
+                 (setq sum1 (+ sum1 (string-to-number (elt row 1))))))
+      (unless (equal count 0)
         (cond ((or (cic:string-float-p   (elt row 1))
                    (cic:string-integer-p (elt row 1)))
                (setcar (nthcdr count sums2) (+ (elt sums2 (- count 1)) (string-to-number (elt row 1))))
@@ -186,8 +186,8 @@ into the last row."
         (unless sum
           (setq sum 0))
         (setq sum (+ sum (* (string-to-number (elt row 1)) (string-to-number (elt row 2)))))))
-    (setq tmp-lisp-table (butlast lisp-table-no-seperators))
-    (setq last-row (car (last lisp-table-no-seperators)))
+    (setq tmp-lisp-table (butlast lisp-table-no-seperators)
+          last-row (car (last lisp-table-no-seperators)))
     (setcar (nthcdr 2 last-row) (ignore-errors (number-to-string sum)))
     (append tmp-lisp-table (list last-row))))
 
@@ -207,10 +207,10 @@ into the last row."
         current-cummulative-work
         current-cummulative-total)
     (dolist (lisp-row (cddr (butlast lisp-table 2)))
-      (let ((sets         (when (not (eq lisp-row 'hline)) (string-to-number (elt lisp-row 1))))
-            (reps         (when (not (eq lisp-row 'hline)) (string-to-number (elt lisp-row 3))))
-            (set-rest     (when (not (eq lisp-row 'hline)) (tblel-time-string-to-seconds (elt lisp-row 2))))
-            (rep-duration (when (not (eq lisp-row 'hline)) (tblel-time-string-to-seconds (elt lisp-row 4)))))
+      (let ((sets         (unless (eq lisp-row 'hline) (string-to-number (elt lisp-row 1))))
+            (reps         (unless (eq lisp-row 'hline) (string-to-number (elt lisp-row 3))))
+            (set-rest     (unless (tblel-time-string-to-seconds (elt lisp-row 2))))
+            (rep-duration (unless (eq lisp-row 'hline) (tblel-time-string-to-seconds (elt lisp-row 4)))))
         ;; TODO: document this better, other things?
         ;; TODO: match only "rest", guard against exercises that might have substring "rest"
         ;; TODO: want total reps too, really only useful for pullups...
@@ -224,29 +224,29 @@ into the last row."
                (setq cummulative-total 0.0))
               ((string-match "rest" (downcase (elt lisp-row 0)))
                (let ((new-total (tblel-time-string-to-seconds (elt lisp-row 5))))
-                 (setq total-column (nconc total-column (list new-total)))
-                 (setq cummulative-total (+ new-total cummulative-total))
-                 (setq cummulative-work-list (append cummulative-work-list (list nil)))
-                 (setq cummulative-total-list (append cummulative-total-list (list nil)))))
+                 (setq total-column           (nconc total-column (list new-total))
+                       cummulative-total      (+ new-total cummulative-total)
+                       cummulative-work-list  (append cummulative-work-list (list nil))
+                       cummulative-total-list (append cummulative-total-list (list nil)))))
               (t
                (let ((new-work (* sets (* reps rep-duration)))
                      (new-total (+ (* (- sets 1) set-rest) (* sets (* reps rep-duration)))))
-                 (setq total-work-column (nconc total-work-column (list new-work)))
-                 (setq total-column (nconc total-column (list new-total)))
-                 (setq cummulative-work  (+ new-work cummulative-work))
-                 (setq cummulative-total (+ new-total cummulative-total))
-                 (setq cummulative-work-list (append cummulative-work-list (list nil)))
-                 (setq cummulative-total-list (append cummulative-total-list (list nil))))))))
-    (setq total-total (apply '+ total-column))
-    (setq total-work  (apply '+ total-work-column))
-    (setq cummulative-work-list (cdr cummulative-work-list))
-    (setq cummulative-total-list (cdr cummulative-total-list))
+                 (setq total-work-column      (nconc total-work-column (list new-work))
+                       total-column           (nconc total-column (list new-total))
+                       cummulative-work       (+ new-work cummulative-work)
+                       cummulative-total      (+ new-total cummulative-total)
+                       cummulative-work-list  (append cummulative-work-list (list nil))
+                       cummulative-total-list (append cummulative-total-list (list nil))))))))
+    (setq total-total            (apply '+ total-column)
+          total-work             (apply '+ total-work-column)
+          cummulative-work-list  (cdr cummulative-work-list)
+          cummulative-total-list (cdr cummulative-total-list))
     (dolist (current-lisp-row (cddr (butlast lisp-table 2)))
       (cond ((eq current-lisp-row 'hline)
              t)
             ((string-match "rest" (downcase (elt current-lisp-row 0)))
-             (setq current-cummulative-work  (pop cummulative-work-list))
-             (setq current-cummulative-total (pop cummulative-total-list))
+             (setq current-cummulative-work  (pop cummulative-work-list)
+                   current-cummulative-total (pop cummulative-total-list))
              (setq new-lisp-table
                    (nconc
                     new-lisp-table
@@ -261,8 +261,8 @@ into the last row."
                                       (format-seconds "%m:%.2s" (pop total-column)))
                                    (format-seconds "%m:%.2s" (pop total-column)))))))))
             (t
-             (setq current-cummulative-work  (pop cummulative-work-list))
-             (setq current-cummulative-total (pop cummulative-total-list))
+             (setq current-cummulative-work  (pop cummulative-work-list)
+                   current-cummulative-total (pop cummulative-total-list))
              (setq new-lisp-table
                    (nconc
                     new-lisp-table
@@ -305,5 +305,31 @@ into the last row."
       (+ (* min 60) sec)))
    ((stringp s) (string-to-number s))
    (t s)))
+
+(defun cic:org-table-elisp-replace (elisp-table-original elisp-table-replacement)
+  "Replace the original table at point ELISP-TABLE-ORIGINAL with
+the ELISP-TABLE-REPLACEMENT.  Only uses expensive org-table-put
+when values has changed.
+
+Meant to be used programatically and behaviour is undefined if
+there is not mutual correspondance between table at point,
+ELISP-TABLE-ORIGINAL, and ELISP-TABLE-REPLACEMENT."
+  ;; TODO: add some quick sanity checks here
+  (when (org-at-table-p)
+    (save-excursion
+      (let ((nrows (length elisp-table-original))
+            (ncols (length (car elisp-table-original))))
+        ;; TODO: do better than straight imperative programming?
+        (dotimes (i nrows)
+          (dotimes (j ncols)
+            (unless (string= (cic:elisp-array-string elisp-table-original i j)
+                             (cic:elisp-array-string elisp-table-replacement i j))
+              (org-table-put (1+ i) (1+ j) (cic:elisp-array-string elisp-table-replacement i j)))))))))
+
+(defun cic:elisp-array-string (elisp-array i j)
+  (let ((thestr (elt (elt elisp-array i) j)))
+    (if (stringp thestr)
+        (s-trim-full-no-properties thestr)
+      "")))
 
 (provide 'tblel)
