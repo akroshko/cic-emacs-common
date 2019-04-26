@@ -201,9 +201,11 @@ does not already exist Uses with-filename-filter."
      (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
            (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
        (set-buffer current-file-buffer)
-       ,@body
-       (unless already-existing-buffer
-         (kill-buffer current-file-buffer)))))
+       (let ((the-return (progn
+                           ,@body)))
+         (unless already-existing-buffer
+           (kill-buffer current-file-buffer))
+         the-return))))
 
 (defmacro with-current-file-transient-headline (filename headline &rest body)
   "Execute BODY with FILENAME as buffer after finding HEADLINE.
