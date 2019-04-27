@@ -137,10 +137,10 @@ history, instead of the incomplete input."
     (apply 'remove-hook hook (list 'ido-hacks-fix-default-hook))
     (unless (eq hist 'command-history)
       (setq hist (if hist
-                        (if (symbolp hist)
-                            hist
-                          (car hist))
-                      'minibuffer-history))
+                     (if (symbolp hist)
+                         hist
+                       (car hist))
+                   'minibuffer-history))
       (when (> (length ad-return-value) 0)
         (add-to-history hist ad-return-value)))))
 

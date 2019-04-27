@@ -318,7 +318,7 @@ flyspell-mode."
         (append
          (list
           '("\\.gnuplot$" . gnuplot-mode)
-          '("\\.gp$" . gnuplot-mode))
+          '("\\.gp$"      . gnuplot-mode))
          auto-mode-alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

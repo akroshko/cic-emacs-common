@@ -99,7 +99,7 @@ with something else in some of my Emacs configurations.  ARG as
 '(4) indicates whether a new frame is created and ARG as '(16)
 creates a new frame on a different monitor based on the
 create-frame-other-window-maximized function."
-    (cond ((equal arg nil)
+    (cond ((null arg)
            (find-file filename wildcards))
           ((equal arg '(4))
            (create-frame-here)
@@ -1035,16 +1035,16 @@ cic:mpp commands."
   (set-buffer-modified-p nil))
 
 (defconst cic:info-jump-alist
-  '(("0" . ("dir"                         ("dir")))
-    ("a" . ("auctex"                      ("auctex")))
-    ("b" . ("(bash) Top"                  ("(bash) Top")))
-    ("c" . ("cl"                          ("cl")))
-    ("d" . ("(cl) Loop Facility"          ("(cl) Loop Facility")))
-    ("e" . ("emacs"                       ("emacs")))
-    ("f" . ("elisp"                       ("elisp")))
-    ("g" . ("(elisp) Regular Expressions" ("(elisp) Regular Expressions")))
-    ("h" . ("org"                         ("org")))
-    ("i" . ("sicp"                        ("sicp"))))
+  '(("0" "dir"                         ("dir"))
+    ("a" "auctex"                      ("auctex"))
+    ("b" "(bash) Top"                  ("(bash) Top"))
+    ("c" "cl"                          ("cl"))
+    ("d" "(cl) Loop Facility"          ("(cl) Loop Facility"))
+    ("e" "emacs"                       ("emacs"))
+    ("f" "elisp"                       ("elisp"))
+    ("g" "(elisp) Regular Expressions" ("(elisp) Regular Expressions"))
+    ("h" "org"                         ("org"))
+    ("i" "sicp"                        ("sicp")))
   "An alist of info nodes.")
 (defun cic:info-jump-select ()
   "Select an info node to jump to."
@@ -1130,10 +1130,10 @@ not possible."
   "Function to select and insert a date and/or time stamp."
   (interactive)
   (let* ((the-current-time (current-time))
-         (the-list (list (cons "c" (list (cic:datestamp-current-time-clean) (list (cic:datestamp-current-time-clean))))
-                         (cons "d" (list (cic:datestamp-current-time-short) (list (cic:datestamp-current-time-short))))
-                         (cons "t" (list (cic:datestamp-current-time)       (list (cic:datestamp-current-time))))
-                         (cons "w" (list (cic:datestamp-weekday-time)       (list (cic:datestamp-weekday-time))))))
+         (the-list (list (list "c" (cic:datestamp-current-time-clean) (list (cic:datestamp-current-time-clean)))
+                         (list "d" (cic:datestamp-current-time-short) (list (cic:datestamp-current-time-short)))
+                         (list "t" (cic:datestamp-current-time)       (list (cic:datestamp-current-time)))
+                         (list "w" (cic:datestamp-weekday-time)       (list (cic:datestamp-weekday-time)))))
          (the-time-string (cic:select-alist the-list)))
     (when the-time-string
       (insert (car the-time-string)))))
