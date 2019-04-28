@@ -81,14 +81,14 @@ FILENAME-LIST."
   (unless column
     (setq column 1))
   (setq filename-list (cic:ensure-list filename-list))
-  (let ((found-list
-         (delq nil
-               (loop for the-filename in filename-list
-                     ;; cons and/or collect at end rather than append
-                     collect (do-org-table-rows the-filename table-name row
-                                                (org-table-goto-column column)
-                                                (when (string= key-value (s-trim-full (org-table-get nil column)))
-                                                  (setq found-list (append found-list (list (list the-filename (point)))))))))))
+  (let (found-list)
+    (setq found-list (nreverse (delq nil
+                                     (loop for the-filename in filename-list
+                                           ;; cons and/or collect at end rather than append
+                                           collect (do-org-table-rows the-filename table-name row
+                                                                      (org-table-goto-column column)
+                                                                      (when (string= key-value (s-trim-full (org-table-get nil column)))
+                                                                        (push (list the-filename (point)) found-list)))))))
     (when (> (length found-list) 1)
       (error "Found too many locations!!!"))
     (car found-list)))
@@ -176,7 +176,6 @@ seperators format)."
             (insert "~")
             (goto-char start)
             (insert "~")))))))
-(define-key org-mode-map (kbd "C-c c") 'org-code-region)
 
 ;; TODO: fix up to remove quotes
 (defun org-quote-region ()
@@ -198,7 +197,6 @@ seperators format)."
      (t
       (insert "#+BEGIN_" choice "\n")
       (save-excursion (insert "#+END_" choice))))))
-(define-key org-mode-map (kbd "C-c q") 'org-quote-region)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode C-enter
@@ -296,19 +294,6 @@ level with a bottom level heading"
   ;; (next-line)
   (org-metaright)
   (previous-line))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; custom todo commands
-
-;; TODO: move somewhere else?
-(define-key org-mode-map (kbd "H-t")   'cic:org-todo)
-;; (define-key org-mode-map (kbd "s-:")   'cic:org-todo)
-(define-key org-mode-map (kbd "C-H-t") 'cic:org-todo-set)
-(define-key org-mode-map (kbd "H-T")   'cic:org-todo-clear)
-;; (define-key org-mode-map (kbd "s-;")   'cic:org-todo-inprogress-done)
-(define-key org-mode-map (kbd "s-:")   'cic:org-todo-cycle-note)
-(define-key org-mode-map (kbd "s-'")   'cic:org-todo-cycle-done)
-(define-key org-mode-map (kbd "s-;")   'cic:org-todo-cycle-not-done)
 
 (defun cic:org-at-todo-p ()
   ;; TODO: there are much much better ways to do this!
@@ -444,14 +429,6 @@ level with a bottom level heading"
          (setq cic:org-meta-moving-up nil)))
   (end-of-line))
 
-;; TODO: move keys somewhere better, decide...
-;; TODO: been overridden by something else
-;; (define-key org-mode-map (kbd "H-j") 'cic:org-meta-content-cycle)
-;; TODO: make better once I decide? show all children
-;; TODO: functions too
-;; don't use this?
-(define-key org-mode-map (kbd "H-s") 'cic:org-cycle-in-level-1-tree)
-
 (defun cic:org-cycle-in-level-1-tree ()
   "Cycle open everything in current level 1 subtree."
   (interactive)
@@ -459,8 +436,6 @@ level with a bottom level heading"
     (ignore-errors (outline-up-heading 5))
     (org-show-subtree)))
 ;; go to end of last heading
-
-(define-key org-mode-map (kbd "s-c o") 'cic:org-open-last-tree)
 
 (defun cic:org-open-last-tree ()
   "Open at end of last tree, then cycle between beginning and end of it."

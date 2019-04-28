@@ -520,12 +520,6 @@ often while developing code or writing in LaTeX."
          (sit-for 0.5)
          (message "Cleaned!!!"))))
 
-;; TODO: move
-(global-set-key [prior] 'scroll-down)
-(global-set-key [next]  'scroll-up)
-(global-set-key (kbd "S-<prior>") 'beginning-of-buffer)
-(global-set-key (kbd "S-<next>" ) 'end-of-buffer)
-
 ;; TODO: make this a bit more robust and universal
 ;; TODO: have a fallback for non-graphical displays
 (defun create-frame-other-window-maximized (&optional frame-name)
@@ -735,7 +729,6 @@ buffer."
       (insert apt-show-output)
       (goto-char (point-min)))
     (select-window current-window)))
-(global-set-key (kbd "s-m a") 'cic:apt-show)
 
 (defun cic:dired-filename-at-point ()
   (expand-file-name (dired-file-name-at-point)))
