@@ -198,14 +198,15 @@ does not already exist Uses with-filename-filter."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
-           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
-       (set-buffer current-file-buffer)
-       (let ((the-return (progn
-                           ,@body)))
-         (unless already-existing-buffer
-           (kill-buffer current-file-buffer))
-         the-return))))
+     (let  ((current-buffer-transient t))
+       (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
+             (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+         (set-buffer current-file-buffer)
+         (let ((the-return (progn
+                             ,@body)))
+           (unless already-existing-buffer
+             (kill-buffer current-file-buffer))
+           the-return)))))
 
 (defmacro with-current-file-transient-headline (filename headline &rest body)
   "Execute BODY with FILENAME as buffer after finding HEADLINE.
@@ -213,15 +214,16 @@ Uses with-filename-filter."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (let (((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
-            (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))))
-     (set-buffer the-buffer)
-     (cic:org-find-headline ,headline)
-     (let ((the-return (progn
-                         ,@body)))
-       (unless already-existing-buffer
-         (kill-buffer current-file-buffer))
-       the-return)))
+     (let  ((current-buffer-transient t))
+       (let (((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
+              (current-file-buffer (find-file-noselect (with-filename-filter ,filename)))))
+         (set-buffer the-buffer)
+         (cic:org-find-headline ,headline)
+         (let ((the-return (progn
+                             ,@body)))
+           (unless already-existing-buffer
+             (kill-buffer current-file-buffer))
+           the-return)))))
 
 (defmacro with-current-file-min (filename &rest body)
   "Like with-current-file, but always go to point-min."
@@ -237,15 +239,16 @@ Uses with-filename-filter."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
-           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
-       (set-buffer current-file-buffer)
-       (goto-char (point-min))
-       (let ((the-return (progn
-                           ,@body)))
-         (unless already-existing-buffer
-           (kill-buffer current-file-buffer))
-         the-return))))
+     (let ((current-buffer-transient t))
+       (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
+             (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+         (set-buffer current-file-buffer)
+         (goto-char (point-min))
+         (let ((the-return (progn
+                             ,@body)))
+           (unless already-existing-buffer
+             (kill-buffer current-file-buffer))
+           the-return)))))
 
 (defmacro with-current-file-max (filename &rest body)
   "Like with-current-file, but always go to point max."
@@ -261,31 +264,33 @@ Uses with-filename-filter."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
-           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
-       (set-buffer current-file-buffer)
-       (goto-char (point-max))
-       (let ((the-return (progn
-                           ,@body)))
-         (unless already-existing-buffer
-           (kill-buffer current-file-buffer))
-         the-return))))
+     (let ((current-buffer-transient t))
+       (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
+             (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+         (set-buffer current-file-buffer)
+         (goto-char (point-max))
+         (let ((the-return (progn
+                             ,@body)))
+           (unless already-existing-buffer
+             (kill-buffer current-file-buffer))
+           the-return)))))
 
 (defmacro with-current-file-transient-org-table (filename table-name &rest body)
   "Like with-current-file, but find TABLE-NAME."
   (declare (indent 1) ;; (debug t)
            )
   `(save-excursion
-     (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
-           (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
-       (set-buffer current-file-buffer)
-       (goto-char (point-min))
-       (when (re-search-forward (concat "^\* " ,table-name "$") nil t)
-         (cic:org-find-table)
-         (let ((the-return (progn
-                             ,@body)))
-           (unless already-existing-buffer
-             (kill-buffer current-file-buffer))
-           the-return)))))
+     (let ((current-buffer-transient t))
+       (let ((already-existing-buffer (get-file-buffer (with-filename-filter ,filename)))
+             (current-file-buffer (find-file-noselect (with-filename-filter ,filename))))
+         (set-buffer current-file-buffer)
+         (goto-char (point-min))
+         (when (re-search-forward (concat "^\* " ,table-name "$") nil t)
+           (cic:org-find-table)
+           (let ((the-return (progn
+                               ,@body)))
+             (unless already-existing-buffer
+               (kill-buffer current-file-buffer))
+             the-return))))))
 
 (provide 'cic-emacs-macros)
