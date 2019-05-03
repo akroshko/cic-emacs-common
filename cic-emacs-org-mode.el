@@ -56,7 +56,8 @@ and eliminate seperators."
   (remove-if-not (lambda (x) (if (eq x 'hline) nil x)) (org-table-to-lisp)))
 
 (defun cic:org-table-last-row ()
-  "Goto the last row of the next table in the buffer."
+  "Goto the last non-seperator row of the next table in the
+buffer."
   (let (table-next
         seperator-next
         table-next-next
@@ -65,9 +66,10 @@ and eliminate seperators."
       (save-excursion
         (forward-line 1)
         (setq table-next     (org-at-table-p)
-              seperator-next (string-match "|-+\+.*|" (cic:get-current-line)))
+              ;; TODO: make sure seperator next goes into a function of its own
+              seperator-next (string-match "|[-+]+\\+" (cic:get-current-line)))
         (forward-line 1)
-        (setq table-next-next (org-at-table-p)))
+        (setq table-next-next (and (org-at-table-p) (not (string-match "|[-+]+\\+" (cic:get-current-line))))))
       (if (or
            (and table-next (not seperator-next))
            (and table-next seperator-next table-next-next))

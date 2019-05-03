@@ -855,16 +855,16 @@ order listed in dired."
 file based on the order listed in dired."
   (interactive)
   ;; TODO: test this out when it gets to the end of a dired buffer
-  (unless (ignore-errors (or (scroll-down) t))
-    (cic:next-file-dired motion)))
+  (unless (ignore-errors (or (scroll-up) t))
+    (cic:next-file-dired)))
 
 (defun cic:previous-file-dired-pageup ()
   "Page up in the current file, then when at beginning go to the
 previous file from the current file as listed by dired."
   (interactive)
   ;; TODO: test this out when it gets to the beginning of a dired buffer
-  (unless (ignore-errors (or (scroll-up) t))
-    (cic:next-file-dired motion)))
+  (unless (ignore-errors (or (scroll-down) t))
+    (cic:previous-file-dired)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixup commands
@@ -1206,5 +1206,57 @@ the start-process function."
                                      (subseq args 2))))
     (message (mapconcat 'identity (append '("Running command:") quoted-command-args) " "))
     (apply 'start-process args)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; post-command delete window hook
+
+(defun cic:find-documentation-transient-window ()
+  "Show the documentation for symbol at point in the *Help*
+buffer in a new window, but set up so the window closes as soon
+as another command is used."
+  (interactive)
+  (let ((current-symbol (symbol-at-point)))
+    (if (fboundp current-symbol)
+        (describe-function current-symbol)
+      (describe-variable current-symbol))
+    (save-window-excursion
+      (select-window (get-buffer-window "*Help*"))
+      (set-window-parameter nil 'post-command-delete-property t))
+    (add-hook 'post-command-hook 'cic:post-command-add-delete-transient))
+  nil)
+
+(defun cic:find-definition-transient-window ()
+  "Show the definition at point in a new window, but set up so
+the window closes as soon as another command is used."
+  (interactive)
+  (let* ((current-window (get-buffer-window))
+         (current-symbol (symbol-at-point))
+         (definition-location (when (fboundp current-symbol)
+                                  (find-definition-noselect current-symbol nil))))
+    (unless definition-location
+      (setq definition-location (find-definition-noselect (variable-at-point) 'defvar)))
+    (when definition-location
+      (pop-to-buffer (car definition-location))
+      (goto-char (cdr definition-location))
+      (set-window-parameter nil 'post-command-delete-property t)
+      (select-window current-window)
+      (add-hook 'post-command-hook 'cic:post-command-add-delete-transient)))
+  nil)
+
+(defun cic:post-command-add-delete-transient ()
+  "Used by post-command-hook to add the actual function that
+deletes transient windows."
+  (add-hook 'post-command-hook 'post-command-hook-delete-transient)
+  (remove-hook 'post-command-hook 'cic:post-command-add-delete-transient))
+
+(defun post-command-hook-delete-transient ()
+    "Actually deletes transient windows that are marked with the
+window paramter 'post-command-delete-property."
+  ;; loop through all of window and check for post-command-delete property
+  (dolist (the-window (window-list))
+    (when (assoc 'post-command-delete-property (window-parameters the-window))
+      (delete-window the-window)))
+  (remove-hook 'post-command-hook 'cic:post-command-add-delete-transient)
+  (remove-hook 'post-command-hook 'post-command-hook-delete-transient))
 
 (provide 'cic-emacs-functions)
