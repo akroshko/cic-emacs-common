@@ -288,10 +288,13 @@ current line at point."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; filesystem helper functions
 
-(defun cic:find-file-upwards (file-to-find)
+;; TODO: normalize paths...
+(defun cic:find-file-upwards (file-to-find ;; &optional min-level-below-home
+                                           )
   "Recursively searches each parent directory starting from the default-directory,
 looking for a file with name FILE-TO-FIND.  Returns the path to
 FILE-TO-FIND or nil if not found."
+;; MIN-LEVEL-BELOW-HOME makes sure it does not go above this level below home.
   (cl-labels
       ((find-file-r (path)
                     (let* ((parent (file-name-directory path))
@@ -306,11 +309,14 @@ FILE-TO-FIND or nil if not found."
                         ;; accounts for both.
                         ;; i.e., not found
                         nil)
+                       ;; ((and min-level-below-home (not (string-match (concat (expand-file-name "~") ) )))
+                       ;;  nil)
                        (t
                         ;; continue upwards
                         (find-file-r (directory-file-name parent)))))))
     (find-file-r default-directory)))
 
+;; TODO: normalize paths...
 (defun cic:join-paths (&rest args)
   "Join paths in elisp. Only works with two arguments for now!"
   ;; TODO: enhance to work with arbitrary arguments
@@ -1210,6 +1216,35 @@ the start-process function."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; post-command delete window hook
 
+(defun cic:upward-tag-table ()
+  "Look upwards in the directory structure for a TAGS file and
+visit it."
+  (interactive)
+  (let ((home-directory (expand-file-name "~"))
+        (ctags-path (expand-file-name "~/tmp/ctags/"))
+        (my-tags-file (cic:find-file-upwards "TAGS")))
+    (cond (my-tags-file
+           (message "Loading tags file: %s" my-tags-file)
+           (setq tags-file-name my-tags-file)
+           (visit-tags-table my-tags-file))
+          ((file-exists-p ctags-path)
+           ;; try to find in a tmp file based on second-level secondary directory name
+           (let* ((second-level-name (when (string-match (concat home-directory "/[^/]*/\\([^/]*\\)") default-directory)
+                                       (match-string 1 default-directory)))
+                  (second-level-name-tags (cic:join-paths ctags-path (concat second-level-name "-TAGS"))))
+             (when (file-exists-p second-level-name-tags)
+               (message "Loading tags file: %s" second-level-name-tags)
+               (setq tags-file-name second-level-name-tags)
+               (visit-tags-table second-level-name-tags)))))))
+
+(defun cic:xref-find-definitions ()
+  "Just find using word at point and default values for TAGS
+file."
+  (interactive)
+  (cic:upward-tag-table)
+  (xref-find-definitions (thing-at-point 'symbol)))
+
+;; TODO: this is only elisp for now
 (defun cic:find-documentation-transient-window ()
   "Show the documentation for symbol at point in the *Help*
 buffer in a new window, but set up so the window closes as soon
