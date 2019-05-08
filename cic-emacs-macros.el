@@ -5,7 +5,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190427
+;; Version: 20190508
 ;; URL: https://github.com/akroshko/cic-emacs-common
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -292,5 +292,15 @@ Uses with-filename-filter."
              (unless already-existing-buffer
                (kill-buffer current-file-buffer))
              the-return))))))
+
+(defmacro command-with-args (func &rest args)
+  "Create a command from FUNC called with arguments ARGS.  Useful
+for called a command from a key with a prefix argument or calling
+a specific function from a key."
+  (declare (indent 1) ;; (debug t)
+           )
+  `(lambda ()
+     (interactive)
+     (apply ,func ',args)))
 
 (provide 'cic-emacs-macros)

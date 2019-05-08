@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190427
+;; Version: 20190508
 ;; URL: https://github.com/akroshko/cic-emacs-common
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -1212,6 +1212,11 @@ the start-process function."
                                      (subseq args 2))))
     (message (mapconcat 'identity (append '("Running command:") quoted-command-args) " "))
     (apply 'start-process args)))
+
+(defun nil-command ()
+  "A command that does nothing at all. Useful for minor modes
+that want to override keys."
+  (interactive))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; post-command delete window hook

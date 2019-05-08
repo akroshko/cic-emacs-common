@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Thu, Aug 27, 2015
-;; Version: 20190427
+;; Version: 20190508
 ;; URL: https://github.com/akroshko/cic-emacs-common
 
 ;; This file is NOT part of GNU Emacs.
