@@ -1207,7 +1207,7 @@ minibuffer giving the command run.  ARGS are the arguments to
 the start-process function."
   (let ((quoted-command-args (mapcar (lambda (e)
                                        (if (string-match " "  e)
-                                           (concat "\"" (replace-regexp-in-string "\"" "\\\"" e) "\"")
+                                           (concat "\"" (replace-regexp-in-string "\"" "\\\\\"" e) "\"")
                                          e))
                                      (subseq args 2))))
     (message (mapconcat 'identity (append '("Running command:") quoted-command-args) " "))

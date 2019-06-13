@@ -43,6 +43,14 @@ for every line."
     (setq str (replace-match "" t t str)))
   str)
 
+(defun s-trim-right (str)
+  "Trim all trailing whitespace from STR.  Does this for every
+line."
+  (while (string-match "\\`\n+\\|\\s-+$\\|\n+\\'"
+                       str)
+    (setq str (replace-match "" t t str)))
+  str)
+
 (defun s-trim-full-no-properties (str)
   "Like trim-full but remove text properties."
   (substring-no-properties (s-trim-full str)))
