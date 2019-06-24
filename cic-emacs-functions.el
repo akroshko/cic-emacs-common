@@ -762,6 +762,17 @@ interprogram-paste.  Ignore any custom kill-whole-line setting."
         (interprogram-cut-function nil))
     (kill-line)))
 
+(defun cic:kill-whole-line-elisp ()
+  "Kill a whole line in elisp without modifying kill-ring or
+interprogram-paste.  Ignore any custom kill-whole-line setting to
+make sure whole line is killed."
+  (let (kill-ring
+        (kill-whole-line t)
+        kill-ring-yank-pointer
+        (save-interprogram-paste-before-kill nil)
+        (interprogram-cut-function nil))
+    (kill-line)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse commands
 
