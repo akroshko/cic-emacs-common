@@ -780,20 +780,20 @@ make sure whole line is killed."
   "Find the URL at point and open in the conkeror web browser."
   (interactive)
   (let ((browse-url-generic-program "conkeror"))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-firefox ()
   "Find the URL at point and open in the Firefox web browser."
   (interactive)
   (let ((browse-url-generic-program "firefox"))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-chromium ()
   "Find the URL at point and open in the Chromium web browser."
   (interactive)
   (let ((browse-url-generic-program "chromium")
         (browse-url-generic-args    '("--temp-profile")))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-google-chrome ()
   "Find the URL at point and open in the Google Chrome web
@@ -801,24 +801,24 @@ browser."
   (interactive)
   (let ((browse-url-generic-program "google-chrome")
         (browse-url-generic-args    '("--temp-profile")))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-pale-moon ()
   "Find the URL at point and open in the Pale Moon web browser."
   (interactive)
   (let ((browse-url-generic-program "palemoon"))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-waterfox ()
   "Find the URL at point and open in the Waterfox web browser."
   (interactive)
   (let ((browse-url-generic-program "waterfox"))
-    (browse-url-generic (cic:url-at-point-or-line 'url))))
+    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
 
 (defun cic:browse-url-at-point-w3m ()
   "Find the URL at point and open in the w3m web browser."
   (interactive)
-  (w3m-browse-url (cic:url-at-point-or-line 'url)))
+  (w3m-browse-url (cic:url-at-point-or-line (cic:get-current-line))))
 
 (defun cic:url-at-point-or-line (&optional current-line)
   "If CURRENT-LINE is nil, find the URL at point and return it.
