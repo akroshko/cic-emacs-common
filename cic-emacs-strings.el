@@ -94,6 +94,15 @@ line."
       (setq str (replace-match "" t t str))))
   str)
 
+(defun s-trim-double-square-brackets (str)
+  "Trim leading and trailing double square brackets off of STR.
+Generally for org-mode links"
+  (when (string-match "^\\[\\[" str)
+    (setq str (replace-match "" t t str)))
+  (when (string-match "\\]\\]$" str)
+    (setq str (replace-match "" t t str)))
+  str)
+
 (defun s-trim-dashes (str)
   "Trim leading and trailing dashes off of STR."
   (when (stringp str)

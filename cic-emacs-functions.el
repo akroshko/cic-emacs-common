@@ -379,6 +379,7 @@ instead."
         key-press
         canceled
         selected
+        goback
         minibuffer-line
         minibuffer-select
         minibuffer-cancel
@@ -408,17 +409,21 @@ instead."
     (setq minibuffer-prompt (concat minibuffer-prompt minibuffer-cancel))
     ;; read a key
     (setq key-press (read-key minibuffer-prompt))
-    (when (or (equal key-press 45) (equal key-press 3) (equal key-press 7))
-      (setq canceled t))
-    (setq key-press       (make-string 1 key-press)
-          ;; test for valid keypress, inner-selection is nil if not valid
-          inner-selection (assoc key-press the-alist))
-    ;; use input, decide if alist is in fact an inner alist
-    (setq selected (caddr inner-selection))
-    (when (and selected (not canceled))
-      (if (symbolp selected)
-          (symbol-value selected)
-        selected))))
+    (cond ((equal key-press 67108914)
+           (setq goback t)
+           '(goback))
+          (t
+           (when (or (equal key-press 45) (equal key-press 3) (equal key-press 7))
+             (setq canceled t))
+           (setq key-press       (make-string 1 key-press)
+                 ;; test for valid keypress, inner-selection is nil if not valid
+                 inner-selection (assoc key-press the-alist))
+           ;; use input, decide if alist is in fact an inner alist
+           (setq selected (caddr inner-selection))
+           (when (and selected (not canceled))
+             (if (symbolp selected)
+                 (symbol-value selected)
+               selected))))))
 
 (defun cic:browse-url-conkeror (url &rest args)
   "Browse a url in the Conkeror web browser."
