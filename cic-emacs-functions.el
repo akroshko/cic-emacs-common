@@ -742,7 +742,8 @@ buffer."
     (select-window current-window)))
 
 (defun cic:dired-filename-at-point ()
-  (expand-file-name (dired-file-name-at-point)))
+  (when (dired-file-name-at-point)
+    (expand-file-name (dired-file-name-at-point))))
 
 (defun cic:datestamp-current-time (&optional the-time)
   "Get a datestamp with the current time or optionally THE-TIME."
@@ -784,8 +785,13 @@ make sure whole line is killed."
 (defun cic:browse-url-at-point-conkeror ()
   "Find the URL at point and open in the conkeror web browser."
   (interactive)
-  (let ((browse-url-generic-program "conkeror"))
-    (browse-url-generic (cic:url-at-point-or-line (cic:get-current-line)))))
+  (let ((the-url (cic:url-at-point-or-line (cic:get-current-line))))
+    ;; open files in a private instance of conkeror
+    (if (starts-with the-url "file:///")
+        (let ((browse-url-generic-program "conkeror-private"))
+          (browse-url-generic the-url))
+      (let ((browse-url-generic-program "conkeror"))
+        (browse-url-generic the-url)))))
 
 (defun cic:browse-url-at-point-firefox ()
   "Find the URL at point and open in the Firefox web browser."
