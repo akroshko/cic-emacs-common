@@ -185,8 +185,7 @@ seperators format)."
   (interactive)
   (if (org-at-table-p)
       (call-interactively 'org-table-rotate-recalc-marks)
-    (cond
-     ((region-active-p)
+    (when (region-active-p)
       (let ((start (region-beginning))
             (end (region-end)))
         (goto-char end)
@@ -194,11 +193,7 @@ seperators format)."
         (insert "\n#+END_QUOTE")
         (goto-char start)
         (beginning-of-line)
-        (insert "#+BEGIN_QUOTE\n")))
-     ;; TODO: this probably does not work
-     (t
-      (insert "#+BEGIN_" choice "\n")
-      (save-excursion (insert "#+END_" choice))))))
+        (insert "#+BEGIN_QUOTE\n")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode C-enter

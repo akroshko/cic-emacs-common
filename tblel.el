@@ -46,13 +46,13 @@ along with a #+TBLEL line."
       (progn
         (goto-char (org-table-end))
         (beginning-of-line)
-        (looking-at "\\s-+#\\+TBLEL:"))))))
+        (looking-at " *#\\+TBLEL:"))))))
 
 (defun tblel-line-p ()
   "Check if at a #+TBLEL line."
   (save-excursion
     (beginning-of-line)
-    (looking-at "\\s-+#\\+TBLEL:")))
+    (looking-at " *#\\+TBLEL:")))
 
 (defun tblel-eval-line (&rest args)
   "Evalute the function on a #+TBLEL line."
@@ -75,7 +75,9 @@ along with a #+TBLEL line."
             (goto-char (org-table-end)))
         (beginning-of-line)
         ;; TODO: eventually get forms
-        (setq lisp-function (substring-no-properties (elt (split-string (cic:get-current-line)) 1))))
+        (let ((split-tblel-line (split-string (cic:get-current-line))))
+          (setq lisp-function (substring-no-properties (elt split-tblel-line 1)))
+          (setq lisp-function-args (subseq split-tblel-line 2))))
       (save-excursion
         (when (tblel-line-p)
           (forward-line -1)
@@ -86,7 +88,9 @@ along with a #+TBLEL line."
               original-lisp-table (copy-tree (cic:org-table-to-lisp-no-separators)))
         ;; XXXX: found it essential to send copy-tree of lisp-table to
         ;; function, stops many subtle bugs
-        (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table) (copy-tree original-lisp-table)))
+        (if lisp-function-args
+            (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table) (copy-tree original-lisp-table) lisp-function-args))
+          (setq new-lisp-table (funcall (intern lisp-function) (copy-tree lisp-table) (copy-tree original-lisp-table))))
         ;; XXXX: make sure nil does not erase table
         (when new-lisp-table
           ;; finally put it back if all is well
@@ -122,7 +126,7 @@ along with a #+TBLEL line."
 
 ;; a nice generic sum function, sum all sumable solumns
 ;; TODO: get a table with seperators!!!!
-(defun tblel-generic-sum (lisp-table  lisp-table-no-seperators)
+(defun tblel-generic-sum (lisp-table  lisp-table-no-seperators &rest tblel-args)
   "Sum any column that is summable to the line at the end, and
 excluding a header."
   (let ((sums (make-list (length (car lisp-table-no-seperators)) nil))
@@ -131,17 +135,18 @@ excluding a header."
     (dolist (row (cdr (butlast lisp-table-no-seperators)))
       (setq column-count 0)
       (dolist (current-column row)
-        (when (or (cic:string-float-p current-column)
-                  (cic:string-integer-p current-column))
-          (unless (elt sums column-count)
-            (setcar (nthcdr column-count sums) 0))
-          (setcar (nthcdr column-count sums) (+ (elt sums column-count) (string-to-number current-column))))
+        (when (or (not tblel-args) (member (number-to-string (1+ column-count)) (car tblel-args)))
+          (when (or (cic:string-float-p current-column)
+                    (cic:string-integer-p current-column))
+            (unless (elt sums column-count)
+              (setcar (nthcdr column-count sums) 0))
+            (setcar (nthcdr column-count sums) (+ (elt sums column-count) (string-to-number current-column)))))
         (setq column-count (1+ column-count))))
     ;; now just insert it in last thing
     (setq tmp-lisp-table (butlast lisp-table-no-seperators))
     (append tmp-lisp-table (list (mapcar (lambda (e) (ignore-errors (number-to-string e))) sums)))))
 
-(defun tblel-generic-sum-cumulative-two-three (lisp-table lisp-table-no-seperators)
+(defun tblel-generic-sum-cumulative-two-three (lisp-table lisp-table-no-seperators &rest tblel-args)
   "Sum column one and record cumulative sums in column two and
 three."
   (let ((sum1 0)
@@ -172,7 +177,7 @@ three."
     (setcar (nthcdr 3 sums) sums3)
     (append tmp-lisp-table (list sums))))
 
-(defun tblel-generic-sum-quantity (lisp-table lisp-table-no-seperators)
+(defun tblel-generic-sum-quantity (lisp-table lisp-table-no-seperators &rest tblel-args)
   "Sums a quantity in second column with value in third column,
 into the last row."
   (let ((sum nil)
@@ -191,8 +196,18 @@ into the last row."
     (setcar (nthcdr 2 last-row) (ignore-errors (number-to-string sum)))
     (append tmp-lisp-table (list last-row))))
 
+(defun tblel-inches-to-millimeters (lisp-table lisp-table-no-seperators &rest tblel-args)
+  (let ((tmp-lisp-table (copy-tree lisp-table-no-seperators)))
+    (dolist (row lisp-table-no-seperators)
+      ;; TODO: need a get inches function, take out of otdb
+      (let ((inches (when (string-match "\\([0-9.]+\\)\"" (car row))
+                      (match-string 1 (car row)))))
+        (when inches
+          (setcar (nthcdr 1 row) (concat (format "%.2f" (* (string-to-float inches) 25.4)) "mm")))))
+    lisp-table-no-seperators))
+
 ;; (tblel-set-rest-reps (org-table-to-lisp) (cic:org-table-to-lisp-no-separators))
-(defun tblel-set-rest-reps (lisp-table lisp-table-no-seperators)
+(defun tblel-set-rest-reps (lisp-table lisp-table-no-seperators &rest tblel-args)
   "Calculate a table with sets, set rest, reps, rep duration and
   figure out total amount."
   (let ((new-lisp-table (list (elt lisp-table 1)))

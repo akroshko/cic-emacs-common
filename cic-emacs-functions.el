@@ -991,17 +991,41 @@ locations BEG END. REVERSE non-nil sorts in reverse order."
 non-nil ARG copy the full path to the kill ring."
   (interactive "P")
   (let (filename)
+    ;; TODO: more accurate message? for info node?
     (cond ((derived-mode-p 'Info-mode)
-           (Info-copy-current-node-name))
+           (setq filename (Info-copy-current-node-name)))
+          ((derived-mode-p 'dired-mode)
+           (setq filename (expand-file-name default-directory)))
           (t
            (if arg
                (setq filename buffer-file-name)
-             (setq filename (if (derived-mode-p 'dired-mode)
-                                (expand-file-name default-directory)
-                              (file-name-nondirectory buffer-file-name))))
+             (setq filename (file-name-nondirectory buffer-file-name)))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the kill ring." filename))))
+
+(defun cic:copy-file-link-to-kill-ring (&optional arg)
+  "Copy a link for the current filename and line to the kill
+ring.  With non-nil ARG copy the full path to the kill ring."
+  (interactive "P")
+  (let (filename
+        line-no
+        the-link)
+    (cond ((derived-mode-p 'Info-mode)
+           (setq the-link (concat "[[" (Info-copy-current-node-name) "]]")))
+          ((derived-mode-p 'dired-mode)
+           (setq the-link (concat "[[" (expand-file-name default-directory) "]]")))
+          (t
+           (if arg
+               (setq filename buffer-file-name)
+             (setq filename (file-name-nondirectory buffer-file-name)))
            (when filename
-             (kill-new filename)
-             (message "Copied buffer file name '%s' to the clipboard." filename))))))
+             (setq line-no (number-to-string (line-number-at-pos)))
+             (setq filename (concat "[[" filename "::" line-no "]]")))))
+    (when filename
+      (kill-new filename)
+      (message "Copied link '%s' to the kill ring." filename))))
+(global-set-key (kbd "s-)") 'cic:copy-file-link-to-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emacs development
@@ -1062,10 +1086,10 @@ cic:mpp commands."
     ("c" "cl"                          ("cl"))
     ("d" "(cl) Loop Facility"          ("(cl) Loop Facility"))
     ("e" "emacs"                       ("emacs"))
-    ("f" "elisp"                       ("elisp"))
-    ("g" "(elisp) Regular Expressions" ("(elisp) Regular Expressions"))
-    ("h" "org"                         ("org"))
-    ("i" "sicp"                        ("sicp")))
+    ("l" "elisp"                       ("elisp"))
+    ("o" "org"                         ("org"))
+    ("r" "(elisp) Regular Expressions" ("(elisp) Regular Expressions"))
+    ("s" "sicp"                        ("sicp")))
   "An alist of info nodes.")
 (defun cic:info-jump-select ()
   "Select an info node to jump to."
