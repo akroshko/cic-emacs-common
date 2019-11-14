@@ -471,7 +471,7 @@ fairly often while developing code or writing in LaTeX."
   (cond ((derived-mode-p 'latex-mode)
          (cond ((equal arg '(4))
                 (let ((full-filename buffer-file-name))
-                           ;; recursive call to compile
+                  ;; recursive call to compile
                   (cic:current-compile nil)
                   (let ((active-process (with-current-file-transient full-filename
                                           (TeX-active-process))))
@@ -481,27 +481,29 @@ fairly often while developing code or writing in LaTeX."
                 (cic:current-compile 'full))
                ((equal arg '(64))
                 (let ((full-filename buffer-file-name))
-                  ;; recursive call to compile
+                  ;; recursive call to compile, do for other things too
                   (cic:current-compile 'full)
                   (let ((active-process (with-current-file-transient full-filename
                                           (TeX-active-process))))
                     (when active-process
                       (set-process-sentinel active-process 'first-latex-full-compile-process-sentinel)))))
                ((equal arg 'full)
-                ;; TODO: this need to be fixed
-                (with-current-file-transient "~/cic-vcs-academic/phdthesis/includeonly.tex"
-                  (erase-buffer)
-                  (basic-save-buffer))
+                ;; TODO: this need to be fixed, do for other things too
+                (when (string-match "phdthesis" default-directory)
+                  (with-current-file-transient "~/cic-vcs-academic/phdthesis/includeonly.tex"
+                    (erase-buffer)
+                    (basic-save-buffer)))
                 (TeX-command "LaTeX" 'TeX-master-file nil))
                (t
                 (save-some-buffers t)
                 ;; get includeonly working
                 (when (or (string-match "thesis" (buffer-name)) (string-match "chapter" (buffer-name)))
                   ;; TODO: this need to be fixed
-                  (with-current-file-transient "~/cic-vcs-academic/phdthesis/includeonly.tex"
-                    (erase-buffer)
-                    (insert (concat "\\includeonly{" (file-name-base buffer-file-name) "}\n"))
-                    (basic-save-buffer)))
+                  (when (string-match "phdthesis" default-directory)
+                    (with-current-file-transient "~/cic-vcs-academic/phdthesis/includeonly.tex"
+                      (erase-buffer)
+                      (insert (concat "\\includeonly{" (file-name-base buffer-file-name) "}\n"))
+                      (basic-save-buffer))))
                 (TeX-command "LaTeX" 'TeX-master-file nil))))
         ((derived-mode-p 'python-mode)
          ;; XXXX: not using pyflakes because can't easily ignore some common design decision I make in Python code
@@ -1258,6 +1260,26 @@ the start-process function."
                                      (subseq args 2))))
     (message (mapconcat 'identity (append '("Running command:") quoted-command-args) " "))
     (apply 'start-process args)))
+
+(defun cic:start-process-message-rxvt-below (&optional name buffer title &rest args)
+  "Opens a terminal that starts on a layer below others (as per my openbox configuration)."
+  ;; TODO: need title
+  (when title
+    (setq title '("-title" title)))
+  (cic:start-process-message (append '("terminal" "*terminal output*" "launch.sh" "rxvt-unicode" "-name" "rxvt-below \"--geometry\"" "+0+0") title ("-e" "bash" "-i" "-c")) args))
+
+(defun cic:call-process-message (&rest args)
+  "The call-process function, but display a message in the
+minibuffer giving the command run.  ARGS are the arguments to
+the call-process function."
+  (let ((quoted-command-args (mapcar (lambda (e)
+                                       (if (string-match " "  e)
+                                           (concat "\"" (replace-regexp-in-string "\"" "\\\\\"" e) "\"")
+                                         e))
+                                     (subseq args 4))))
+    (message (mapconcat 'identity (append '("Running command:") (list (car args)) quoted-command-args) " "))
+    ;; TODO: synchronous, timeout...
+    (apply 'call-process args)))
 
 (defun nil-command ()
   "A command that does nothing at all. Useful for minor modes
