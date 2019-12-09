@@ -6,7 +6,7 @@
 ;; Author: Andrew Kroshko
 ;; Maintainer: Andrew Kroshko <akroshko.public+devel@gmail.com>
 ;; Created: Fri Mar 27, 2015
-;; Version: 20190508
+;; Version: 20191209
 ;; URL: https://github.com/akroshko/cic-emacs-common
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -1006,29 +1006,6 @@ non-nil ARG copy the full path to the kill ring."
       (kill-new filename)
       (message "Copied buffer file name '%s' to the kill ring." filename))))
 
-(defun cic:copy-file-link-to-kill-ring (&optional arg)
-  "Copy a link for the current filename and line to the kill
-ring.  With non-nil ARG copy the full path to the kill ring."
-  (interactive "P")
-  (let (filename
-        line-no
-        the-link)
-    (cond ((derived-mode-p 'Info-mode)
-           (setq the-link (concat "[[" (Info-copy-current-node-name) "]]")))
-          ((derived-mode-p 'dired-mode)
-           (setq the-link (concat "[[" (expand-file-name default-directory) "]]")))
-          (t
-           (if arg
-               (setq filename buffer-file-name)
-             (setq filename (file-name-nondirectory buffer-file-name)))
-           (when filename
-             (setq line-no (number-to-string (line-number-at-pos)))
-             (setq filename (concat "[[" filename "::" line-no "]]")))))
-    (when filename
-      (kill-new filename)
-      (message "Copied link '%s' to the kill ring." filename))))
-(global-set-key (kbd "s-)") 'cic:copy-file-link-to-kill-ring)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; emacs development
 (defun cic:recalculate ()
@@ -1048,6 +1025,7 @@ cic:mpp commands."
   (switch-to-buffer "*PPCapture*"))
 (defun cic:elisp-messages-buffer ()
   "Switch to the *Messages* buffer."
+  (interactive)
   (switch-to-buffer "*Messages*"))
 (defun cic:elisp-debug-on-error ()
   "Toggle debug-on-error on with a helpful message."
